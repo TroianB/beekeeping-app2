@@ -61,6 +61,23 @@
   padding-right: 0.75rem !important;
 }
 
+/* Big screens only: make Apiary names and values easier to read. */
+@media (min-width: 761px) {
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+    font-size: 1.12rem !important;
+    font-weight: 950 !important;
+    line-height: 1.12 !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+    font-size: 1.08rem !important;
+    font-weight: 950 !important;
+    line-height: 1.12 !important;
+  }
+}
+
 /* Small screens only: keep row values fixed, then move labels left over them. */
 @media (max-width: 760px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
