@@ -1,3 +1,4 @@
+import "./app2-storage.js";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import BeekeepingApp from "./App.jsx";
