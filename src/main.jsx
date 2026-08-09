@@ -3,6 +3,7 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import BeekeepingApp from "./App.jsx";
 import "./fit-screen.css";
+import "./apiary-labels.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
