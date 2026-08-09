@@ -101,6 +101,8 @@
     justify-self: start !important;
     transform: none !important;
     white-space: normal !important;
+    font-size: 1.05rem !important;
+    font-weight: 950 !important;
   }
 }
 
@@ -115,11 +117,15 @@
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
-  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    font-size: 0.86rem !important;
+  }
+
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
-    font-size: 0.86rem !important;
+    font-size: 1.02rem !important;
+    font-weight: 950 !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
