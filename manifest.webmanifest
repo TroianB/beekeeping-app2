@@ -1,6 +1,6 @@
 {
-  "name": "Beekeeping App",
-  "short_name": "Beekeeping",
+  "name": "Beekeeping App 2",
+  "short_name": "Beekeeping 2",
   "start_url": "/beekeeping-app2/",
   "scope": "/beekeeping-app2/",
   "display": "standalone",
