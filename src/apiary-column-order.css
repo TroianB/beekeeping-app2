@@ -61,7 +61,7 @@
   padding-right: 0.75rem !important;
 }
 
-/* Small screens only: move labels and values left together and space columns evenly. */
+/* Small screens only: keep row values fixed, then move labels left over them. */
 @media (max-width: 760px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
     grid-template-columns: 20px minmax(80px, 110px) 64px 64px 78px !important;
@@ -71,9 +71,29 @@
     padding-right: 0.35rem !important;
   }
 
+  /* Header labels only: move left so fixed values sit under each label centre. */
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
-  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
+    text-align: left !important;
+    justify-self: start !important;
+    white-space: normal !important;
+    line-height: 1.08 !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    transform: translateX(-1.15rem) !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4) {
+    transform: translateX(-1.2rem) !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
+    transform: translateX(-1.35rem) !important;
+  }
+
+  /* Row values only: keep exactly where the column layout puts them. */
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
@@ -100,6 +120,23 @@
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
     font-size: 0.86rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    transform: translateX(-1rem) !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4) {
+    transform: translateX(-1.05rem) !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
+    transform: translateX(-1.15rem) !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
     transform: none !important;
   }
 }
