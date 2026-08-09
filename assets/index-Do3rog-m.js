@@ -79,18 +79,19 @@ Error generating stack: `+e.message+`
       color: #6b7280 !important;
     }
 
+    /* Keep buttons the same black/yellow colours in Light mode as in Dark mode. */
     body.light-mode #root button,
     body.light-mode #bkImportCsvButton {
-      background: #ffffff !important;
-      color: #000000 !important;
-      border-color: rgba(17, 24, 39, 0.22) !important;
-      box-shadow: 0 6px 14px rgba(17, 24, 39, 0.12) !important;
+      background: rgba(0, 0, 0, 0.4) !important;
+      color: #fde047 !important;
+      border-color: rgba(250, 204, 21, 0.4) !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
     }
 
     body.light-mode #root button:hover,
     body.light-mode #bkImportCsvButton:hover {
-      background: #f3f4f6 !important;
-      color: #000000 !important;
+      background: rgba(0, 0, 0, 0.6) !important;
+      color: #facc15 !important;
     }
 
     body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid:nth-child(odd) {
@@ -106,13 +107,13 @@ Error generating stack: `+e.message+`
     }
 
     body.light-mode #themeToggle {
-      background: #ffffff;
+      background: #facc15;
       color: #000000;
-      border-color: rgba(17, 24, 39, 0.25);
+      border-color: rgba(250, 204, 21, 0.65);
     }
 
     body.light-mode #themeToggle:hover {
-      background: #f3f4f6;
+      background: #fde047;
     }
 
     @media (max-width: 640px) {
