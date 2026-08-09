@@ -79,19 +79,52 @@ Error generating stack: `+e.message+`
       color: #6b7280 !important;
     }
 
-    /* Keep buttons the same black/yellow colours in Light mode as in Dark mode. */
+    /* Light mode buttons should keep the same variants as dark mode. */
     body.light-mode #root button,
     body.light-mode #bkImportCsvButton {
-      background: rgba(0, 0, 0, 0.4) !important;
-      color: #fde047 !important;
+      background-color: rgba(0, 0, 0, 0.4) !important;
+      color: #fcd34d !important;
       border-color: rgba(250, 204, 21, 0.4) !important;
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22) !important;
     }
 
     body.light-mode #root button:hover,
     body.light-mode #bkImportCsvButton:hover {
-      background: rgba(0, 0, 0, 0.6) !important;
-      color: #facc15 !important;
+      background-color: rgba(0, 0, 0, 0.6) !important;
+      color: #fde047 !important;
+    }
+
+    body.light-mode #root button[class*="bg-yellow-500"],
+    body.light-mode #root button[class*="bg-yellow-400"],
+    body.light-mode #root button[class*="bg-yellow-"] {
+      background-color: #eab308 !important;
+      color: #000000 !important;
+      border-color: rgba(234, 179, 8, 0.8) !important;
+      box-shadow: 0 10px 24px rgba(234, 179, 8, 0.22) !important;
+    }
+
+    body.light-mode #root button[class*="bg-yellow-500"]:hover,
+    body.light-mode #root button[class*="bg-yellow-400"]:hover,
+    body.light-mode #root button[class*="bg-yellow-"]:hover {
+      background-color: #facc15 !important;
+      color: #000000 !important;
+    }
+
+    body.light-mode #root button[class*="text-red-"] {
+      color: #fca5a5 !important;
+    }
+
+    body.light-mode #root button[class*="text-red-"]:hover {
+      color: #fecaca !important;
+    }
+
+    body.light-mode #root button * {
+      color: inherit !important;
+    }
+
+    body.light-mode #root button:disabled {
+      opacity: 0.5 !important;
+      cursor: not-allowed !important;
     }
 
     body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid:nth-child(odd) {
@@ -107,13 +140,15 @@ Error generating stack: `+e.message+`
     }
 
     body.light-mode #themeToggle {
-      background: #facc15;
-      color: #000000;
-      border-color: rgba(250, 204, 21, 0.65);
+      background: #facc15 !important;
+      color: #000000 !important;
+      border-color: rgba(250, 204, 21, 0.65) !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32) !important;
     }
 
     body.light-mode #themeToggle:hover {
-      background: #fde047;
+      background: #fde047 !important;
+      color: #000000 !important;
     }
 
     @media (max-width: 640px) {
