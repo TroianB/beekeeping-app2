@@ -1,0 +1,152 @@
+/* Layout tweaks so the Apiaries section sits further left and fits smaller screens. */
+#root > .mx-auto {
+  max-width: 100vw !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0.5rem !important;
+  padding-right: 0.5rem !important;
+  padding-top: 3.4rem !important;
+}
+
+/* Hide the Export JSON button while keeping Export CSV visible. */
+#root > .mx-auto > div.mb-4.flex > div:last-child > button:first-child {
+  display: none !important;
+}
+
+/* The Apiaries page used a fixed 520px list column. This keeps the list readable
+   but gives more room to the apiary details panel on the right. */
+@media (min-width: 1024px) {
+  [class*="lg:grid-cols-[520px,1fr]"] {
+    grid-template-columns: minmax(390px, 42vw) minmax(0, 1fr) !important;
+    column-gap: 0.75rem !important;
+  }
+}
+
+/* Make the Apiaries table columns tighter on narrow screens. */
+@media (max-width: 760px) {
+  [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+    grid-template-columns: 20px minmax(90px, 1fr) 48px 44px 44px !important;
+    gap: 0.25rem !important;
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+  }
+
+  [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] span {
+    font-size: 0.82rem !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #root > .mx-auto {
+    padding-left: 0.25rem !important;
+    padding-right: 0.25rem !important;
+    padding-top: 3.25rem !important;
+  }
+
+  [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+    grid-template-columns: 18px minmax(75px, 1fr) 42px 38px 38px !important;
+  }
+}
+
+/* Taller, larger Apiaries table labels for easier reading. */
+#root input[placeholder="Search apiaries..."] + div > div.grid {
+  min-height: 3.35rem !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  align-items: center !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div.grid > span {
+  font-size: 0.98rem !important;
+  font-weight: 900 !important;
+  line-height: 1.12 !important;
+}
+
+/* Remove the separate green/blue/white label and value colours inside the Apiaries list. */
+body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div.grid > span,
+body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid > span {
+  color: #fef3c7 !important;
+}
+
+body.light-mode #root input[placeholder="Search apiaries..."] + div > div.grid > span,
+body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid > span {
+  color: #111827 !important;
+}
+
+/* Lighter alternating Apiary row backgrounds for easier reading in dark mode. */
+body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid:nth-child(odd) {
+  background: rgba(250, 204, 21, 0.095) !important;
+}
+
+body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid:nth-child(even) {
+  background: rgba(255, 255, 255, 0.065) !important;
+}
+
+body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid:hover {
+  background: rgba(250, 204, 21, 0.16) !important;
+}
+
+@media (max-width: 760px) {
+  #root input[placeholder="Search apiaries..."] + div > div.grid {
+    min-height: 3.55rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span {
+    font-size: 0.88rem !important;
+  }
+}
+
+/* Larger small-screen Apiary text and row content. */
+@media (max-width: 760px) {
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    font-size: 0.98rem !important;
+    font-weight: 900 !important;
+    line-height: 1.08 !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+    min-height: 4.1rem !important;
+    padding-top: 1.05rem !important;
+    padding-bottom: 1.05rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+    font-size: 1.1rem !important;
+    font-weight: 900 !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+    font-size: 1.02rem !important;
+    font-weight: 900 !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #root input[placeholder="Search apiaries..."] + div > div.grid,
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+    grid-template-columns: 18px minmax(72px, 1fr) 54px 50px 50px !important;
+    gap: 0.28rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    font-size: 0.92rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+    font-size: 1.04rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+    font-size: 0.96rem !important;
+  }
+}
