@@ -1,0 +1,134 @@
+/* Centred stacked Apiary labels. */
+
+/* Put the Apiaries list/detail area in the centre of the page instead of hard-left. */
+@media (min-width: 1024px) {
+  [class*="lg:grid-cols-[520px,1fr]"] {
+    grid-template-columns: minmax(0, 820px) !important;
+    justify-content: center !important;
+    max-width: 920px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+
+/* Centre the search and the label list. */
+#root input[placeholder="Search apiaries..."] {
+  display: block !important;
+  max-width: 720px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div {
+  max-width: 760px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+/* Hide the old table heading row because each label now carries its own information below. */
+#root input[placeholder="Search apiaries..."] + div > div.grid {
+  display: none !important;
+}
+
+/* Reverse the Apiary label order. */
+#root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
+  display: flex !important;
+  flex-direction: column-reverse !important;
+  align-items: center !important;
+  gap: 1rem !important;
+}
+
+/* Turn each Apiary row into a centred label/card. */
+#root input[placeholder="Search apiaries..."] + div > div > div.grid {
+  position: relative !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  justify-items: center !important;
+  align-items: center !important;
+  width: min(100%, 680px) !important;
+  min-height: 0 !important;
+  gap: 0.45rem !important;
+  padding: 1.1rem 1.25rem 1.15rem !important;
+  border-radius: 1.35rem !important;
+  text-align: center !important;
+}
+
+/* Keep the checkbox available but move it out of the text flow. */
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > input[type="checkbox"] {
+  position: absolute !important;
+  top: 1rem !important;
+  left: 1rem !important;
+  width: 1.1rem !important;
+  height: 1.1rem !important;
+}
+
+/* Apiary name: top centre of the label. */
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+  order: 1 !important;
+  width: 100% !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+  text-align: center !important;
+  font-size: 1.25rem !important;
+  font-weight: 950 !important;
+  line-height: 1.15 !important;
+}
+
+/* Put all numbers underneath the Apiary name, centred and in reverse detail order. */
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+  display: block !important;
+  width: min(100%, 260px) !important;
+  padding: 0.35rem 0.75rem !important;
+  border: 1px solid rgba(250, 204, 21, 0.22) !important;
+  border-radius: 999px !important;
+  text-align: center !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+  line-height: 1.15 !important;
+  background: rgba(0, 0, 0, 0.22) !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+  order: 2 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4) {
+  order: 3 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+  order: 4 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5)::before {
+  content: "Doubles: ";
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4)::before {
+  content: "Singles: ";
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3)::before {
+  content: "Total: ";
+}
+
+body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
+body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+body.light-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+  background: rgba(250, 204, 21, 0.18) !important;
+  border-color: rgba(202, 138, 4, 0.32) !important;
+}
+
+@media (max-width: 760px) {
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+    width: min(100%, 94vw) !important;
+    padding: 1rem 0.9rem 1.05rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+    font-size: 1.15rem !important;
+  }
+}
