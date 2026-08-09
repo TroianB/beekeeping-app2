@@ -33,7 +33,7 @@
   order: 5 !important;
 }
 
-/* Move only the column header labels farther left. Do not move the row values. */
+/* Move only the desktop/tablet column header labels farther left. Do not move the row values. */
 #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
 #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
 #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
@@ -44,7 +44,7 @@
   line-height: 1.1 !important;
 }
 
-/* Keep the row values in their current positions. */
+/* Keep the desktop/tablet row values in their current positions. */
 #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
 #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
 #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
@@ -61,29 +61,45 @@
   padding-right: 0.75rem !important;
 }
 
+/* Small screens only: move labels and values left together and space columns evenly. */
 @media (max-width: 760px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-    grid-template-columns: 20px minmax(88px, 1fr) 58px 58px 70px !important;
-    column-gap: 0.55rem !important;
+    grid-template-columns: 20px minmax(80px, 110px) 64px 64px 78px !important;
+    column-gap: 0.75rem !important;
+    justify-content: start !important;
+    padding-left: 0.35rem !important;
+    padding-right: 0.35rem !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
-  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
-    transform: translateX(-0.65rem) !important;
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+    text-align: left !important;
+    justify-self: start !important;
+    transform: none !important;
+    white-space: normal !important;
   }
 }
 
 @media (max-width: 520px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-    grid-template-columns: 18px minmax(70px, 1fr) 50px 50px 62px !important;
-    column-gap: 0.4rem !important;
+    grid-template-columns: 18px minmax(66px, 88px) 54px 54px 66px !important;
+    column-gap: 0.55rem !important;
+    justify-content: start !important;
+    padding-left: 0.3rem !important;
+    padding-right: 0.25rem !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
-  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
-    font-size: 0.82rem !important;
-    transform: translateX(-0.45rem) !important;
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+    font-size: 0.86rem !important;
+    transform: none !important;
   }
 }
