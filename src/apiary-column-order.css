@@ -1,8 +1,10 @@
 /* Reverse only the Apiary list number columns: Singles, Doubles, Total Hives. */
 
-/* Give the reversed Total Hives column more room at the far right. */
+/* Desktop/tablet layout: move the reversed labels/content left and give each value room. */
 #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-  grid-template-columns: 24px minmax(120px, 1fr) 70px 70px 88px !important;
+  grid-template-columns: 24px minmax(130px, 1fr) 96px 96px 118px !important;
+  column-gap: 1rem !important;
+  align-items: center !important;
 }
 
 /* Header: Singles, Doubles, Total Hives. */
@@ -31,14 +33,41 @@
   order: 5 !important;
 }
 
+/* Override the old text-right classes so labels and values sit to the left of each column. */
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+  text-align: left !important;
+  justify-self: start !important;
+  white-space: normal !important;
+  line-height: 1.15 !important;
+}
+
+/* Keep the Apiary name readable and separated from the number columns. */
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(2),
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
+  padding-right: 0.75rem !important;
+}
+
 @media (max-width: 760px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-    grid-template-columns: 20px minmax(90px, 1fr) 44px 44px 52px !important;
+    grid-template-columns: 20px minmax(88px, 1fr) 58px 58px 70px !important;
+    column-gap: 0.55rem !important;
   }
 }
 
 @media (max-width: 520px) {
   #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-    grid-template-columns: 18px minmax(72px, 1fr) 38px 38px 48px !important;
+    grid-template-columns: 18px minmax(70px, 1fr) 50px 50px 62px !important;
+    column-gap: 0.4rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+    font-size: 0.82rem !important;
   }
 }
