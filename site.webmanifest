@@ -1,1 +1,1 @@
-{"name":"Beekeeping App","short_name":"Beekeeping","display":"standalone","theme_color":"#facc15","background_color":"#000000","start_url":"/beekeeping-app2/"}
+{"name":"Beekeeping App 2","short_name":"Beekeeping 2","display":"standalone","theme_color":"#facc15","background_color":"#000000","start_url":"/beekeeping-app2/","scope":"/beekeeping-app2/"}
