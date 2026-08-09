@@ -90,7 +90,7 @@
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
-    transform: translateX(-1.35rem) !important;
+    transform: translateX(-1.18rem) !important;
   }
 
   /* Row values only: keep exactly where the column layout puts them. */
@@ -131,7 +131,7 @@
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
-    transform: translateX(-1.15rem) !important;
+    transform: translateX(-0.98rem) !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
