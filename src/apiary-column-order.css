@@ -1,0 +1,44 @@
+/* Reverse only the Apiary list number columns: Singles, Doubles, Total Hives. */
+
+/* Give the reversed Total Hives column more room at the far right. */
+#root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+  grid-template-columns: 24px minmax(120px, 1fr) 70px 70px 88px !important;
+}
+
+/* Header: Singles, Doubles, Total Hives. */
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
+  order: 3 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4) {
+  order: 4 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3) {
+  order: 5 !important;
+}
+
+/* Rows: Singles, Doubles, Total Hives. */
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+  order: 3 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4) {
+  order: 4 !important;
+}
+
+#root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3) {
+  order: 5 !important;
+}
+
+@media (max-width: 760px) {
+  #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+    grid-template-columns: 20px minmax(90px, 1fr) 44px 44px 52px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  #root input[placeholder="Search apiaries..."] + div [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+    grid-template-columns: 18px minmax(72px, 1fr) 38px 38px 48px !important;
+  }
+}
