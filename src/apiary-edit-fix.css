@@ -80,6 +80,10 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
   flex-wrap: nowrap !important;
 }
 
+.bk-remove-treatment-button {
+  white-space: nowrap !important;
+}
+
 /* Move the Treatment In button slightly left. */
 body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1) > div.space-y-2 > div.flex > button:first-child {
   margin-left: -0.35rem !important;
@@ -107,5 +111,19 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
 
   body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1) > div.space-y-2 > div.flex > button:first-child {
     margin-left: -0.25rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 .bk-new-treatment-button {
+    width: 100% !important;
+    padding: 0.7rem 0.9rem !important;
+    font-size: 0.98rem !important;
+    font-weight: 950 !important;
+  }
+
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 .bk-remove-treatment-button {
+    width: 100% !important;
+    padding: 0.58rem 0.75rem !important;
+    font-size: 0.88rem !important;
+    font-weight: 900 !important;
   }
 }
