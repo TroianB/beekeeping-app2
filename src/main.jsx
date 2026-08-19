@@ -11,6 +11,7 @@ import "./csv-controls.js";
 import "./apiary-mobile.js";
 import "./apiary-list-only.js";
 import "./apiary-edit-fix.js";
+import "./dashboard-apiary-swipe.js";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
