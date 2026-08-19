@@ -34,6 +34,11 @@ body.bk-apiary-detail-closing [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2
   transform: translateX(105%) !important;
 }
 
+body.bk-apiary-detail-closed-right [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
+  transform: translateX(105%) !important;
+  transition: none !important;
+}
+
 body.bk-apiaries-list-only.bk-apiary-detail-open {
   overflow: hidden;
 }
