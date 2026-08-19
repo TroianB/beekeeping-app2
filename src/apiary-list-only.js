@@ -339,3 +339,5 @@ new MutationObserver(applyApiaryListOnlyMode).observe(document.documentElement, 
 });
 
 applyApiaryListOnlyMode();
+
+// redeploy trigger: 2026-08-19T22:39+12:00
