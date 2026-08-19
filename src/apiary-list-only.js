@@ -47,6 +47,16 @@ function getListRows() {
   return Array.from(list.querySelectorAll('div.grid')).filter((row) => row.querySelector('input[type="checkbox"]'));
 }
 
+function getTopButtonRow() {
+  const search = getSearchInput();
+  const container = search?.parentElement;
+  if (!container) return null;
+  return Array.from(container.children).find((child) => {
+    if (!(child instanceof HTMLElement)) return false;
+    return Array.from(child.querySelectorAll('button')).some((button) => button.textContent.trim().toLowerCase().includes('add apiary'));
+  }) || null;
+}
+
 function getRowName(row) {
   const firstSpan = row.querySelector(':scope > span');
   return firstSpan ? firstSpan.textContent.trim() : '';
@@ -187,8 +197,7 @@ function deleteSelectedApiaries() {
 
 function updateControls() {
   const button = document.getElementById('bkDeleteApiaryButton');
-  const message = document.getElementById('bkApiaryDeleteMessage');
-  if (!button || !message) return;
+  if (!button) return;
 
   const selectedCount = getSelectedRows().length;
   button.classList.toggle('bk-ready', deleteMode && selectedCount > 0);
@@ -196,35 +205,28 @@ function updateControls() {
   if (!deleteMode) {
     button.disabled = false;
     button.textContent = 'Delete Apiary';
-    message.textContent = 'Apiary list only';
     return;
   }
 
-  button.textContent = selectedCount > 0 ? `Delete Apiary (${selectedCount})` : 'Delete Apiary';
+  button.textContent = selectedCount > 0 ? `Delete (${selectedCount})` : 'Delete Apiary';
   button.disabled = selectedCount === 0;
-  message.textContent = selectedCount > 0
-    ? `${selectedCount} selected for deletion`
-    : 'Select apiaries to be deleted';
 }
 
 function ensureControls() {
   const search = getSearchInput();
   if (!search) return;
 
+  const buttonRow = getTopButtonRow();
   let controls = document.getElementById('bkApiaryListControls');
   if (!controls) {
     controls = document.createElement('div');
     controls.id = 'bkApiaryListControls';
     controls.innerHTML = `
       <div class="bk-apiary-list-controls-inner">
-        <div id="bkApiaryDeleteMessage">Apiary list only</div>
-        <div class="flex flex-wrap gap-2">
-          <button type="button" id="bkDeleteApiaryButton">Delete Apiary</button>
-          <button type="button" id="bkCancelDeleteApiaryButton">Cancel</button>
-        </div>
+        <button type="button" id="bkDeleteApiaryButton">Delete Apiary</button>
+        <button type="button" id="bkCancelDeleteApiaryButton">Cancel</button>
       </div>
     `;
-    search.parentElement?.insertBefore(controls, search);
 
     controls.querySelector('#bkDeleteApiaryButton')?.addEventListener('click', () => {
       if (!deleteMode) {
@@ -237,6 +239,12 @@ function ensureControls() {
     controls.querySelector('#bkCancelDeleteApiaryButton')?.addEventListener('click', () => {
       setDeleteMode(false);
     });
+  }
+
+  if (buttonRow && controls.parentElement !== buttonRow) {
+    buttonRow.appendChild(controls);
+  } else if (!buttonRow && controls.parentElement !== search.parentElement) {
+    search.parentElement?.insertBefore(controls, search);
   }
 
   updateControls();
