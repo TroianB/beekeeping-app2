@@ -160,7 +160,7 @@ body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div >
 }
 
 body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
-  content: counter(bk-apiary-row);
+  content: counter(bk-apiary-row) ".";
   grid-column: 1;
   align-self: center;
   justify-self: center;
