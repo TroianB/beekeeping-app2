@@ -89,6 +89,8 @@ function openDetailScreen() {
 function closeDetailScreen() {
   if (!detailOpen) return;
   detailOpen = false;
+  touchStartX = 0;
+  touchStartY = 0;
   document.body.classList.add('bk-apiary-detail-closing');
   document.body.classList.remove('bk-apiary-detail-open');
   window.setTimeout(() => {
@@ -97,8 +99,12 @@ function closeDetailScreen() {
 }
 
 function ensureDetailBackButton() {
+  const panel = getDetailPanel();
+  if (!panel) return;
+
   let bar = document.getElementById('bkApiaryDetailBack');
-  if (bar) return;
+  if (bar && panel.contains(bar)) return;
+  if (bar) bar.remove();
 
   bar = document.createElement('div');
   bar.id = 'bkApiaryDetailBack';
@@ -107,7 +113,7 @@ function ensureDetailBackButton() {
     <span>Swipe left to return to the Apiary list</span>
   `;
   bar.querySelector('button')?.addEventListener('click', closeDetailScreen);
-  document.body.appendChild(bar);
+  panel.insertBefore(bar, panel.firstChild);
 }
 
 function cleanNumberValue(value) {
@@ -315,20 +321,22 @@ document.addEventListener('input', (event) => {
 }, true);
 
 document.addEventListener('touchstart', (event) => {
+  if (!detailOpen) return;
   const panel = getDetailPanel();
-  if (!detailOpen || !panel?.contains(event.target)) return;
+  if (!panel?.contains(event.target)) return;
   const touch = event.touches[0];
   touchStartX = touch.clientX;
   touchStartY = touch.clientY;
 }, { passive: true });
 
 document.addEventListener('touchend', (event) => {
-  const panel = getDetailPanel();
-  if (!detailOpen || !panel?.contains(event.target)) return;
+  if (!detailOpen || touchStartX === 0) return;
   const touch = event.changedTouches[0];
   const dx = touch.clientX - touchStartX;
   const dy = touch.clientY - touchStartY;
-  if (dx < -55 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+  touchStartX = 0;
+  touchStartY = 0;
+  if (dx < -35 && Math.abs(dx) > Math.abs(dy)) {
     closeDetailScreen();
   }
 }, { passive: true });
