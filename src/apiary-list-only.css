@@ -144,9 +144,15 @@ body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div >
   color: #fde68a !important;
 }
 
-/* The currently selected/open Apiary name is highlighted white. */
+/* The currently selected/open Apiary row is highlighted white with black text. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bg-black\/50 {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bg-black\/50 > span,
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bg-black\/50 > span[draggable="true"] {
-  color: #ffffff !important;
+  color: #000000 !important;
 }
 
 /* Replace the checkbox column with an order number until delete mode is active. */
@@ -167,6 +173,10 @@ body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="
   color: #fde68a;
   font-weight: 950;
   font-size: 0.95rem;
+}
+
+body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid.bg-black\/50::before {
+  color: #000000 !important;
 }
 
 body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid > input[type="checkbox"] {
