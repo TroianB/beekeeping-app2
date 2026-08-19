@@ -136,6 +136,19 @@ body:not(.bk-apiary-delete-mode) #bkCancelDeleteApiaryButton {
   display: none;
 }
 
+/* Keep row number size unchanged, but make Apiary names larger. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
+  font-size: 1.12rem !important;
+  line-height: 1.25 !important;
+  font-weight: 900 !important;
+  color: #fde68a !important;
+}
+
+/* The currently selected/open Apiary name is highlighted white. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bg-black\/50 > span[draggable="true"] {
+  color: #ffffff !important;
+}
+
 /* Replace the checkbox column with an order number until delete mode is active. */
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
   counter-reset: bk-apiary-row;
@@ -212,6 +225,10 @@ body.bk-apiary-delete-mode .bk-apiary-row-selected {
     white-space: nowrap;
     padding: 0.38rem 0.5rem;
     font-size: 0.72rem;
+  }
+
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
+    font-size: 1.08rem !important;
   }
 
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
