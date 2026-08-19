@@ -110,7 +110,7 @@ function ensureDetailBackButton() {
   bar.id = 'bkApiaryDetailBack';
   bar.innerHTML = `
     <button type="button">← Apiary List</button>
-    <span>Swipe left to return to the Apiary list</span>
+    <span>Swipe right to return to the Apiary page</span>
   `;
   bar.querySelector('button')?.addEventListener('click', closeDetailScreen);
   panel.insertBefore(bar, panel.firstChild);
@@ -336,7 +336,7 @@ document.addEventListener('touchend', (event) => {
   const dy = touch.clientY - touchStartY;
   touchStartX = 0;
   touchStartY = 0;
-  if (dx < -35 && Math.abs(dx) > Math.abs(dy)) {
+  if (dx > 35 && Math.abs(dx) > Math.abs(dy)) {
     closeDetailScreen();
   }
 }, { passive: true });
