@@ -20,7 +20,7 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   height: 100vh !important;
   overflow-y: auto !important;
   background: #0a0a0a !important;
-  padding: 0.75rem !important;
+  padding: 5.25rem 0.75rem 0.75rem !important;
   transform: translateX(-105%) !important;
   transition: transform 260ms ease !important;
   will-change: transform !important;
@@ -38,17 +38,22 @@ body.bk-apiaries-list-only.bk-apiary-detail-open {
   overflow: hidden;
 }
 
+body:not(.bk-apiary-detail-open) #bkApiaryDetailBack {
+  display: none !important;
+}
+
 #bkApiaryDetailBack {
-  position: sticky;
-  top: 0;
-  z-index: 70;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  right: 0.75rem;
+  z-index: 80;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
-  margin-bottom: 0.75rem;
   border: 1px solid rgba(234, 179, 8, 0.28);
-  background: rgba(0, 0, 0, 0.92);
+  background: rgba(0, 0, 0, 0.94);
   border-radius: 1rem;
   padding: 0.7rem 0.85rem;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42);
@@ -128,7 +133,7 @@ body:not(.bk-apiary-delete-mode) #bkCancelDeleteApiaryButton {
 }
 
 /* Replace the checkbox column with an order number until delete mode is active. */
-body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div {
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
   counter-reset: bk-apiary-row;
 }
 
