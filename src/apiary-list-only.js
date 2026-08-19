@@ -76,8 +76,10 @@ function hideNativeDeleteButtons() {
 
 function openDetailScreen() {
   if (!getSearchInput()) return;
+  const panel = getDetailPanel();
+  document.body.classList.remove('bk-apiary-detail-closing', 'bk-apiary-detail-closed-right');
+  if (panel) void panel.offsetWidth;
   detailOpen = true;
-  document.body.classList.remove('bk-apiary-detail-closing');
   document.body.classList.add('bk-apiary-detail-open');
   ensureDetailBackButton();
   window.setTimeout(() => {
@@ -92,9 +94,10 @@ function closeDetailScreen() {
   touchStartX = 0;
   touchStartY = 0;
   document.body.classList.add('bk-apiary-detail-closing');
-  document.body.classList.remove('bk-apiary-detail-open');
+  document.body.classList.remove('bk-apiary-detail-open', 'bk-apiary-detail-closed-right');
   window.setTimeout(() => {
     document.body.classList.remove('bk-apiary-detail-closing');
+    document.body.classList.add('bk-apiary-detail-closed-right');
   }, 300);
 }
 
@@ -109,7 +112,7 @@ function ensureDetailBackButton() {
   bar = document.createElement('div');
   bar.id = 'bkApiaryDetailBack';
   bar.innerHTML = `
-    <button type="button">← Apiary List</button>
+    <button type="button">Apiary List</button>
     <span>Swipe right to return to the Apiary page</span>
   `;
   bar.querySelector('button')?.addEventListener('click', closeDetailScreen);
@@ -247,7 +250,7 @@ function applyApiaryListOnlyMode() {
     const active = Boolean(getSearchInput());
     document.body.classList.toggle('bk-apiaries-list-only', active);
     if (!active) {
-      document.body.classList.remove('bk-apiary-delete-mode', 'bk-apiary-detail-open', 'bk-apiary-detail-closing');
+      document.body.classList.remove('bk-apiary-delete-mode', 'bk-apiary-detail-open', 'bk-apiary-detail-closing', 'bk-apiary-detail-closed-right');
       deleteMode = false;
       detailOpen = false;
       applying = false;
