@@ -80,6 +80,11 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
   flex-wrap: nowrap !important;
 }
 
+/* Move the Treatment In button slightly left. */
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1) > div.space-y-2 > div.flex > button:first-child {
+  margin-left: -0.35rem !important;
+}
+
 @media (max-width: 520px) {
   body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
     padding: 0.75rem !important;
@@ -98,5 +103,9 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
 
   body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1) > div.space-y-2 > div.flex {
     gap: 0.35rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1) > div.space-y-2 > div.flex > button:first-child {
+    margin-left: -0.25rem !important;
   }
 }
