@@ -5,10 +5,12 @@ import MonitoringShell from "./MonitoringShell.jsx";
 import "./fit-screen.css";
 import "./apiary-column-order.css";
 import "./apiary-list-only.css";
+import "./apiary-edit-fix.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
 import "./apiary-list-only.js";
+import "./apiary-edit-fix.js";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>
