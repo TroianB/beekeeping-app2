@@ -20,7 +20,7 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   height: 100vh !important;
   overflow-y: auto !important;
   background: #0a0a0a !important;
-  padding: 5.25rem 0.75rem 0.75rem !important;
+  padding: 0.75rem !important;
   transform: translateX(-105%) !important;
   transition: transform 260ms ease !important;
   will-change: transform !important;
@@ -43,15 +43,14 @@ body:not(.bk-apiary-detail-open) #bkApiaryDetailBack {
 }
 
 #bkApiaryDetailBack {
-  position: fixed;
-  top: 0.75rem;
-  left: 0.75rem;
-  right: 0.75rem;
+  position: sticky;
+  top: 0;
   z-index: 80;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  margin-bottom: 0.75rem;
   border: 1px solid rgba(234, 179, 8, 0.28);
   background: rgba(0, 0, 0, 0.94);
   border-radius: 1rem;
