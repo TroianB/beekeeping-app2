@@ -4,6 +4,7 @@ let applying = false;
 let detailOpen = false;
 let touchStartX = 0;
 let touchStartY = 0;
+let cleaningNumberInput = false;
 
 function normalise(value) {
   return String(value || '').trim().toLowerCase();
@@ -79,6 +80,10 @@ function openDetailScreen() {
   document.body.classList.remove('bk-apiary-detail-closing');
   document.body.classList.add('bk-apiary-detail-open');
   ensureDetailBackButton();
+  window.setTimeout(() => {
+    getDetailPanel()?.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    cleanNumberInputs();
+  }, 40);
 }
 
 function closeDetailScreen() {
@@ -92,17 +97,54 @@ function closeDetailScreen() {
 }
 
 function ensureDetailBackButton() {
-  const panel = getDetailPanel();
-  if (!panel || document.getElementById('bkApiaryDetailBack')) return;
+  let bar = document.getElementById('bkApiaryDetailBack');
+  if (bar) return;
 
-  const bar = document.createElement('div');
+  bar = document.createElement('div');
   bar.id = 'bkApiaryDetailBack';
   bar.innerHTML = `
     <button type="button">← Apiary List</button>
     <span>Swipe left to return to the Apiary list</span>
   `;
   bar.querySelector('button')?.addEventListener('click', closeDetailScreen);
-  panel.insertBefore(bar, panel.firstChild);
+  document.body.appendChild(bar);
+}
+
+function cleanNumberValue(value) {
+  return String(value ?? '').replace(/^0+(?=\d)/, '');
+}
+
+function cleanNumberInputs() {
+  const panel = getDetailPanel();
+  if (!panel) return;
+  panel.querySelectorAll('input[type="number"]').forEach((input) => {
+    const cleaned = cleanNumberValue(input.value);
+    if (cleaned !== input.value) input.value = cleaned;
+  });
+}
+
+function cleanFocusedNumberInput(input) {
+  if (!input || input.type !== 'number') return;
+  const panel = getDetailPanel();
+  if (!panel?.contains(input)) return;
+  if (input.value === '0') {
+    input.value = '';
+    return;
+  }
+  const cleaned = cleanNumberValue(input.value);
+  if (cleaned !== input.value) input.value = cleaned;
+}
+
+function cleanNumberInputAndNotify(input) {
+  if (cleaningNumberInput || !input || input.type !== 'number') return;
+  const panel = getDetailPanel();
+  if (!panel?.contains(input)) return;
+  const cleaned = cleanNumberValue(input.value);
+  if (cleaned === input.value) return;
+  cleaningNumberInput = true;
+  input.value = cleaned;
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  cleaningNumberInput = false;
 }
 
 function setDeleteMode(next) {
@@ -208,9 +250,11 @@ function applyApiaryListOnlyMode() {
 
     ensureControls();
     ensureDetailBackButton();
+    if (detailOpen) document.body.classList.add('bk-apiary-detail-open');
     hideNativeDeleteButtons();
     updateRowHighlights();
     updateControls();
+    cleanNumberInputs();
     applying = false;
   });
 }
@@ -235,19 +279,24 @@ document.addEventListener('click', (event) => {
     return;
   }
 
-  const row = event.target.closest(`${SEARCH_SELECTOR} + div > div > div.grid`);
-  if (row && row.querySelector('input[type="checkbox"]')) {
-    window.setTimeout(openDetailScreen, 40);
-    return;
-  }
-
   const panel = getDetailPanel();
   if (detailOpen && panel?.contains(event.target)) {
     const button = event.target.closest('button');
     const text = button?.textContent?.trim().toLowerCase() || '';
+    if (button && text.includes('edit')) {
+      window.setTimeout(openDetailScreen, 90);
+      window.setTimeout(cleanNumberInputs, 140);
+      return;
+    }
     if (button && /save|update/.test(text)) {
       window.setTimeout(closeDetailScreen, 180);
+      return;
     }
+  }
+
+  const row = event.target.closest(`${SEARCH_SELECTOR} + div > div > div.grid`);
+  if (row && row.querySelector('input[type="checkbox"]')) {
+    window.setTimeout(openDetailScreen, 40);
   }
 }, true);
 
@@ -255,6 +304,14 @@ document.addEventListener('change', () => {
   if (!deleteMode) return;
   updateRowHighlights();
   updateControls();
+}, true);
+
+document.addEventListener('focusin', (event) => {
+  cleanFocusedNumberInput(event.target);
+}, true);
+
+document.addEventListener('input', (event) => {
+  cleanNumberInputAndNotify(event.target);
 }, true);
 
 document.addEventListener('touchstart', (event) => {
