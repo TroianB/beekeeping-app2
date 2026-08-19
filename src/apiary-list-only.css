@@ -94,7 +94,7 @@ body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="
   display: none !important;
 }
 
-body.bk-apiries-list-only.bk-apiary-delete-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+body.bk-apiaries-list-only.bk-apiary-delete-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
   content: none !important;
 }
 
