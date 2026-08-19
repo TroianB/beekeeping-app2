@@ -104,7 +104,8 @@ export default function BeekeepingApp() {
     const result = validateApiary(data, hives, null);
     if (!result.valid) return false;
     const values = result.values;
-    setHives((prev) => [{ id: nextHiveId(prev), ...values, lastInspection: todayISO(), treatmentDate: values.inTreatment ? (values.treatmentDate || todayISO()) : "" }, ...prev]);
+    setHives((prev) => [...prev, { id: nextHiveId(prev), ...values, lastInspection: todayISO(), treatmentDate: values.inTreatment ? (values.treatmentDate || todayISO()) : "" }]);
+    setTab("apiaries");
     return true;
   }
   function updateHive(id, data) {
