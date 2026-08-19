@@ -33,8 +33,9 @@ body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
   font-weight: 900 !important;
 }
 
-/* In Add Apiary and Edit Apiary, number labels and number inputs sit on the same line. */
-body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]) {
+/* In Add Apiary and Edit Apiary, number fields and Strength sit on the same line as their labels. */
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]),
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> select) {
   display: grid !important;
   grid-template-columns: minmax(120px, 1fr) 8rem !important;
   align-items: center !important;
@@ -43,11 +44,16 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="num
   font-weight: 800 !important;
 }
 
-body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]) input[type="number"] {
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]) input[type="number"],
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> select) select {
   margin-top: 0 !important;
   text-align: center !important;
   font-size: 1.05rem !important;
   font-weight: 900 !important;
+}
+
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> select) select {
+  width: 100% !important;
 }
 
 @media (max-width: 520px) {
@@ -55,7 +61,8 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="num
     padding: 0.75rem !important;
   }
 
-  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]) {
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]),
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> select) {
     grid-template-columns: minmax(105px, 1fr) 6.5rem !important;
     gap: 0.55rem !important;
   }
