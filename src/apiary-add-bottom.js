@@ -1,3 +1,5 @@
+const RETURN_TO_APIARIES_AFTER_ADD_KEY = 'bk.returnToApiariesAfterAdd';
+
 function readApiaryList() {
   try {
     const raw = localStorage.getItem('bk.hives');
@@ -12,6 +14,30 @@ function writeApiaryList(apiaries) {
   try {
     localStorage.setItem('bk.hives', JSON.stringify(apiaries));
   } catch {}
+}
+
+function rememberApiariesAfterAdd() {
+  try {
+    sessionStorage.setItem(RETURN_TO_APIARIES_AFTER_ADD_KEY, '1');
+  } catch {}
+}
+
+function returnToApiariesAfterAdd() {
+  let shouldReturn = false;
+  try {
+    shouldReturn = sessionStorage.getItem(RETURN_TO_APIARIES_AFTER_ADD_KEY) === '1';
+  } catch {}
+  if (!shouldReturn) return;
+
+  const apiariesButton = Array.from(document.querySelectorAll('button')).find((button) => {
+    return button.textContent.trim().toLowerCase() === 'apiaries';
+  });
+  if (!apiariesButton) return;
+
+  try {
+    sessionStorage.removeItem(RETURN_TO_APIARIES_AFTER_ADD_KEY);
+  } catch {}
+  apiariesButton.click();
 }
 
 function getModalTitle(modal) {
@@ -47,6 +73,7 @@ function moveNewestApiaryToBottom(before) {
 
 function moveNewestApiaryToBottomWithRetry(before, attempt = 0) {
   if (moveNewestApiaryToBottom(before)) {
+    rememberApiariesAfterAdd();
     window.setTimeout(() => window.location.reload(), 80);
     return;
   }
@@ -64,3 +91,10 @@ document.addEventListener('click', (event) => {
   const before = readApiaryList();
   window.setTimeout(() => moveNewestApiaryToBottomWithRetry(before), 80);
 }, true);
+
+new MutationObserver(returnToApiariesAfterAdd).observe(document.documentElement, {
+  childList: true,
+  subtree: true,
+});
+
+returnToApiariesAfterAdd();
