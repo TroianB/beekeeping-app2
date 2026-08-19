@@ -113,6 +113,26 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
     margin-left: -0.25rem !important;
   }
 
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.flex:has(input[placeholder="New treatment name"]) {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 0.45rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.flex:has(input[placeholder="New treatment name"]) input[placeholder="New treatment name"] {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    font-size: 1rem !important;
+    padding: 0.7rem 0.85rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.flex:has(input[placeholder="New treatment name"]) button {
+    width: 100% !important;
+    padding: 0.62rem 0.75rem !important;
+    font-weight: 900 !important;
+  }
+
   body.bk-apiaries-list-only #root .fixed.inset-0.z-50 .bk-new-treatment-button {
     width: 100% !important;
     padding: 0.7rem 0.9rem !important;
