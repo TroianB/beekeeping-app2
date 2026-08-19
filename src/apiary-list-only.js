@@ -1,4 +1,5 @@
 const SEARCH_SELECTOR = '#root input[placeholder="Search apiaries..."]';
+const RETURN_TO_APIARIES_KEY = 'bk.returnToApiariesAfterDelete';
 let deleteMode = false;
 let applying = false;
 let detailOpen = false;
@@ -24,6 +25,31 @@ function writeApiaries(apiaries) {
   try {
     localStorage.setItem('bk.hives', JSON.stringify(apiaries));
   } catch {}
+}
+
+function rememberApiariesScreen() {
+  try {
+    sessionStorage.setItem(RETURN_TO_APIARIES_KEY, '1');
+  } catch {}
+}
+
+function returnToApiariesAfterDelete() {
+  let shouldReturn = false;
+  try {
+    shouldReturn = sessionStorage.getItem(RETURN_TO_APIARIES_KEY) === '1';
+  } catch {}
+  if (!shouldReturn) return;
+
+  const apiariesButton = Array.from(document.querySelectorAll('button')).find((button) => {
+    return button.textContent.trim().toLowerCase() === 'apiaries';
+  });
+  if (!apiariesButton) return;
+
+  try {
+    sessionStorage.removeItem(RETURN_TO_APIARIES_KEY);
+  } catch {}
+  apiariesButton.click();
+  window.setTimeout(applyApiaryListOnlyMode, 80);
 }
 
 function getSearchInput() {
@@ -192,6 +218,7 @@ function deleteSelectedApiaries() {
   const selectedSet = new Set(selectedNames.map(normalise));
   const remaining = readApiaries().filter((apiary) => !selectedSet.has(normalise(apiary.name)));
   writeApiaries(remaining);
+  rememberApiariesScreen();
   window.location.reload();
 }
 
@@ -352,11 +379,15 @@ document.addEventListener('touchend', (event) => {
   }
 }, { passive: true });
 
-new MutationObserver(applyApiaryListOnlyMode).observe(document.documentElement, {
+new MutationObserver(() => {
+  returnToApiariesAfterDelete();
+  applyApiaryListOnlyMode();
+}).observe(document.documentElement, {
   childList: true,
   subtree: true,
 });
 
+returnToApiariesAfterDelete();
 applyApiaryListOnlyMode();
 
 // redeploy trigger: 2026-08-19T22:39+12:00
