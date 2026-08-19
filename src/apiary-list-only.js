@@ -1,6 +1,9 @@
 const SEARCH_SELECTOR = '#root input[placeholder="Search apiaries..."]';
 let deleteMode = false;
 let applying = false;
+let detailOpen = false;
+let touchStartX = 0;
+let touchStartY = 0;
 
 function normalise(value) {
   return String(value || '').trim().toLowerCase();
@@ -24,6 +27,16 @@ function writeApiaries(apiaries) {
 
 function getSearchInput() {
   return document.querySelector(SEARCH_SELECTOR);
+}
+
+function getApiaryLayout() {
+  const search = getSearchInput();
+  return search?.closest('[class*="lg:grid-cols-[520px,1fr]"]') || null;
+}
+
+function getDetailPanel() {
+  const layout = getApiaryLayout();
+  return layout?.children?.[1] || null;
 }
 
 function getListRows() {
@@ -58,6 +71,38 @@ function hideNativeDeleteButtons() {
       button.style.display = 'none';
     }
   });
+}
+
+function openDetailScreen() {
+  if (!getSearchInput()) return;
+  detailOpen = true;
+  document.body.classList.remove('bk-apiary-detail-closing');
+  document.body.classList.add('bk-apiary-detail-open');
+  ensureDetailBackButton();
+}
+
+function closeDetailScreen() {
+  if (!detailOpen) return;
+  detailOpen = false;
+  document.body.classList.add('bk-apiary-detail-closing');
+  document.body.classList.remove('bk-apiary-detail-open');
+  window.setTimeout(() => {
+    document.body.classList.remove('bk-apiary-detail-closing');
+  }, 300);
+}
+
+function ensureDetailBackButton() {
+  const panel = getDetailPanel();
+  if (!panel || document.getElementById('bkApiaryDetailBack')) return;
+
+  const bar = document.createElement('div');
+  bar.id = 'bkApiaryDetailBack';
+  bar.innerHTML = `
+    <button type="button">← Apiary List</button>
+    <span>Swipe left to return to the Apiary list</span>
+  `;
+  bar.querySelector('button')?.addEventListener('click', closeDetailScreen);
+  panel.insertBefore(bar, panel.firstChild);
 }
 
 function setDeleteMode(next) {
@@ -154,13 +199,15 @@ function applyApiaryListOnlyMode() {
     const active = Boolean(getSearchInput());
     document.body.classList.toggle('bk-apiaries-list-only', active);
     if (!active) {
-      document.body.classList.remove('bk-apiary-delete-mode');
+      document.body.classList.remove('bk-apiary-delete-mode', 'bk-apiary-detail-open', 'bk-apiary-detail-closing');
       deleteMode = false;
+      detailOpen = false;
       applying = false;
       return;
     }
 
     ensureControls();
+    ensureDetailBackButton();
     hideNativeDeleteButtons();
     updateRowHighlights();
     updateControls();
@@ -177,12 +224,31 @@ function toggleRowSelection(row) {
 }
 
 document.addEventListener('click', (event) => {
-  if (!deleteMode || !getSearchInput()) return;
+  if (!getSearchInput()) return;
+
+  if (deleteMode) {
+    const row = event.target.closest(`${SEARCH_SELECTOR} + div > div > div.grid`);
+    if (!row || !row.querySelector('input[type="checkbox"]')) return;
+    event.preventDefault();
+    event.stopPropagation();
+    toggleRowSelection(row);
+    return;
+  }
+
   const row = event.target.closest(`${SEARCH_SELECTOR} + div > div > div.grid`);
-  if (!row || !row.querySelector('input[type="checkbox"]')) return;
-  event.preventDefault();
-  event.stopPropagation();
-  toggleRowSelection(row);
+  if (row && row.querySelector('input[type="checkbox"]')) {
+    window.setTimeout(openDetailScreen, 40);
+    return;
+  }
+
+  const panel = getDetailPanel();
+  if (detailOpen && panel?.contains(event.target)) {
+    const button = event.target.closest('button');
+    const text = button?.textContent?.trim().toLowerCase() || '';
+    if (button && /save|update/.test(text)) {
+      window.setTimeout(closeDetailScreen, 180);
+    }
+  }
 }, true);
 
 document.addEventListener('change', () => {
@@ -190,6 +256,25 @@ document.addEventListener('change', () => {
   updateRowHighlights();
   updateControls();
 }, true);
+
+document.addEventListener('touchstart', (event) => {
+  const panel = getDetailPanel();
+  if (!detailOpen || !panel?.contains(event.target)) return;
+  const touch = event.touches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}, { passive: true });
+
+document.addEventListener('touchend', (event) => {
+  const panel = getDetailPanel();
+  if (!detailOpen || !panel?.contains(event.target)) return;
+  const touch = event.changedTouches[0];
+  const dx = touch.clientX - touchStartX;
+  const dy = touch.clientY - touchStartY;
+  if (dx < -55 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+    closeDetailScreen();
+  }
+}, { passive: true });
 
 new MutationObserver(applyApiaryListOnlyMode).observe(document.documentElement, {
   childList: true,
