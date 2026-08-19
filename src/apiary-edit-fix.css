@@ -1,0 +1,9 @@
+/* Keeps the real Edit form above the sliding Apiary detail screen. */
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 {
+  z-index: 120 !important;
+}
+
+body.bk-apiaries-list-only #root .fixed.inset-0.z-50 > div {
+  position: relative;
+  z-index: 121 !important;
+}
