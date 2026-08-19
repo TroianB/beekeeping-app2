@@ -1,5 +1,25 @@
+function getModalTitle(modal) {
+  const panel = modal?.children?.[0];
+  const title = panel?.children?.[0];
+  return String(title?.textContent || '').trim();
+}
+
+function isEditApiaryModal(modal) {
+  return getModalTitle(modal).toLowerCase().startsWith('edit ');
+}
+
+function markEditModals() {
+  let foundEdit = false;
+  document.querySelectorAll('#root .fixed.inset-0.z-50').forEach((modal) => {
+    const isEdit = isEditApiaryModal(modal);
+    modal.classList.toggle('bk-apiary-edit-modal', isEdit);
+    if (isEdit) foundEdit = true;
+  });
+  document.body.classList.toggle('bk-apiary-edit-open', foundEdit);
+}
+
 function isApiaryEditModal(element) {
-  return Boolean(element?.closest?.('#root .fixed.inset-0.z-50'));
+  return Boolean(element?.closest?.('#root .bk-apiary-edit-modal'));
 }
 
 function setRawInputValue(input, value) {
@@ -24,14 +44,15 @@ function cleanLeadingZero(input, { clearPlainZero = false } = {}) {
 }
 
 function cleanEditModalNumbers() {
-  document.querySelectorAll('#root .fixed.inset-0.z-50 input[type="number"]').forEach((input) => {
+  document.querySelectorAll('#root .bk-apiary-edit-modal input[type="number"]').forEach((input) => {
     cleanLeadingZero(input, { clearPlainZero: true });
   });
 }
 
 function raiseEditModal() {
-  document.querySelectorAll('#root .fixed.inset-0.z-50').forEach((modal) => {
-    modal.style.zIndex = '120';
+  markEditModals();
+  document.querySelectorAll('#root .bk-apiary-edit-modal').forEach((modal) => {
+    modal.style.zIndex = '130';
   });
 }
 
@@ -39,8 +60,11 @@ function closeApiaryDetailAfterSave() {
   if (!document.body.classList.contains('bk-apiary-detail-open')) return;
   window.setTimeout(() => {
     document.body.classList.add('bk-apiary-detail-closing');
-    document.body.classList.remove('bk-apiary-detail-open');
-    window.setTimeout(() => document.body.classList.remove('bk-apiary-detail-closing'), 300);
+    document.body.classList.remove('bk-apiary-detail-open', 'bk-apiary-detail-closed-right');
+    window.setTimeout(() => {
+      document.body.classList.remove('bk-apiary-detail-closing');
+      document.body.classList.add('bk-apiary-detail-closed-right');
+    }, 300);
   }, 220);
 }
 
