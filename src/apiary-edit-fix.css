@@ -1,4 +1,4 @@
-/* Edit Apiary uses the same full-screen format as the Apiary information screen. */
+/* Keep Edit Apiary above the sliding Apiary information screen, but keep it as a small centered popup. */
 body.bk-apiaries-list-only #root .fixed.inset-0.z-50 {
   z-index: 120 !important;
 }
@@ -8,78 +8,55 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 > div {
   z-index: 121 !important;
 }
 
+/* Edit Apiary stays in the original centered popup format. */
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
-  position: fixed !important;
-  inset: 0 !important;
-  z-index: 130 !important;
-  display: block !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  overflow-y: auto !important;
-  background: #0a0a0a !important;
-  padding: 0.75rem !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(0, 0, 0, 0.7) !important;
+  padding: 1rem !important;
 }
 
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
-  position: relative !important;
-  z-index: 131 !important;
   width: 100% !important;
-  max-width: 72rem !important;
-  min-height: calc(100vh - 1.5rem) !important;
-  max-height: none !important;
-  margin: 0 auto !important;
-  overflow: visible !important;
-  border: 1px solid rgba(234, 179, 8, 0.22) !important;
-  background: rgba(0, 0, 0, 0.42) !important;
+  max-width: 36rem !important;
+  max-height: 85vh !important;
+  overflow: auto !important;
+  border: 1px solid rgba(234, 179, 8, 0.3) !important;
+  background: #000 !important;
   border-radius: 1rem !important;
-  padding: 0.75rem !important;
 }
 
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 132 !important;
-  margin-bottom: 0.85rem !important;
-  border: 1px solid rgba(234, 179, 8, 0.28) !important;
-  background: rgba(0, 0, 0, 0.94) !important;
-  border-radius: 1rem !important;
-  padding: 0.85rem !important;
+  margin-bottom: 0.75rem !important;
   color: #fde047 !important;
-  font-size: 1.15rem !important;
-  font-weight: 950 !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.42) !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
 }
 
-body.bk-apiary-edit-open #root .bk-apiary-edit-modal label {
-  font-size: 0.95rem !important;
-  font-weight: 800 !important;
+/* In Edit mode, number labels and number inputs sit on the same line. */
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal label:has(> input[type="number"]) {
+  display: grid !important;
+  grid-template-columns: minmax(120px, 1fr) 8rem !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
   color: #fde68a !important;
+  font-weight: 800 !important;
 }
 
-body.bk-apiary-edit-open #root .bk-apiary-edit-modal input,
-body.bk-apiary-edit-open #root .bk-apiary-edit-modal textarea,
-body.bk-apiary-edit-open #root .bk-apiary-edit-modal select {
-  margin-top: 0.35rem !important;
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal label:has(> input[type="number"]) input[type="number"] {
+  margin-top: 0 !important;
+  text-align: center !important;
+  font-size: 1.05rem !important;
+  font-weight: 900 !important;
 }
 
-body.bk-apiary-edit-open #root .bk-apiary-edit-modal .sticky.bottom-0 {
-  border-top: 1px solid rgba(234, 179, 8, 0.2) !important;
-  background: rgba(0, 0, 0, 0.96) !important;
-  padding: 0.85rem 0 0 !important;
-}
-
-@media (max-width: 760px) {
+@media (max-width: 520px) {
   body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
-    padding: 0.55rem !important;
+    padding: 0.75rem !important;
   }
 
-  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
-    min-height: calc(100vh - 1.1rem) !important;
-    padding: 0.65rem !important;
-  }
-
-  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
-    top: 0 !important;
-    font-size: 1.05rem !important;
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal label:has(> input[type="number"]) {
+    grid-template-columns: minmax(105px, 1fr) 6.5rem !important;
+    gap: 0.55rem !important;
   }
 }
