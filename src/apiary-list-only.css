@@ -80,35 +80,35 @@ body:not(.bk-apiary-detail-open) #bkApiaryDetailBack {
   opacity: 0.88;
 }
 
-/* Controls shown above the Apiary list. */
+/* Controls now sit beside the Add Apiary button. */
 #bkApiaryListControls {
-  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 !important;
 }
 
 #bkApiaryListControls .bk-apiary-list-controls-inner {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  border: 1px solid rgba(234, 179, 8, 0.28);
-  background: rgba(0, 0, 0, 0.34);
-  border-radius: 1rem;
-  padding: 0.75rem;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 #bkApiaryDeleteMessage {
-  color: #fde68a;
-  font-size: 0.95rem;
-  font-weight: 800;
+  display: none !important;
 }
 
 #bkDeleteApiaryButton,
 #bkCancelDeleteApiaryButton {
-  border-radius: 0.8rem;
-  padding: 0.65rem 0.9rem;
-  font-size: 0.9rem;
+  border-radius: 0.7rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
   font-weight: 900;
+  line-height: 1.1;
 }
 
 #bkDeleteApiaryButton {
@@ -173,11 +173,9 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #root input[placeholder="Search
   accent-color: #eab308;
 }
 
-/* Header first column label. */
+/* Header first column is blank unless delete mode is active. */
 body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div.grid > span:first-child::after {
-  content: "No.";
-  color: #fde68a;
-  font-weight: 950;
+  content: "";
 }
 
 body.bk-apiaries-list-only.bk-apiary-delete-mode #root input[placeholder="Search apiaries..."] + div > div.grid > span:first-child::after {
@@ -194,13 +192,13 @@ body.bk-apiary-delete-mode .bk-apiary-row-selected {
 
 @media (max-width: 760px) {
   #bkApiaryListControls .bk-apiary-list-controls-inner {
-    align-items: stretch;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
   }
 
   #bkDeleteApiaryButton,
   #bkCancelDeleteApiaryButton {
-    width: 100%;
+    width: auto;
   }
 
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
