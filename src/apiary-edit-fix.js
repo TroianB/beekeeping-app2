@@ -3,6 +3,7 @@ let currentApiaryNameForHighlight = '';
 let savedApiaryListScrollTop = 0;
 let savedWindowScrollX = 0;
 let savedWindowScrollY = 0;
+let detailWasOpenBeforeEdit = false;
 
 function getModalTitle(modal) {
   const panel = modal?.children?.[0];
@@ -139,6 +140,16 @@ function raiseEditModal() {
   });
 }
 
+function restoreApiaryInformationScreenAfterCancel() {
+  [40, 120, 260, 520].forEach((delay) => {
+    window.setTimeout(() => {
+      document.body.classList.remove('bk-apiary-detail-closing', 'bk-apiary-detail-closed-right');
+      if (detailWasOpenBeforeEdit) document.body.classList.add('bk-apiary-detail-open');
+      keepEditedApiaryHighlighted();
+    }, delay);
+  });
+}
+
 function closeApiaryDetailAfterSave() {
   keepEditedApiaryHighlightedAfterRender();
 
@@ -177,11 +188,17 @@ document.addEventListener('click', (event) => {
 
   const text = button.textContent.trim().toLowerCase();
   if (text.includes('edit')) {
+    detailWasOpenBeforeEdit = document.body.classList.contains('bk-apiary-detail-open');
     window.setTimeout(() => {
       raiseEditModal();
       cleanEditModalNumbers();
     }, 60);
     window.setTimeout(cleanEditModalNumbers, 180);
+    return;
+  }
+
+  if (isApiaryEditModal(button) && text === 'cancel') {
+    restoreApiaryInformationScreenAfterCancel();
     return;
   }
 
