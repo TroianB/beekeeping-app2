@@ -1,0 +1,76 @@
+/* Larger text for the Edit Apiary screen only. */
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
+  max-width: 42rem !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
+  font-size: 2rem !important;
+  line-height: 1.15 !important;
+  font-weight: 950 !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal label,
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal div.text-sm {
+  font-size: 1.75rem !important;
+  line-height: 1.18 !important;
+  font-weight: 900 !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal input,
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal select,
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal textarea {
+  font-size: 1.7rem !important;
+  line-height: 1.2 !important;
+  padding: 0.95rem 1rem !important;
+  min-height: 3.7rem !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal textarea {
+  min-height: 8rem !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal button {
+  font-size: 1.45rem !important;
+  line-height: 1.15 !important;
+  padding: 0.9rem 1.1rem !important;
+  font-weight: 950 !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal .text-xs {
+  font-size: 1.25rem !important;
+  line-height: 1.2 !important;
+}
+
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal .text-red-300 {
+  font-size: 1.15rem !important;
+  line-height: 1.25 !important;
+}
+
+@media (max-width: 520px) {
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
+    max-width: calc(100vw - 1rem) !important;
+    padding: 0.85rem !important;
+  }
+
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
+    font-size: 1.65rem !important;
+  }
+
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal label,
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal div.text-sm {
+    font-size: 1.35rem !important;
+  }
+
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal input,
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal select,
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal textarea {
+    font-size: 1.25rem !important;
+    min-height: 3.35rem !important;
+    padding: 0.78rem 0.85rem !important;
+  }
+
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal button {
+    font-size: 1.15rem !important;
+    padding: 0.78rem 0.9rem !important;
+  }
+}
