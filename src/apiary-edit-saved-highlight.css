@@ -1,0 +1,14 @@
+/* Keep the edited Apiary highlighted after Save returns to the Apiaries list. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bk-apiary-edit-saved-highlight {
+  background: #ffffff !important;
+  color: #000000 !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bk-apiary-edit-saved-highlight > span,
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid.bk-apiary-edit-saved-highlight > span[draggable="true"] {
+  color: #000000 !important;
+}
+
+body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid.bk-apiary-edit-saved-highlight::before {
+  color: #000000 !important;
+}
