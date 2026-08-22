@@ -174,15 +174,16 @@ Error generating stack: `+e.message+`
       <option value="total">Total Hives</option>
       <option value="doubles">Doubles</option>
       <option value="singles">Singles</option>
-    `,n.addEventListener(`click`,e=>e.stopPropagation()),n.addEventListener(`pointerdown`,e=>e.stopPropagation()),n.addEventListener(`mousedown`,e=>e.stopPropagation()),n.addEventListener(`change`,()=>{nn(n.value),fn()}),t[2].textContent=``,t[2].appendChild(n)),n.value=tn(),n}function cn(e){e.style.removeProperty(`display`),e.style.removeProperty(`grid-column`)}function ln(e){e.forEach((e,t)=>{if(cn(e),t===2){e.style.setProperty(`grid-column`,`3`,`important`);return}(t===3||t===4)&&e.style.setProperty(`display`,`none`,`important`)})}function un(e,t){e.forEach((e,n)=>{if(cn(e),n>=2&&n<=4&&n!==t){e.style.setProperty(`display`,`none`,`important`);return}n===t&&e.style.setProperty(`grid-column`,`3`,`important`)})}function dn(e){e.style.setProperty(`grid-template-columns`,`2.25rem minmax(0, 1fr) minmax(6.5rem, 0.42fr)`,`important`),e.style.setProperty(`width`,`100%`,`important`),e.style.setProperty(`min-width`,`0`,`important`)}function fn(){en||(en=!0,window.requestAnimationFrame(()=>{let e=rn(),t=an(e);if(!e||!t){document.body.classList.remove(`bk-apiary-metric-dropdown`),en=!1;return}let n=$t[tn()]?.index??2;document.body.classList.add(`bk-apiary-metric-dropdown`),sn(t),dn(t),ln(Array.from(t.children)),on(e).forEach(e=>{dn(e),un(Array.from(e.children),n)}),en=!1}))}function pn(){if(document.getElementById(`bkApiaryMetricDropdownStyles`))return;let e=document.createElement(`style`);e.id=`bkApiaryMetricDropdownStyles`,e.textContent=`
+    `,n.addEventListener(`click`,e=>e.stopPropagation()),n.addEventListener(`pointerdown`,e=>e.stopPropagation()),n.addEventListener(`mousedown`,e=>e.stopPropagation()),n.addEventListener(`change`,()=>{nn(n.value),fn()}),t[2].textContent=``,t[2].appendChild(n)),n.value=tn(),n}function cn(e){e.style.removeProperty(`display`),e.style.removeProperty(`grid-column`),e.style.removeProperty(`justify-self`),e.style.removeProperty(`text-align`),e.style.removeProperty(`width`)}function ln(e){e.forEach((e,t)=>{if(cn(e),t===2){e.style.setProperty(`grid-column`,`3`,`important`),e.style.setProperty(`justify-self`,`stretch`,`important`),e.style.setProperty(`text-align`,`center`,`important`),e.style.setProperty(`width`,`100%`,`important`);return}(t===3||t===4)&&e.style.setProperty(`display`,`none`,`important`)})}function un(e,t){e.forEach((e,n)=>{if(cn(e),n>=2&&n<=4&&n!==t){e.style.setProperty(`display`,`none`,`important`);return}n===t&&(e.style.setProperty(`grid-column`,`3`,`important`),e.style.setProperty(`justify-self`,`stretch`,`important`),e.style.setProperty(`text-align`,`center`,`important`),e.style.setProperty(`width`,`100%`,`important`))})}function dn(e){e.style.setProperty(`grid-template-columns`,`2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr)`,`important`),e.style.setProperty(`width`,`100%`,`important`),e.style.setProperty(`min-width`,`0`,`important`),e.style.setProperty(`align-items`,`center`,`important`)}function fn(){en||(en=!0,window.requestAnimationFrame(()=>{let e=rn(),t=an(e);if(!e||!t){document.body.classList.remove(`bk-apiary-metric-dropdown`),en=!1;return}let n=$t[tn()]?.index??2;document.body.classList.add(`bk-apiary-metric-dropdown`),sn(t),dn(t),ln(Array.from(t.children)),on(e).forEach(e=>{dn(e),un(Array.from(e.children),n)}),en=!1}))}function pn(){if(document.getElementById(`bkApiaryMetricDropdownStyles`))return;let e=document.createElement(`style`);e.id=`bkApiaryMetricDropdownStyles`,e.textContent=`
     body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
       width: 100%;
-      border-radius: 0.85rem;
-      border: 1px solid rgba(234, 179, 8, 0.45);
-      background: rgba(0, 0, 0, 0.6);
+      min-width: 0;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(234, 179, 8, 0.55);
+      background: rgba(0, 0, 0, 0.72);
       color: #fde047;
-      padding: 0.55rem 0.45rem;
-      font-size: 0.98rem;
+      padding: 0.8rem 0.55rem;
+      font-size: 1.35rem;
       line-height: 1.1;
       font-weight: 950;
       text-align: center;
@@ -196,10 +197,28 @@ Error generating stack: `+e.message+`
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-      grid-template-columns: 2.25rem minmax(0, 1fr) minmax(6.5rem, 0.42fr) !important;
+      grid-template-columns: 2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr) !important;
       min-width: 0 !important;
       width: 100% !important;
-      gap: 0.35rem !important;
+      gap: 0.55rem !important;
+      align-items: center !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid {
+      padding-top: 0.85rem !important;
+      padding-bottom: 0.85rem !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+      min-height: 4.6rem !important;
+      padding-top: 0.85rem !important;
+      padding-bottom: 0.85rem !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(2) {
+      font-size: 1.65rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
     }
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
@@ -207,37 +226,64 @@ Error generating stack: `+e.message+`
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
+      font-size: 2.25rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
     }
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
-      justify-self: end !important;
-      text-align: right !important;
+      justify-self: stretch !important;
+      text-align: center !important;
       min-width: 0 !important;
+      width: 100% !important;
       white-space: nowrap !important;
+      font-size: 2.25rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
+    }
+
+    body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+      font-size: 1.55rem !important;
+      line-height: 1.05 !important;
     }
 
     @media (max-width: 760px) {
       body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
-        padding: 0.5rem 0.3rem;
-        font-size: 0.82rem;
+        padding: 0.68rem 0.35rem;
+        font-size: 1.05rem;
       }
 
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-        grid-template-columns: 1.9rem minmax(0, 1fr) 4.8rem !important;
-        gap: 0.22rem !important;
+        grid-template-columns: 2rem minmax(0, 1fr) 5.65rem !important;
+        gap: 0.32rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(2) {
+        font-size: 1.18rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
+        font-size: 1.75rem !important;
       }
     }
 
     @media (max-width: 390px) {
       body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
-        font-size: 0.74rem;
-        padding: 0.45rem 0.2rem;
+        font-size: 0.92rem;
+        padding: 0.58rem 0.25rem;
       }
 
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-        grid-template-columns: 1.75rem minmax(0, 1fr) 4.25rem !important;
+        grid-template-columns: 1.8rem minmax(0, 1fr) 5rem !important;
+        gap: 0.24rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
+        font-size: 1.52rem !important;
       }
     }
   `,document.head.appendChild(e)}pn(),new MutationObserver(fn).observe(document.documentElement,{childList:!0,subtree:!0}),fn();var mn=0,hn=0,gn=!1;function _n(e){let t=String(e||``).trim().toLowerCase();return Array.from(document.querySelectorAll(`#root button`)).find(e=>e.textContent.trim().toLowerCase()===t)||null}function vn(){return!!document.querySelector(`#root input[placeholder="Search apiaries..."]`)}function yn(){return!!_n(`Dashboard`)&&!vn()}function bn(e){return!!(document.body.classList.contains(`bk-apiary-detail-open`)||document.body.classList.contains(`bk-apiary-detail-closing`)||document.body.classList.contains(`bk-apiary-delete-mode`)||e?.closest?.(`#root .fixed.inset-0.z-50`)||e?.closest?.(`#bkApiaryDetailBack`)||e?.closest?.(`input, textarea, select, button`))}function xn(){_n(`Dashboard`)?.click()}function Sn(){_n(`Apiaries`)?.click()}document.addEventListener(`touchstart`,e=>{let t=e.touches[0];mn=t.clientX,hn=t.clientY,gn=bn(e.target)},{passive:!0}),document.addEventListener(`touchend`,e=>{if(!mn||gn){mn=0,hn=0,gn=!1;return}let t=e.changedTouches[0],n=t.clientX-mn,r=t.clientY-hn;if(mn=0,hn=0,gn=!1,!(Math.abs(n)<55)&&!(Math.abs(n)<=Math.abs(r)*1.15)){if(yn()&&n<0){Sn();return}vn()&&n>0&&xn()}},{passive:!0}),(0,te.createRoot)(document.getElementById(`root`)).render((0,C.jsx)(S.StrictMode,{children:(0,C.jsx)(Pe,{})}));
