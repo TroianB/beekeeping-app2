@@ -1,0 +1,96 @@
+/* Larger text on the Apiary list screen. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] {
+  font-size: 1.55rem !important;
+  line-height: 1.25 !important;
+  padding: 0.95rem 1rem !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div {
+  overflow-x: auto !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid,
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+  grid-template-columns: 3.2rem minmax(15rem, 1fr) 8.5rem 7.5rem 7.5rem !important;
+  min-width: 46rem !important;
+  gap: 0.75rem !important;
+}
+
+/* Apiary list header text. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid {
+  font-size: 1.15rem !important;
+  line-height: 1.2 !important;
+  padding-top: 0.95rem !important;
+  padding-bottom: 0.95rem !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid > span {
+  font-size: 1.15rem !important;
+  line-height: 1.2 !important;
+  font-weight: 950 !important;
+}
+
+/* Apiary list row text. */
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+  min-height: 4rem !important;
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.85rem !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
+  font-size: 2.2rem !important;
+  line-height: 1.08 !important;
+  font-weight: 950 !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
+  font-size: 1.5rem !important;
+  line-height: 1.1 !important;
+  font-weight: 950 !important;
+}
+
+body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+  font-size: 1.5rem !important;
+  line-height: 1.1 !important;
+}
+
+body.bk-apiaries-list-only.bk-apiary-delete-mode #root input[placeholder="Search apiaries..."] + div > div > div.grid > input[type="checkbox"] {
+  width: 1.7rem !important;
+  height: 1.7rem !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] ~ div button,
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div button,
+#bkDeleteApiaryButton,
+#bkCancelDeleteApiaryButton {
+  font-size: 1.05rem !important;
+  padding: 0.7rem 0.85rem !important;
+}
+
+@media (max-width: 760px) {
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] {
+    font-size: 1.25rem !important;
+    padding: 0.8rem 0.9rem !important;
+  }
+
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid,
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+    grid-template-columns: 2.7rem minmax(13rem, 1fr) 7.25rem 6.25rem 6.25rem !important;
+    min-width: 39rem !important;
+    gap: 0.55rem !important;
+  }
+
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid,
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid > span {
+    font-size: 0.98rem !important;
+  }
+
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
+    font-size: 1.85rem !important;
+  }
+
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
+  body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+    font-size: 1.25rem !important;
+  }
+}
