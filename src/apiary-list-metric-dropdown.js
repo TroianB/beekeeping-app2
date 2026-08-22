@@ -71,6 +71,9 @@ function ensureMetricDropdown(header) {
 function clearMetricCellStyles(cell) {
   cell.style.removeProperty('display');
   cell.style.removeProperty('grid-column');
+  cell.style.removeProperty('justify-self');
+  cell.style.removeProperty('text-align');
+  cell.style.removeProperty('width');
 }
 
 function showHeaderDropdownCell(cells) {
@@ -79,6 +82,9 @@ function showHeaderDropdownCell(cells) {
 
     if (index === 2) {
       cell.style.setProperty('grid-column', '3', 'important');
+      cell.style.setProperty('justify-self', 'stretch', 'important');
+      cell.style.setProperty('text-align', 'center', 'important');
+      cell.style.setProperty('width', '100%', 'important');
       return;
     }
 
@@ -99,14 +105,18 @@ function showOnlySelectedRowMetric(cells, selectedIndex) {
 
     if (index === selectedIndex) {
       cell.style.setProperty('grid-column', '3', 'important');
+      cell.style.setProperty('justify-self', 'stretch', 'important');
+      cell.style.setProperty('text-align', 'center', 'important');
+      cell.style.setProperty('width', '100%', 'important');
     }
   });
 }
 
 function applyMetricGrid(element) {
-  element.style.setProperty('grid-template-columns', '2.25rem minmax(0, 1fr) minmax(6.5rem, 0.42fr)', 'important');
+  element.style.setProperty('grid-template-columns', '2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr)', 'important');
   element.style.setProperty('width', '100%', 'important');
   element.style.setProperty('min-width', '0', 'important');
+  element.style.setProperty('align-items', 'center', 'important');
 }
 
 function applyApiaryMetricDropdown() {
@@ -146,12 +156,13 @@ function installApiaryMetricDropdownStyles() {
   style.textContent = `
     body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
       width: 100%;
-      border-radius: 0.85rem;
-      border: 1px solid rgba(234, 179, 8, 0.45);
-      background: rgba(0, 0, 0, 0.6);
+      min-width: 0;
+      border-radius: 0.95rem;
+      border: 1px solid rgba(234, 179, 8, 0.55);
+      background: rgba(0, 0, 0, 0.72);
       color: #fde047;
-      padding: 0.55rem 0.45rem;
-      font-size: 0.98rem;
+      padding: 0.8rem 0.55rem;
+      font-size: 1.35rem;
       line-height: 1.1;
       font-weight: 950;
       text-align: center;
@@ -165,10 +176,28 @@ function installApiaryMetricDropdownStyles() {
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-      grid-template-columns: 2.25rem minmax(0, 1fr) minmax(6.5rem, 0.42fr) !important;
+      grid-template-columns: 2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr) !important;
       min-width: 0 !important;
       width: 100% !important;
-      gap: 0.35rem !important;
+      gap: 0.55rem !important;
+      align-items: center !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid {
+      padding-top: 0.85rem !important;
+      padding-bottom: 0.85rem !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+      min-height: 4.6rem !important;
+      padding-top: 0.85rem !important;
+      padding-bottom: 0.85rem !important;
+    }
+
+    body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(2) {
+      font-size: 1.65rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
     }
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
@@ -176,37 +205,64 @@ function installApiaryMetricDropdownStyles() {
       overflow: hidden !important;
       text-overflow: ellipsis !important;
       white-space: nowrap !important;
+      font-size: 2.25rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
     }
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
-      justify-self: end !important;
-      text-align: right !important;
+      justify-self: stretch !important;
+      text-align: center !important;
       min-width: 0 !important;
+      width: 100% !important;
       white-space: nowrap !important;
+      font-size: 2.25rem !important;
+      line-height: 1.05 !important;
+      font-weight: 950 !important;
+    }
+
+    body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+      font-size: 1.55rem !important;
+      line-height: 1.05 !important;
     }
 
     @media (max-width: 760px) {
       body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
-        padding: 0.5rem 0.3rem;
-        font-size: 0.82rem;
+        padding: 0.68rem 0.35rem;
+        font-size: 1.05rem;
       }
 
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-        grid-template-columns: 1.9rem minmax(0, 1fr) 4.8rem !important;
-        gap: 0.22rem !important;
+        grid-template-columns: 2rem minmax(0, 1fr) 5.65rem !important;
+        gap: 0.32rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(2) {
+        font-size: 1.18rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
+        font-size: 1.75rem !important;
       }
     }
 
     @media (max-width: 390px) {
       body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown {
-        font-size: 0.74rem;
-        padding: 0.45rem 0.2rem;
+        font-size: 0.92rem;
+        padding: 0.58rem 0.25rem;
       }
 
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div.grid,
       body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-        grid-template-columns: 1.75rem minmax(0, 1fr) 4.25rem !important;
+        grid-template-columns: 1.8rem minmax(0, 1fr) 5rem !important;
+        gap: 0.24rem !important;
+      }
+
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+      body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
+        font-size: 1.52rem !important;
       }
     }
   `;
