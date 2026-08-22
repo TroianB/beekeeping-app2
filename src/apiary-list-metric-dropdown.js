@@ -54,6 +54,8 @@ function ensureMetricDropdown(header) {
       <option value="singles">Singles</option>
     `;
     select.addEventListener('click', (event) => event.stopPropagation());
+    select.addEventListener('pointerdown', (event) => event.stopPropagation());
+    select.addEventListener('mousedown', (event) => event.stopPropagation());
     select.addEventListener('change', () => {
       setMetricValue(select.value);
       applyApiaryMetricDropdown();
@@ -66,10 +68,29 @@ function ensureMetricDropdown(header) {
   return select;
 }
 
-function showOnlyMetricCells(cells, selectedIndex) {
+function clearMetricCellStyles(cell) {
+  cell.style.removeProperty('display');
+  cell.style.removeProperty('grid-column');
+}
+
+function showHeaderDropdownCell(cells) {
   cells.forEach((cell, index) => {
-    cell.style.removeProperty('display');
-    cell.style.removeProperty('grid-column');
+    clearMetricCellStyles(cell);
+
+    if (index === 2) {
+      cell.style.setProperty('grid-column', '3', 'important');
+      return;
+    }
+
+    if (index === 3 || index === 4) {
+      cell.style.setProperty('display', 'none', 'important');
+    }
+  });
+}
+
+function showOnlySelectedRowMetric(cells, selectedIndex) {
+  cells.forEach((cell, index) => {
+    clearMetricCellStyles(cell);
 
     if (index >= 2 && index <= 4 && index !== selectedIndex) {
       cell.style.setProperty('display', 'none', 'important');
@@ -107,11 +128,11 @@ function applyApiaryMetricDropdown() {
 
     ensureMetricDropdown(header);
     applyMetricGrid(header);
-    showOnlyMetricCells(Array.from(header.children), selectedIndex);
+    showHeaderDropdownCell(Array.from(header.children));
 
     getApiaryMetricRows(card).forEach((row) => {
       applyMetricGrid(row);
-      showOnlyMetricCells(Array.from(row.children), selectedIndex);
+      showOnlySelectedRowMetric(Array.from(row.children), selectedIndex);
     });
 
     metricApplying = false;
@@ -134,6 +155,8 @@ function installApiaryMetricDropdownStyles() {
       line-height: 1.1;
       font-weight: 950;
       text-align: center;
+      pointer-events: auto;
+      cursor: pointer;
     }
 
     body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div {
