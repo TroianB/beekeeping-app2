@@ -149,7 +149,7 @@ export default function BeekeepingApp() {
 
   function Apiaries() {
     const [selected, setSelected] = useState(new Set());
-    const [openId, setOpenId] = useState(hives[0]?.id || null);
+    const [openId, setOpenId] = useState(null);
     const [query, setQuery] = useState("");
     const [qaOpen, setQaOpen] = useState(false);
     const [qaDraft, setQaDraft] = useState({ title:"", due:todayISO(), priority:"Medium" });
