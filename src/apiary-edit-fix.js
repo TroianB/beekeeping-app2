@@ -56,11 +56,28 @@ function raiseEditModal() {
   });
 }
 
+function keepEditedApiaryHighlighted() {
+  const rows = document.querySelectorAll('#root input[placeholder="Search apiaries..."] + div > div > div.grid');
+  rows.forEach((row) => {
+    const isReactSelected = row.classList.contains('bg-black/50');
+    row.classList.toggle('bk-apiary-edit-saved-highlight', isReactSelected);
+  });
+}
+
+function keepEditedApiaryHighlightedAfterRender() {
+  [40, 160, 340, 620].forEach((delay) => {
+    window.setTimeout(keepEditedApiaryHighlighted, delay);
+  });
+}
+
 function closeApiaryDetailAfterSave() {
+  keepEditedApiaryHighlightedAfterRender();
+
   window.setTimeout(() => {
     const apiaryListButton = document.querySelector('#bkApiaryDetailBack button');
     if (apiaryListButton) {
       apiaryListButton.click();
+      keepEditedApiaryHighlightedAfterRender();
       return;
     }
 
@@ -71,6 +88,7 @@ function closeApiaryDetailAfterSave() {
     window.setTimeout(() => {
       document.body.classList.remove('bk-apiary-detail-closing');
       document.body.classList.add('bk-apiary-detail-closed-right');
+      keepEditedApiaryHighlightedAfterRender();
     }, 300);
   }, 260);
 }
@@ -105,6 +123,7 @@ document.addEventListener('input', (event) => {
 new MutationObserver(() => {
   raiseEditModal();
   cleanEditModalNumbers();
+  keepEditedApiaryHighlighted();
 }).observe(document.documentElement, {
   childList: true,
   subtree: true,
@@ -112,3 +131,4 @@ new MutationObserver(() => {
 
 raiseEditModal();
 cleanEditModalNumbers();
+keepEditedApiaryHighlighted();
