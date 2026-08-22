@@ -8,6 +8,7 @@ import "./apiary-list-only.css";
 import "./apiary-edit-fix.css";
 import "./apiary-edit-saved-highlight.css";
 import "./apiary-info-screen.css";
+import "./apiary-list-screen-text.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
