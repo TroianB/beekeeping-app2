@@ -1,3 +1,6 @@
+const APIARY_ROW_SELECTOR = '#root input[placeholder="Search apiaries..."] + div > div > div.grid';
+let currentApiaryNameForHighlight = '';
+
 function getModalTitle(modal) {
   const panel = modal?.children?.[0];
   const title = panel?.children?.[0];
@@ -20,6 +23,50 @@ function markEditModals() {
 
 function isApiaryEditModal(element) {
   return Boolean(element?.closest?.('#root .bk-apiary-edit-modal'));
+}
+
+function normaliseApiaryName(value) {
+  return String(value || '').trim().toLowerCase();
+}
+
+function getApiaryRows() {
+  return Array.from(document.querySelectorAll(APIARY_ROW_SELECTOR)).filter((row) => {
+    return row.querySelector('input[type="checkbox"]');
+  });
+}
+
+function getApiaryRowName(row) {
+  return row?.querySelector(':scope > span[draggable="true"]')?.textContent?.trim()
+    || row?.querySelector(':scope > span')?.textContent?.trim()
+    || '';
+}
+
+function getEditModalName(modal) {
+  const titleName = getModalTitle(modal).replace(/^edit\s+/i, '').trim();
+  const nameInput = modal?.querySelector('label input:not([type]), label input[type="text"], label input');
+  return String(nameInput?.value || titleName || '').trim();
+}
+
+function rememberHighlightedApiary(name) {
+  currentApiaryNameForHighlight = String(name || '').trim();
+  keepEditedApiaryHighlighted();
+}
+
+function keepEditedApiaryHighlighted() {
+  const targetName = normaliseApiaryName(currentApiaryNameForHighlight);
+
+  getApiaryRows().forEach((row) => {
+    const rowName = normaliseApiaryName(getApiaryRowName(row));
+    const isReactSelected = row.classList.contains('bg-black/50');
+    const shouldHighlight = targetName ? rowName === targetName : isReactSelected;
+    row.classList.toggle('bk-apiary-edit-saved-highlight', shouldHighlight);
+  });
+}
+
+function keepEditedApiaryHighlightedAfterRender() {
+  [20, 80, 180, 360, 720].forEach((delay) => {
+    window.setTimeout(keepEditedApiaryHighlighted, delay);
+  });
 }
 
 function setRawInputValue(input, value) {
@@ -56,20 +103,6 @@ function raiseEditModal() {
   });
 }
 
-function keepEditedApiaryHighlighted() {
-  const rows = document.querySelectorAll('#root input[placeholder="Search apiaries..."] + div > div > div.grid');
-  rows.forEach((row) => {
-    const isReactSelected = row.classList.contains('bg-black/50');
-    row.classList.toggle('bk-apiary-edit-saved-highlight', isReactSelected);
-  });
-}
-
-function keepEditedApiaryHighlightedAfterRender() {
-  [40, 160, 340, 620].forEach((delay) => {
-    window.setTimeout(keepEditedApiaryHighlighted, delay);
-  });
-}
-
 function closeApiaryDetailAfterSave() {
   keepEditedApiaryHighlightedAfterRender();
 
@@ -94,6 +127,12 @@ function closeApiaryDetailAfterSave() {
 }
 
 document.addEventListener('click', (event) => {
+  const row = event.target.closest?.(APIARY_ROW_SELECTOR);
+  if (row && row.querySelector('input[type="checkbox"]') && !event.target.closest('input[type="checkbox"]')) {
+    rememberHighlightedApiary(getApiaryRowName(row));
+    keepEditedApiaryHighlightedAfterRender();
+  }
+
   const button = event.target.closest?.('button');
   if (!button) return;
 
@@ -108,6 +147,7 @@ document.addEventListener('click', (event) => {
   }
 
   if (isApiaryEditModal(button) && text === 'save') {
+    rememberHighlightedApiary(getEditModalName(button.closest('#root .bk-apiary-edit-modal')));
     closeApiaryDetailAfterSave();
   }
 }, true);
