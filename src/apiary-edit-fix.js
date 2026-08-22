@@ -1,5 +1,8 @@
 const APIARY_ROW_SELECTOR = '#root input[placeholder="Search apiaries..."] + div > div > div.grid';
 let currentApiaryNameForHighlight = '';
+let savedApiaryListScrollTop = 0;
+let savedWindowScrollX = 0;
+let savedWindowScrollY = 0;
 
 function getModalTitle(modal) {
   const panel = modal?.children?.[0];
@@ -39,6 +42,39 @@ function getApiaryRowName(row) {
   return row?.querySelector(':scope > span[draggable="true"]')?.textContent?.trim()
     || row?.querySelector(':scope > span')?.textContent?.trim()
     || '';
+}
+
+function getApiaryListScroller() {
+  const search = document.querySelector('#root input[placeholder="Search apiaries..."]');
+  const listCard = search?.nextElementSibling;
+  if (!listCard) return null;
+
+  return Array.from(listCard.querySelectorAll('div')).find((element) => {
+    const style = window.getComputedStyle(element);
+    return element.scrollHeight > element.clientHeight && /auto|scroll/.test(style.overflowY);
+  }) || null;
+}
+
+function rememberApiaryListPosition() {
+  const scroller = getApiaryListScroller();
+  if (scroller) savedApiaryListScrollTop = scroller.scrollTop;
+  savedWindowScrollX = window.scrollX || document.documentElement.scrollLeft || 0;
+  savedWindowScrollY = window.scrollY || document.documentElement.scrollTop || 0;
+}
+
+function restoreApiaryListPosition() {
+  const scroller = getApiaryListScroller();
+  if (scroller) scroller.scrollTop = savedApiaryListScrollTop;
+  window.scrollTo({ left: savedWindowScrollX, top: savedWindowScrollY, behavior: 'auto' });
+}
+
+function restoreApiaryListPositionAfterRender() {
+  [20, 80, 180, 360, 720].forEach((delay) => {
+    window.setTimeout(() => {
+      restoreApiaryListPosition();
+      keepEditedApiaryHighlighted();
+    }, delay);
+  });
 }
 
 function getEditModalName(modal) {
@@ -111,6 +147,7 @@ function closeApiaryDetailAfterSave() {
     if (apiaryListButton) {
       apiaryListButton.click();
       keepEditedApiaryHighlightedAfterRender();
+      restoreApiaryListPositionAfterRender();
       return;
     }
 
@@ -122,6 +159,7 @@ function closeApiaryDetailAfterSave() {
       document.body.classList.remove('bk-apiary-detail-closing');
       document.body.classList.add('bk-apiary-detail-closed-right');
       keepEditedApiaryHighlightedAfterRender();
+      restoreApiaryListPositionAfterRender();
     }, 300);
   }, 260);
 }
@@ -129,6 +167,7 @@ function closeApiaryDetailAfterSave() {
 document.addEventListener('click', (event) => {
   const row = event.target.closest?.(APIARY_ROW_SELECTOR);
   if (row && row.querySelector('input[type="checkbox"]') && !event.target.closest('input[type="checkbox"]')) {
+    rememberApiaryListPosition();
     rememberHighlightedApiary(getApiaryRowName(row));
     keepEditedApiaryHighlightedAfterRender();
   }
