@@ -57,15 +57,22 @@ function raiseEditModal() {
 }
 
 function closeApiaryDetailAfterSave() {
-  if (!document.body.classList.contains('bk-apiary-detail-open')) return;
   window.setTimeout(() => {
+    const apiaryListButton = document.querySelector('#bkApiaryDetailBack button');
+    if (apiaryListButton) {
+      apiaryListButton.click();
+      return;
+    }
+
+    if (!document.body.classList.contains('bk-apiary-detail-open')) return;
+
     document.body.classList.add('bk-apiary-detail-closing');
     document.body.classList.remove('bk-apiary-detail-open', 'bk-apiary-detail-closed-right');
     window.setTimeout(() => {
       document.body.classList.remove('bk-apiary-detail-closing');
       document.body.classList.add('bk-apiary-detail-closed-right');
     }, 300);
-  }, 220);
+  }, 260);
 }
 
 document.addEventListener('click', (event) => {
