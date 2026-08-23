@@ -176,13 +176,14 @@ function bkFillRegionSelect(select, selected) {
   if (!select) return;
   const current = bkCleanRegion(selected || select.value);
   select.innerHTML = '';
-  bkAllRegions().forEach((region) => {
+  const regions = bkAllRegions();
+  regions.forEach((region) => {
     const option = document.createElement('option');
     option.value = region;
     option.textContent = region;
     select.appendChild(option);
   });
-  select.value = bkAllRegions().includes(current) ? current : BK_DEFAULT_REGION;
+  select.value = regions.includes(current) ? current : BK_DEFAULT_REGION;
 }
 
 function bkRefreshRegionSelects(selected) {
@@ -223,10 +224,43 @@ function bkRemoveRegionHeaders(list) {
 function bkMakeRegionHeader(region, count) {
   const header = document.createElement('div');
   header.className = 'bk-region-area-header';
+  header.dataset.regionArea = region;
+  header.dataset.regionCount = String(count);
   header.innerHTML = `<span>Region/Area</span><strong></strong><em></em>`;
   header.querySelector('strong').textContent = region;
   header.querySelector('em').textContent = `${count} Apiar${count === 1 ? 'y' : 'ies'}`;
   return header;
+}
+
+function bkRegionRowSignature(row) {
+  const name = bkGetApiaryRowName(row);
+  return `R:${bkNorm(name)}:${bkRegionForApiaryName(name)}`;
+}
+
+function bkRegionHeaderSignature(header) {
+  const region = header.dataset.regionArea || header.querySelector('strong')?.textContent || '';
+  const count = header.dataset.regionCount || '';
+  return `H:${bkCleanRegion(region)}:${count}`;
+}
+
+function bkCurrentRegionSignature(list) {
+  return Array.from(list.children).map((child) => {
+    if (!(child instanceof HTMLElement)) return 'X';
+    if (child.classList.contains('bk-region-area-header')) return bkRegionHeaderSignature(child);
+    if (child.querySelector('input[type="checkbox"]')) return bkRegionRowSignature(child);
+    return `X:${child.className}`;
+  }).join('|');
+}
+
+function bkDesiredRegionSignature(orderedRegions, groups) {
+  const parts = [];
+  orderedRegions.forEach((region) => {
+    const rows = groups.get(region) || [];
+    if (!rows.length) return;
+    parts.push(`H:${bkCleanRegion(region)}:${rows.length}`);
+    rows.forEach((row) => parts.push(bkRegionRowSignature(row)));
+  });
+  return parts.join('|');
 }
 
 function bkApplyRegionGrouping() {
@@ -240,7 +274,6 @@ function bkApplyRegionGrouping() {
       return;
     }
 
-    bkRemoveRegionHeaders(list);
     const rows = Array.from(list.children).filter((row) => {
       return row instanceof HTMLElement && row.querySelector('input[type="checkbox"]');
     });
@@ -260,6 +293,14 @@ function bkApplyRegionGrouping() {
       if (!orderedRegions.includes(region)) orderedRegions.push(region);
     });
 
+    const currentSignature = bkCurrentRegionSignature(list);
+    const desiredSignature = bkDesiredRegionSignature(orderedRegions, groups);
+    if (currentSignature === desiredSignature) {
+      bkRegionApplying = false;
+      return;
+    }
+
+    bkRemoveRegionHeaders(list);
     orderedRegions.forEach((region) => {
       const groupRows = groups.get(region) || [];
       if (!groupRows.length) return;
