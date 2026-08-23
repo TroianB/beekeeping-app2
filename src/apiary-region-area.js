@@ -26,6 +26,13 @@ function bkRegionKey(region) {
   return bkCleanRegion(region) ? `region:${bkNorm(region)}` : 'region:__none__';
 }
 
+function bkSortRegions(regions) {
+  return [...(regions || [])].sort((a, b) => String(a).localeCompare(String(b), undefined, {
+    sensitivity: 'base',
+    numeric: true,
+  }));
+}
+
 function bkReadJson(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
@@ -92,6 +99,10 @@ function bkAllRegions() {
   const fromHives = bkReadHives().map((hive) => hive?.regionArea).map(bkCleanRegion).filter(Boolean);
   const fromNames = Object.values(store.byName || {}).map(bkCleanRegion).filter(Boolean);
   return bkUniqueRegions([...store.areas, ...fromHives, ...fromNames]);
+}
+
+function bkMenuRegions() {
+  return bkSortRegions(bkAllRegions());
 }
 
 function bkRegionForApiaryName(name) {
@@ -207,12 +218,56 @@ function bkGetControlRegion(control) {
   return bkCleanRegion(control?.querySelector('.bk-region-area-value')?.value);
 }
 
+function bkHideRegionPanels(control) {
+  control?.querySelector('.bk-region-area-add-panel')?.setAttribute('hidden', '');
+  control?.querySelector('.bk-region-area-delete-panel')?.setAttribute('hidden', '');
+}
+
+function bkShowAddRegionPanel(control) {
+  bkHideRegionPanels(control);
+  const panel = control.querySelector('.bk-region-area-add-panel');
+  const input = control.querySelector('.bk-region-area-new-input');
+  panel?.removeAttribute('hidden');
+  if (input) {
+    input.value = '';
+    window.setTimeout(() => input.focus(), 0);
+  }
+}
+
+function bkShowDeleteRegionPanel(control) {
+  bkHideRegionPanels(control);
+  bkRenderRegionMenu(control);
+  const panel = control.querySelector('.bk-region-area-delete-panel');
+  panel?.removeAttribute('hidden');
+  window.setTimeout(() => control.querySelector('.bk-region-area-delete-select')?.focus(), 0);
+}
+
+function bkRenderDeleteSelector(control, regions) {
+  const select = control.querySelector('.bk-region-area-delete-select');
+  if (!select) return;
+
+  const selected = bkCleanRegion(select.value) || bkGetControlRegion(control) || regions[0] || '';
+  const signature = regions.join('\u0001');
+  if (select.dataset.regionSignature !== signature) {
+    select.dataset.regionSignature = signature;
+    const fragment = document.createDocumentFragment();
+    regions.forEach((region) => {
+      const option = document.createElement('option');
+      option.value = region;
+      option.textContent = region;
+      fragment.appendChild(option);
+    });
+    select.replaceChildren(fragment);
+  }
+  select.value = regions.includes(selected) ? selected : (regions[0] || '');
+}
+
 function bkRenderRegionMenu(control) {
   if (!control) return;
   const list = control.querySelector('.bk-region-area-list');
   if (!list) return;
 
-  const regions = bkAllRegions();
+  const regions = bkMenuRegions();
   const selected = bkGetControlRegion(control);
   const signature = regions.join('\u0001');
 
@@ -223,7 +278,7 @@ function bkRenderRegionMenu(control) {
     if (regions.length === 0) {
       const empty = document.createElement('div');
       empty.className = 'bk-region-area-empty';
-      empty.textContent = 'No areas yet. Add one below.';
+      empty.textContent = 'No regions yet. Use Add Region above.';
       list.appendChild(empty);
     } else {
       regions.forEach((region) => {
@@ -241,14 +296,18 @@ function bkRenderRegionMenu(control) {
     option.classList.toggle('bk-region-area-option-selected', bkNorm(option.dataset.regionArea) === bkNorm(selected));
   });
 
-  const deleteButton = control.querySelector('.bk-region-area-delete-button');
-  if (deleteButton) deleteButton.disabled = !selected;
+  bkRenderDeleteSelector(control, regions);
+  const deleteToggle = control.querySelector('.bk-region-area-delete-toggle');
+  const confirmDelete = control.querySelector('.bk-region-area-confirm-delete');
+  if (deleteToggle) deleteToggle.disabled = regions.length === 0;
+  if (confirmDelete) confirmDelete.disabled = regions.length === 0;
 }
 
 function bkCloseOtherRegionMenus(currentControl) {
   document.querySelectorAll('.bk-region-area-control').forEach((control) => {
     if (control === currentControl) return;
     control.querySelector('.bk-region-area-menu')?.setAttribute('hidden', '');
+    bkHideRegionPanels(control);
   });
 }
 
@@ -258,7 +317,39 @@ function bkToggleRegionMenu(control) {
   bkCloseOtherRegionMenus(control);
   bkRenderRegionMenu(control);
   menu.hidden = !menu.hidden;
-  if (!menu.hidden) control.querySelector('.bk-region-area-new-input')?.focus();
+  if (menu.hidden) bkHideRegionPanels(control);
+}
+
+function bkAddRegionFromControl(control) {
+  const input = control.querySelector('.bk-region-area-new-input');
+  const region = bkCleanRegion(input?.value);
+  if (!region) return;
+
+  const store = bkReadRegionStore();
+  store.areas = bkUniqueRegions([...(store.areas || []), region]);
+  store.regionOrder = bkUniqueKeys([...(store.regionOrder || []), bkRegionKey(region)]);
+  bkWriteRegionStore(store);
+
+  if (input) input.value = '';
+  bkSetControlRegion(control, region);
+  bkHideRegionPanels(control);
+  control.querySelector('.bk-region-area-menu')?.setAttribute('hidden', '');
+  bkRefreshRegionControls();
+  bkApplyRegionGrouping();
+}
+
+function bkDeleteRegionFromControl(control) {
+  const select = control.querySelector('.bk-region-area-delete-select');
+  const region = bkCleanRegion(select?.value);
+  if (!region) return;
+  if (!window.confirm(`Delete Region/Area "${region}"?`)) return;
+
+  const currentRegion = bkGetControlRegion(control);
+  bkDeleteRegion(region);
+  if (bkNorm(currentRegion) === bkNorm(region)) bkSetControlRegion(control, '');
+  bkHideRegionPanels(control);
+  bkRefreshRegionControls();
+  bkApplyRegionGrouping();
 }
 
 function bkEnsureRegionControl(modal) {
@@ -275,12 +366,21 @@ function bkEnsureRegionControl(modal) {
       <button type="button" class="bk-region-area-button">Region/Area ▾</button>
       <input type="hidden" class="bk-region-area-value" value="" />
       <div class="bk-region-area-menu" hidden>
-        <div class="bk-region-area-list"></div>
-        <div class="bk-region-area-actions">
-          <input class="bk-region-area-new-input" placeholder="New Region/Area name" />
-          <button type="button" class="bk-region-area-add-button">Add Area</button>
-          <button type="button" class="bk-region-area-delete-button">Delete Area</button>
+        <div class="bk-region-area-toolbar">
+          <button type="button" class="bk-region-area-add-toggle">Add Region</button>
+          <button type="button" class="bk-region-area-delete-toggle">Delete Region</button>
         </div>
+        <div class="bk-region-area-add-panel" hidden>
+          <input class="bk-region-area-new-input" placeholder="New Region Name" />
+          <button type="button" class="bk-region-area-add-save">Add</button>
+          <button type="button" class="bk-region-area-panel-cancel">Cancel</button>
+        </div>
+        <div class="bk-region-area-delete-panel" hidden>
+          <select class="bk-region-area-delete-select" aria-label="Select Region to delete"></select>
+          <button type="button" class="bk-region-area-confirm-delete">Delete</button>
+          <button type="button" class="bk-region-area-panel-cancel">Cancel</button>
+        </div>
+        <div class="bk-region-area-list"></div>
       </div>
     `;
 
@@ -289,37 +389,23 @@ function bkEnsureRegionControl(modal) {
     else grid.appendChild(control);
 
     control.querySelector('.bk-region-area-button')?.addEventListener('click', () => bkToggleRegionMenu(control));
+    control.querySelector('.bk-region-area-add-toggle')?.addEventListener('click', () => bkShowAddRegionPanel(control));
+    control.querySelector('.bk-region-area-delete-toggle')?.addEventListener('click', () => bkShowDeleteRegionPanel(control));
+    control.querySelector('.bk-region-area-add-save')?.addEventListener('click', () => bkAddRegionFromControl(control));
+    control.querySelector('.bk-region-area-confirm-delete')?.addEventListener('click', () => bkDeleteRegionFromControl(control));
+    control.querySelectorAll('.bk-region-area-panel-cancel').forEach((button) => {
+      button.addEventListener('click', () => bkHideRegionPanels(control));
+    });
+    control.querySelector('.bk-region-area-new-input')?.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter') bkAddRegionFromControl(control);
+    });
 
     control.querySelector('.bk-region-area-list')?.addEventListener('click', (event) => {
       const option = event.target.closest?.('.bk-region-area-option');
       if (!option) return;
       bkSetControlRegion(control, option.dataset.regionArea || '');
       control.querySelector('.bk-region-area-menu')?.setAttribute('hidden', '');
-    });
-
-    control.querySelector('.bk-region-area-add-button')?.addEventListener('click', () => {
-      const input = control.querySelector('.bk-region-area-new-input');
-      const region = bkCleanRegion(input?.value);
-      if (!region) return;
-
-      const store = bkReadRegionStore();
-      store.areas = bkUniqueRegions([...(store.areas || []), region]);
-      store.regionOrder = bkUniqueKeys([...(store.regionOrder || []), bkRegionKey(region)]);
-      bkWriteRegionStore(store);
-      if (input) input.value = '';
-      bkSetControlRegion(control, region);
-      bkRefreshRegionControls();
-      bkApplyRegionGrouping();
-    });
-
-    control.querySelector('.bk-region-area-delete-button')?.addEventListener('click', () => {
-      const region = bkGetControlRegion(control);
-      if (!region) return;
-      if (!window.confirm(`Delete Region/Area "${region}"?`)) return;
-      bkDeleteRegion(region);
-      bkSetControlRegion(control, '');
-      bkRefreshRegionControls();
-      bkApplyRegionGrouping();
+      bkHideRegionPanels(control);
     });
   }
 
@@ -384,7 +470,7 @@ function bkMakeRegionHeader(region, count, groupOrder) {
   header.dataset.regionCount = String(count);
   header.style.order = String(groupOrder);
   header.title = 'Drag this Region/Area to move the whole group';
-  header.innerHTML = `<span>Drag Region/Area</span><strong></strong><em></em>`;
+  header.innerHTML = `<strong></strong><em></em>`;
   header.querySelector('strong').textContent = bkRegionDisplayName(region);
   header.querySelector('em').textContent = `${count} Apiar${count === 1 ? 'y' : 'ies'}`;
   return header;
