@@ -1,7 +1,6 @@
 const BK_REGION_STORAGE_KEY = 'bk.regionAreas';
 const BK_DEFAULT_REGION = 'Unassigned Area';
 const BK_REGION_SEARCH_SELECTOR = '#root input[placeholder="Search apiaries..."]';
-let bkRegionApplying = false;
 let bkRegionRaf = 0;
 
 function bkNorm(value) {
@@ -31,8 +30,7 @@ function bkReadRegionStore() {
   const raw = bkReadJson(BK_REGION_STORAGE_KEY, null);
   const areas = Array.isArray(raw?.areas) ? raw.areas.map(bkCleanRegion) : [BK_DEFAULT_REGION];
   const byName = raw?.byName && typeof raw.byName === 'object' ? raw.byName : {};
-  const cleanAreas = Array.from(new Set([BK_DEFAULT_REGION, ...areas].map(bkCleanRegion)));
-  return { areas: cleanAreas, byName };
+  return { areas: Array.from(new Set([BK_DEFAULT_REGION, ...areas].map(bkCleanRegion))), byName };
 }
 
 function bkWriteRegionStore(store) {
@@ -113,8 +111,26 @@ function bkApiaryNameFromModal(modal) {
 function bkPanelGrid(modal) {
   const panel = modal?.children?.[0];
   return Array.from(panel?.children || []).find((child) => {
-    return child instanceof HTMLElement && child.className.includes('grid');
+    return child instanceof HTMLElement && String(child.className).includes('grid');
   }) || null;
+}
+
+function bkFillRegionSelect(select, selected) {
+  if (!select) return;
+  const current = bkCleanRegion(selected || select.value);
+  const regions = bkAllRegions();
+  select.innerHTML = '';
+  regions.forEach((region) => {
+    const option = document.createElement('option');
+    option.value = region;
+    option.textContent = region;
+    select.appendChild(option);
+  });
+  select.value = regions.includes(current) ? current : BK_DEFAULT_REGION;
+}
+
+function bkRefreshRegionSelects(selected) {
+  document.querySelectorAll('.bk-region-area-select').forEach((select) => bkFillRegionSelect(select, selected));
 }
 
 function bkEnsureRegionControl(modal) {
@@ -167,36 +183,7 @@ function bkEnsureRegionControl(modal) {
   }
 
   const select = control.querySelector('.bk-region-area-select');
-  const currentName = bkApiaryNameFromModal(modal);
-  const selected = bkRegionForApiaryName(currentName);
-  bkFillRegionSelect(select, selected);
-}
-
-function bkFillRegionSelect(select, selected) {
-  if (!select) return;
-  const current = bkCleanRegion(selected || select.value);
-  select.innerHTML = '';
-  const regions = bkAllRegions();
-  regions.forEach((region) => {
-    const option = document.createElement('option');
-    option.value = region;
-    option.textContent = region;
-    select.appendChild(option);
-  });
-  select.value = regions.includes(current) ? current : BK_DEFAULT_REGION;
-}
-
-function bkRefreshRegionSelects(selected) {
-  document.querySelectorAll('.bk-region-area-select').forEach((select) => bkFillRegionSelect(select, selected));
-}
-
-function bkScheduleRegionSave(names, region) {
-  [0, 60, 160, 360, 760, 1300].forEach((delay) => {
-    window.setTimeout(() => {
-      names.filter(Boolean).forEach((name) => bkSaveRegionForApiaryName(name, region));
-      bkApplyRegionGrouping();
-    }, delay);
-  });
+  bkFillRegionSelect(select, bkRegionForApiaryName(bkApiaryNameFromModal(modal)));
 }
 
 function bkWireApiaryRegionForms() {
@@ -217,98 +204,34 @@ function bkGetApiaryRowName(row) {
     || '';
 }
 
-function bkRemoveRegionHeaders(list) {
+function bkApplyRegionBordersOnly() {
+  const list = bkGetApiaryListScroller();
+  if (!list) return;
+
   list.querySelectorAll(':scope > .bk-region-area-header').forEach((header) => header.remove());
-}
 
-function bkMakeRegionHeader(region, count) {
-  const header = document.createElement('div');
-  header.className = 'bk-region-area-header';
-  header.dataset.regionArea = region;
-  header.dataset.regionCount = String(count);
-  header.innerHTML = `<span>Region/Area</span><strong></strong><em></em>`;
-  header.querySelector('strong').textContent = region;
-  header.querySelector('em').textContent = `${count} Apiar${count === 1 ? 'y' : 'ies'}`;
-  return header;
-}
-
-function bkRegionRowSignature(row) {
-  const name = bkGetApiaryRowName(row);
-  return `R:${bkNorm(name)}:${bkRegionForApiaryName(name)}`;
-}
-
-function bkRegionHeaderSignature(header) {
-  const region = header.dataset.regionArea || header.querySelector('strong')?.textContent || '';
-  const count = header.dataset.regionCount || '';
-  return `H:${bkCleanRegion(region)}:${count}`;
-}
-
-function bkCurrentRegionSignature(list) {
-  return Array.from(list.children).map((child) => {
-    if (!(child instanceof HTMLElement)) return 'X';
-    if (child.classList.contains('bk-region-area-header')) return bkRegionHeaderSignature(child);
-    if (child.querySelector('input[type="checkbox"]')) return bkRegionRowSignature(child);
-    return `X:${child.className}`;
-  }).join('|');
-}
-
-function bkDesiredRegionSignature(orderedRegions, groups) {
-  const parts = [];
-  orderedRegions.forEach((region) => {
-    const rows = groups.get(region) || [];
-    if (!rows.length) return;
-    parts.push(`H:${bkCleanRegion(region)}:${rows.length}`);
-    rows.forEach((row) => parts.push(bkRegionRowSignature(row)));
+  const rows = Array.from(list.children).filter((row) => {
+    return row instanceof HTMLElement && row.querySelector('input[type="checkbox"]');
   });
-  return parts.join('|');
+
+  let previousRegion = null;
+  rows.forEach((row) => {
+    const region = bkRegionForApiaryName(bkGetApiaryRowName(row));
+    const firstInArea = previousRegion !== region;
+    previousRegion = region;
+
+    row.classList.add('bk-region-area-row');
+    row.classList.toggle('bk-region-area-first-row', firstInArea);
+    row.dataset.regionArea = region;
+  });
 }
 
-function bkApplyRegionGrouping() {
-  if (bkRegionApplying) return;
-  bkRegionApplying = true;
-
-  window.requestAnimationFrame(() => {
-    const list = bkGetApiaryListScroller();
-    if (!list) {
-      bkRegionApplying = false;
-      return;
-    }
-
-    const rows = Array.from(list.children).filter((row) => {
-      return row instanceof HTMLElement && row.querySelector('input[type="checkbox"]');
-    });
-
-    const groups = new Map();
-    rows.forEach((row) => {
-      const name = bkGetApiaryRowName(row);
-      const region = bkRegionForApiaryName(name);
-      if (!groups.has(region)) groups.set(region, []);
-      groups.get(region).push(row);
-      row.classList.add('bk-region-area-row');
-      row.dataset.regionArea = region;
-    });
-
-    const orderedRegions = bkAllRegions().filter((region) => groups.has(region));
-    Array.from(groups.keys()).forEach((region) => {
-      if (!orderedRegions.includes(region)) orderedRegions.push(region);
-    });
-
-    const currentSignature = bkCurrentRegionSignature(list);
-    const desiredSignature = bkDesiredRegionSignature(orderedRegions, groups);
-    if (currentSignature === desiredSignature) {
-      bkRegionApplying = false;
-      return;
-    }
-
-    bkRemoveRegionHeaders(list);
-    orderedRegions.forEach((region) => {
-      const groupRows = groups.get(region) || [];
-      if (!groupRows.length) return;
-      list.appendChild(bkMakeRegionHeader(region, groupRows.length));
-      groupRows.forEach((row) => list.appendChild(row));
-    });
-
-    bkRegionApplying = false;
+function bkScheduleRegionSave(names, region) {
+  [0, 60, 160, 360, 760, 1300].forEach((delay) => {
+    window.setTimeout(() => {
+      names.filter(Boolean).forEach((name) => bkSaveRegionForApiaryName(name, region));
+      bkApplyRegionBordersOnly();
+    }, delay);
   });
 }
 
@@ -317,7 +240,7 @@ function bkScheduleRegionWork() {
   bkRegionRaf = window.requestAnimationFrame(() => {
     bkRegionRaf = 0;
     bkWireApiaryRegionForms();
-    bkApplyRegionGrouping();
+    bkApplyRegionBordersOnly();
   });
 }
 
