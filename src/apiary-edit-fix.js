@@ -140,9 +140,14 @@ function raiseEditModal() {
   });
 }
 
+function dispatchOpenApiaryDetail() {
+  window.dispatchEvent(new Event('bk-open-apiary-detail'));
+}
+
 function restoreApiaryInformationScreenAfterCancel() {
-  [40, 120, 260, 520].forEach((delay) => {
+  [0, 40, 120, 260, 520, 820].forEach((delay) => {
     window.setTimeout(() => {
+      if (detailWasOpenBeforeEdit) dispatchOpenApiaryDetail();
       document.body.classList.remove('bk-apiary-detail-closing', 'bk-apiary-detail-closed-right');
       if (detailWasOpenBeforeEdit) document.body.classList.add('bk-apiary-detail-open');
       keepEditedApiaryHighlighted();
