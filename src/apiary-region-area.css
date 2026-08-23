@@ -1,5 +1,6 @@
 /* Region/Area controls on Add Apiary and Edit Apiary screens. */
 #root .bk-region-area-control {
+  position: relative !important;
   display: grid !important;
   gap: 0.55rem !important;
   border: 1px solid rgba(234, 179, 8, 0.36) !important;
@@ -8,43 +9,104 @@
   padding: 0.75rem !important;
 }
 
-#root .bk-region-area-main,
-#root .bk-region-area-new-panel {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) auto !important;
-  align-items: center !important;
-  gap: 0.55rem !important;
-}
-
-#root .bk-region-area-new-panel {
-  grid-template-columns: minmax(0, 1fr) auto !important;
-}
-
-#root .bk-region-area-button,
-#root .bk-region-area-new-button,
-#root .bk-region-area-use-button {
-  border-radius: 0.85rem !important;
-  border: 1px solid rgba(234, 179, 8, 0.5) !important;
-  background: rgba(0, 0, 0, 0.45) !important;
+#root .bk-region-area-button {
+  width: 100% !important;
+  border-radius: 0.9rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.52) !important;
+  background: rgba(0, 0, 0, 0.55) !important;
   color: #fde047 !important;
-  padding: 0.72rem 0.85rem !important;
-  font-size: 1rem !important;
+  padding: 0.85rem 0.95rem !important;
+  font-size: 1.08rem !important;
   font-weight: 950 !important;
   line-height: 1.1 !important;
+  text-align: left !important;
   white-space: nowrap !important;
 }
 
-#root .bk-region-area-select,
+#root .bk-region-area-menu {
+  display: grid !important;
+  gap: 0.65rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.42) !important;
+  border-radius: 1rem !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+  padding: 0.65rem !important;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.42) !important;
+}
+
+#root .bk-region-area-menu[hidden] {
+  display: none !important;
+}
+
+#root .bk-region-area-list {
+  display: grid !important;
+  gap: 0.35rem !important;
+  max-height: 12rem !important;
+  overflow-y: auto !important;
+}
+
+#root .bk-region-area-option,
+#root .bk-region-area-add-button,
+#root .bk-region-area-delete-button {
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.42) !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: #fef3c7 !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  text-align: left !important;
+}
+
+#root .bk-region-area-option-selected {
+  background: #eab308 !important;
+  color: #000 !important;
+}
+
+#root .bk-region-area-empty {
+  border: 1px dashed rgba(234, 179, 8, 0.38) !important;
+  border-radius: 0.8rem !important;
+  color: #fde68a !important;
+  padding: 0.7rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 850 !important;
+  opacity: 0.9 !important;
+}
+
+#root .bk-region-area-actions {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 0.45rem !important;
+  align-items: center !important;
+}
+
 #root .bk-region-area-new-input {
   width: 100% !important;
   min-width: 0 !important;
-  border-radius: 0.85rem !important;
+  border-radius: 0.8rem !important;
   border: 1px solid rgba(234, 179, 8, 0.38) !important;
-  background: rgba(0, 0, 0, 0.5) !important;
+  background: rgba(0, 0, 0, 0.55) !important;
   color: #fef3c7 !important;
-  padding: 0.72rem 0.85rem !important;
-  font-size: 1rem !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.98rem !important;
   font-weight: 850 !important;
+}
+
+#root .bk-region-area-add-button {
+  background: rgba(234, 179, 8, 0.18) !important;
+  color: #fde047 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-region-area-delete-button {
+  border-color: rgba(248, 113, 113, 0.52) !important;
+  color: #fca5a5 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-region-area-delete-button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
 }
 
 /* Safe Region/Area display in the Apiary list.
@@ -86,17 +148,17 @@ body.bk-apiaries-list-only #root .bk-region-area-first-row::after {
 }
 
 @media (max-width: 560px) {
-  #root .bk-region-area-main {
-    grid-template-columns: 1fr !important;
-  }
-
   #root .bk-region-area-button,
-  #root .bk-region-area-new-button,
-  #root .bk-region-area-use-button,
-  #root .bk-region-area-select,
+  #root .bk-region-area-option,
+  #root .bk-region-area-add-button,
+  #root .bk-region-area-delete-button,
   #root .bk-region-area-new-input {
     font-size: 0.95rem !important;
     padding: 0.65rem 0.75rem !important;
+  }
+
+  #root .bk-region-area-actions {
+    grid-template-columns: 1fr !important;
   }
 
   body.bk-apiaries-list-only #root .bk-region-area-first-row {
