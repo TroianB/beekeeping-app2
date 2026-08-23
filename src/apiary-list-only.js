@@ -124,6 +124,16 @@ function openDetailScreen() {
   }, 40);
 }
 
+function reopenDetailScreenAfterModal() {
+  [0, 40, 120, 260, 520].forEach((delay) => {
+    window.setTimeout(() => {
+      if (!getSearchInput()) return;
+      openDetailScreen();
+      applyApiaryListOnlyMode();
+    }, delay);
+  });
+}
+
 function closeDetailScreen() {
   if (!detailOpen) return;
   detailOpen = false;
@@ -378,6 +388,8 @@ document.addEventListener('touchend', (event) => {
     closeDetailScreen();
   }
 }, { passive: true });
+
+window.addEventListener('bk-open-apiary-detail', reopenDetailScreenAfterModal);
 
 new MutationObserver(() => {
   returnToApiariesAfterDelete();
