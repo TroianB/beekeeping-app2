@@ -3,10 +3,14 @@ body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
   max-width: 42rem !important;
 }
 
+/* Hide the Apiary List back header while the Edit Apiary window is open. */
+body.bk-apiary-edit-open #bkApiaryDetailBack {
+  display: none !important;
+}
+
+/* Remove the "Edit Apiary name" title. Keep the Name field below it. */
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
-  font-size: 2rem !important;
-  line-height: 1.15 !important;
-  font-weight: 950 !important;
+  display: none !important;
 }
 
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal label,
@@ -46,14 +50,26 @@ body.bk-apiary-edit-open #root .bk-apiary-edit-modal .text-red-300 {
   line-height: 1.25 !important;
 }
 
+/* Save and Cancel stay in the normal form flow so they scroll with the rest of the Edit window. */
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > div:last-child,
+body.bk-apiary-edit-open #root .bk-apiary-edit-modal div.flex.justify-end.gap-2 {
+  position: static !important;
+  inset: auto !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: none !important;
+  z-index: auto !important;
+  margin-top: 1rem !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
 @media (max-width: 520px) {
   body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
     max-width: calc(100vw - 1rem) !important;
     padding: 0.85rem !important;
-  }
-
-  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div > .mb-3 {
-    font-size: 1.65rem !important;
   }
 
   body.bk-apiary-edit-open #root .bk-apiary-edit-modal label,
