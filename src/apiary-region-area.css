@@ -47,56 +47,42 @@
   font-weight: 850 !important;
 }
 
-/* Region/Area grouping in the Apiary list. */
-body.bk-apiaries-list-only #root .bk-region-area-header {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) auto !important;
-  align-items: center !important;
-  gap: 0.7rem !important;
-  margin: 0.9rem 0.35rem 0.35rem !important;
-  padding: 0.65rem 0.85rem !important;
-  border: 2px solid rgba(234, 179, 8, 0.58) !important;
-  border-left: 0.65rem solid #eab308 !important;
-  border-radius: 1rem !important;
-  background: linear-gradient(90deg, rgba(234, 179, 8, 0.24), rgba(0, 0, 0, 0.54)) !important;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 10px 20px rgba(0, 0, 0, 0.28) !important;
-  color: #fde68a !important;
+/* Safe Region/Area display in the Apiary list.
+   This does not insert or move React rows. It only styles the real rows. */
+body.bk-apiaries-list-only #root .bk-region-area-row {
+  position: relative !important;
+  border-left: 0.28rem solid rgba(234, 179, 8, 0.55) !important;
+  border-right: 1px solid rgba(234, 179, 8, 0.18) !important;
 }
 
-body.bk-apiaries-list-only #root .bk-region-area-header span {
-  font-size: 0.8rem !important;
+body.bk-apiaries-list-only #root .bk-region-area-first-row {
+  margin-top: 1.65rem !important;
+  border-top: 0.22rem solid #eab308 !important;
+  box-shadow: 0 -0.65rem 0 rgba(234, 179, 8, 0.12) !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-first-row::after {
+  content: "Region/Area: " attr(data-region-area);
+  position: absolute !important;
+  left: 0.35rem !important;
+  right: 0.35rem !important;
+  top: -1.45rem !important;
+  z-index: 2 !important;
+  display: block !important;
+  border: 1px solid rgba(234, 179, 8, 0.58) !important;
+  border-left: 0.55rem solid #eab308 !important;
+  border-radius: 0.8rem !important;
+  background: linear-gradient(90deg, rgba(234, 179, 8, 0.26), rgba(0, 0, 0, 0.86)) !important;
+  color: #facc15 !important;
+  padding: 0.25rem 0.55rem !important;
+  font-size: 0.82rem !important;
   font-weight: 950 !important;
-  letter-spacing: 0.08em !important;
-  text-transform: uppercase !important;
-  opacity: 0.86 !important;
-}
-
-body.bk-apiaries-list-only #root .bk-region-area-header strong {
-  min-width: 0 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0.02em !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  color: #facc15 !important;
-  font-size: 1.35rem !important;
-  font-weight: 1000 !important;
-  line-height: 1.05 !important;
-}
-
-body.bk-apiaries-list-only #root .bk-region-area-header em {
-  color: #fef3c7 !important;
-  font-size: 0.9rem !important;
-  font-style: normal !important;
-  font-weight: 900 !important;
-  opacity: 0.9 !important;
-}
-
-body.bk-apiaries-list-only #root .bk-region-area-row {
-  border-left: 0.28rem solid rgba(234, 179, 8, 0.65) !important;
-  border-right: 1px solid rgba(234, 179, 8, 0.22) !important;
-}
-
-body.bk-apiaries-list-only #root .bk-region-area-header + .bk-region-area-row {
-  border-top: 2px solid rgba(234, 179, 8, 0.42) !important;
+  pointer-events: none !important;
 }
 
 @media (max-width: 560px) {
@@ -113,12 +99,12 @@ body.bk-apiaries-list-only #root .bk-region-area-header + .bk-region-area-row {
     padding: 0.65rem 0.75rem !important;
   }
 
-  body.bk-apiaries-list-only #root .bk-region-area-header {
-    grid-template-columns: 1fr !important;
-    gap: 0.25rem !important;
+  body.bk-apiaries-list-only #root .bk-region-area-first-row {
+    margin-top: 1.5rem !important;
   }
 
-  body.bk-apiaries-list-only #root .bk-region-area-header strong {
-    font-size: 1.18rem !important;
+  body.bk-apiaries-list-only #root .bk-region-area-first-row::after {
+    top: -1.33rem !important;
+    font-size: 0.76rem !important;
   }
 }
