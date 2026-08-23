@@ -50,7 +50,7 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) .
     font-size: 1.9rem !important;
   }
 
-  /* Put the Last Update date on the right side on small screens. */
+  /* Keep the Last Update label left and put the date on the right on small screens. */
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div > div.flex.items-start.justify-between.gap-4 {
     align-items: flex-start !important;
   }
@@ -63,18 +63,26 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) .
 
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div > div.flex.items-start.justify-between.gap-4 > div:first-child > div:nth-child(2) {
     display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-end !important;
-    justify-content: flex-start !important;
-    text-align: right !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 0.75rem !important;
+    text-align: left !important;
     width: 100% !important;
     margin-left: 0 !important;
   }
 
-  body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div > div.flex.items-start.justify-between.gap-4 > div:first-child > div:nth-child(2) span {
-    display: block !important;
+  body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div > div.flex.items-start.justify-between.gap-4 > div:first-child > div:nth-child(2) span:first-child {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    align-self: center !important;
+  }
+
+  body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div > div.flex.items-start.justify-between.gap-4 > div:first-child > div:nth-child(2) span:last-child {
     text-align: right !important;
     margin-left: auto !important;
-    align-self: flex-end !important;
+    align-self: center !important;
+    white-space: nowrap !important;
   }
 }
