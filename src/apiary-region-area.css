@@ -1,0 +1,124 @@
+/* Region/Area controls on Add Apiary and Edit Apiary screens. */
+#root .bk-region-area-control {
+  display: grid !important;
+  gap: 0.55rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.36) !important;
+  border-radius: 1rem !important;
+  background: rgba(234, 179, 8, 0.08) !important;
+  padding: 0.75rem !important;
+}
+
+#root .bk-region-area-main,
+#root .bk-region-area-new-panel {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+}
+
+#root .bk-region-area-new-panel {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+#root .bk-region-area-button,
+#root .bk-region-area-new-button,
+#root .bk-region-area-use-button {
+  border-radius: 0.85rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.5) !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  color: #fde047 !important;
+  padding: 0.72rem 0.85rem !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-region-area-select,
+#root .bk-region-area-new-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 0.85rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.38) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #fef3c7 !important;
+  padding: 0.72rem 0.85rem !important;
+  font-size: 1rem !important;
+  font-weight: 850 !important;
+}
+
+/* Region/Area grouping in the Apiary list. */
+body.bk-apiaries-list-only #root .bk-region-area-header {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.7rem !important;
+  margin: 0.9rem 0.35rem 0.35rem !important;
+  padding: 0.65rem 0.85rem !important;
+  border: 2px solid rgba(234, 179, 8, 0.58) !important;
+  border-left: 0.65rem solid #eab308 !important;
+  border-radius: 1rem !important;
+  background: linear-gradient(90deg, rgba(234, 179, 8, 0.24), rgba(0, 0, 0, 0.54)) !important;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), 0 10px 20px rgba(0, 0, 0, 0.28) !important;
+  color: #fde68a !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-header span {
+  font-size: 0.8rem !important;
+  font-weight: 950 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  opacity: 0.86 !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-header strong {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  color: #facc15 !important;
+  font-size: 1.35rem !important;
+  font-weight: 1000 !important;
+  line-height: 1.05 !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-header em {
+  color: #fef3c7 !important;
+  font-size: 0.9rem !important;
+  font-style: normal !important;
+  font-weight: 900 !important;
+  opacity: 0.9 !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-row {
+  border-left: 0.28rem solid rgba(234, 179, 8, 0.65) !important;
+  border-right: 1px solid rgba(234, 179, 8, 0.22) !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-area-header + .bk-region-area-row {
+  border-top: 2px solid rgba(234, 179, 8, 0.42) !important;
+}
+
+@media (max-width: 560px) {
+  #root .bk-region-area-main {
+    grid-template-columns: 1fr !important;
+  }
+
+  #root .bk-region-area-button,
+  #root .bk-region-area-new-button,
+  #root .bk-region-area-use-button,
+  #root .bk-region-area-select,
+  #root .bk-region-area-new-input {
+    font-size: 0.95rem !important;
+    padding: 0.65rem 0.75rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .bk-region-area-header {
+    grid-template-columns: 1fr !important;
+    gap: 0.25rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .bk-region-area-header strong {
+    font-size: 1.18rem !important;
+  }
+}
