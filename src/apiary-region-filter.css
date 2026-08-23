@@ -1,0 +1,39 @@
+/* Region/Area filter replacing the Apiary title in the list header. */
+body.bk-apiaries-list-only #root .bk-region-list-filter-cell {
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-list-filter-select {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.55) !important;
+  background: rgba(0, 0, 0, 0.64) !important;
+  color: #fde047 !important;
+  padding: 0.55rem 0.65rem !important;
+  font-size: 1rem !important;
+  line-height: 1.1 !important;
+  font-weight: 950 !important;
+  cursor: pointer !important;
+}
+
+body.bk-apiaries-list-only #root .bk-region-list-filter-select:focus {
+  outline: 2px solid rgba(250, 204, 21, 0.85) !important;
+  outline-offset: 2px !important;
+}
+
+@media (max-width: 760px) {
+  body.bk-apiaries-list-only #root .bk-region-list-filter-select {
+    font-size: 0.82rem !important;
+    padding: 0.45rem 0.45rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  body.bk-apiaries-list-only #root .bk-region-list-filter-select {
+    font-size: 0.72rem !important;
+    padding: 0.38rem 0.35rem !important;
+  }
+}
