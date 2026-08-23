@@ -104,7 +104,7 @@ function bkRegionFilterHasNoRegionRows(scroller) {
 }
 
 function bkRegionFilterEntries(scroller) {
-  const entries = [{ value: BK_REGION_FILTER_ALL, label: 'All Region' }];
+  const entries = [{ value: BK_REGION_FILTER_ALL, label: 'All Regions' }];
   bkRegionFilterAllRegions().forEach((region) => {
     entries.push({ value: bkRegionFilterKey(region), label: region });
   });
