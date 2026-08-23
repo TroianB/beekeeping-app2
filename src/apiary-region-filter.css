@@ -24,6 +24,11 @@ body.bk-apiaries-list-only #root .bk-region-list-filter-select:focus {
   outline-offset: 2px !important;
 }
 
+/* Stronger than the row/header display:grid !important rules. */
+body.bk-apiaries-list-only #root .bk-region-area-filter-hidden {
+  display: none !important;
+}
+
 @media (max-width: 760px) {
   body.bk-apiaries-list-only #root .bk-region-list-filter-select {
     font-size: 0.82rem !important;
