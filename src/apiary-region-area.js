@@ -54,6 +54,10 @@ function bkAllRegions() {
   return Array.from(new Set([BK_DEFAULT_REGION, ...store.areas, ...fromHives, ...fromNames]));
 }
 
+function bkSameList(a, b) {
+  return a.length === b.length && a.every((item, index) => item === b[index]);
+}
+
 function bkRegionForApiaryName(name) {
   const cleanName = bkNorm(name);
   const store = bkReadRegionStore();
@@ -117,16 +121,27 @@ function bkPanelGrid(modal) {
 
 function bkFillRegionSelect(select, selected) {
   if (!select) return;
-  const current = bkCleanRegion(selected || select.value);
+
   const regions = bkAllRegions();
-  select.innerHTML = '';
+  const wanted = bkCleanRegion(selected || select.value || BK_DEFAULT_REGION);
+  const nextValue = regions.includes(wanted) ? wanted : BK_DEFAULT_REGION;
+  const existingRegions = Array.from(select.options || []).map((option) => option.value);
+
+  if (bkSameList(existingRegions, regions)) {
+    if (select.value !== nextValue) select.value = nextValue;
+    return;
+  }
+
+  const fragment = document.createDocumentFragment();
   regions.forEach((region) => {
     const option = document.createElement('option');
     option.value = region;
     option.textContent = region;
-    select.appendChild(option);
+    fragment.appendChild(option);
   });
-  select.value = regions.includes(current) ? current : BK_DEFAULT_REGION;
+
+  select.replaceChildren(fragment);
+  if (select.value !== nextValue) select.value = nextValue;
 }
 
 function bkRefreshRegionSelects(selected) {
@@ -183,7 +198,10 @@ function bkEnsureRegionControl(modal) {
   }
 
   const select = control.querySelector('.bk-region-area-select');
-  bkFillRegionSelect(select, bkRegionForApiaryName(bkApiaryNameFromModal(modal)));
+  const formName = bkApiaryNameFromModal(modal);
+  const storedRegion = formName ? bkRegionForApiaryName(formName) : '';
+  const selectedRegion = select?.value || storedRegion || BK_DEFAULT_REGION;
+  bkFillRegionSelect(select, selectedRegion);
 }
 
 function bkWireApiaryRegionForms() {
