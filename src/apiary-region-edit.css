@@ -1,0 +1,88 @@
+/* Edit Region controls inside the Add/Edit Apiary Region dropdown. */
+#root .bk-region-area-edit-toggle {
+  border-color: rgba(96, 165, 250, 0.58) !important;
+  background: rgba(30, 64, 175, 0.25) !important;
+  color: #bfdbfe !important;
+}
+
+#root .bk-region-area-edit-toggle-active {
+  background: rgba(96, 165, 250, 0.32) !important;
+  color: #dbeafe !important;
+  outline: 2px solid rgba(147, 197, 253, 0.72) !important;
+  outline-offset: 2px !important;
+}
+
+#root .bk-region-area-control.bk-region-area-editing-regions .bk-region-area-option {
+  border-color: rgba(147, 197, 253, 0.62) !important;
+  background: rgba(30, 64, 175, 0.22) !important;
+  color: #dbeafe !important;
+}
+
+#root .bk-region-area-control.bk-region-area-editing-regions .bk-region-area-option::after {
+  content: "Edit";
+  float: right;
+  margin-left: 0.75rem;
+  color: #bfdbfe;
+  font-size: 0.78rem;
+  font-weight: 950;
+  opacity: 0.9;
+}
+
+#root .bk-region-area-edit-panel {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 0.45rem !important;
+  align-items: center !important;
+  border: 1px solid rgba(147, 197, 253, 0.46) !important;
+  border-radius: 0.9rem !important;
+  background: rgba(30, 64, 175, 0.16) !important;
+  padding: 0.5rem !important;
+}
+
+#root .bk-region-area-edit-panel[hidden] {
+  display: none !important;
+}
+
+#root .bk-region-area-edit-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(147, 197, 253, 0.52) !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  color: #dbeafe !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 850 !important;
+}
+
+#root .bk-region-area-edit-save,
+#root .bk-region-area-edit-cancel {
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(147, 197, 253, 0.52) !important;
+  background: rgba(30, 64, 175, 0.28) !important;
+  color: #dbeafe !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.92rem !important;
+  font-weight: 950 !important;
+  line-height: 1.1 !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-region-area-edit-cancel {
+  background: rgba(0, 0, 0, 0.34) !important;
+  opacity: 0.88 !important;
+}
+
+@media (max-width: 560px) {
+  #root .bk-region-area-edit-panel {
+    grid-template-columns: 1fr !important;
+  }
+
+  #root .bk-region-area-edit-input,
+  #root .bk-region-area-edit-save,
+  #root .bk-region-area-edit-cancel {
+    font-size: 0.95rem !important;
+    padding: 0.65rem 0.75rem !important;
+  }
+}
