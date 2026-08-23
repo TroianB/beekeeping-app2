@@ -1,43 +1,59 @@
-/* When the Apiary names list is scrolled, collapse the top area and keep only Apiary controls visible. */
+/* Smoothly collapse the Apiaries top area while leaving the Add/Delete buttons unchanged. */
+body.bk-apiaries-list-only #root > div > div.mb-4,
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."],
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid,
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
+  transition:
+    max-height 320ms ease,
+    height 320ms ease,
+    opacity 240ms ease,
+    margin 320ms ease,
+    padding 320ms ease,
+    border-width 320ms ease,
+    transform 320ms ease !important;
+}
+
+body.bk-apiaries-list-only #root > div > div.mb-4 {
+  max-height: 12rem !important;
+  overflow: hidden !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] {
+  max-height: 5rem !important;
+  overflow: hidden !important;
+}
+
+body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid {
+  max-height: 6rem !important;
+  overflow: hidden !important;
+}
+
 body.bk-apiary-list-compact-top #root > div > div.mb-4 {
   max-height: 0 !important;
   margin-bottom: 0 !important;
   opacity: 0 !important;
   overflow: hidden !important;
   pointer-events: none !important;
-  transform: translateY(-120%) !important;
+  transform: translateY(-0.65rem) !important;
 }
 
+/* Do not restyle, resize, stretch, or move the Add Apiary / Delete Apiary buttons. */
 body.bk-apiary-list-compact-top #root div:has(> input[placeholder="Search apiaries..."]) > div:first-child {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 55 !important;
+  position: relative !important;
+  top: auto !important;
+  z-index: auto !important;
   display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 0.65rem !important;
-  margin: 0 0 0.45rem !important;
-  padding: 0.55rem 0.65rem !important;
-  border: 1px solid rgba(234, 179, 8, 0.35) !important;
-  border-radius: 1rem !important;
-  background: rgba(0, 0, 0, 0.96) !important;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.46) !important;
-}
-
-body.bk-apiary-list-compact-top #root div:has(> input[placeholder="Search apiaries..."]) > div:first-child > button,
-body.bk-apiary-list-compact-top #bkDeleteApiaryButton,
-body.bk-apiary-list-compact-top #bkCancelDeleteApiaryButton {
-  flex: 1 1 0 !important;
-  min-width: 0 !important;
-  width: auto !important;
-  padding: 0.72rem 0.65rem !important;
-  font-size: 1rem !important;
-  font-weight: 950 !important;
-  white-space: nowrap !important;
+  margin: 0 0 0.5rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] {
   height: 0 !important;
+  max-height: 0 !important;
   min-height: 0 !important;
   margin: 0 !important;
   padding-top: 0 !important;
@@ -46,10 +62,19 @@ body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] {
   opacity: 0 !important;
   overflow: hidden !important;
   pointer-events: none !important;
+  transform: translateY(-0.35rem) !important;
 }
 
 body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div > div.grid {
-  display: none !important;
+  max-height: 0 !important;
+  margin: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-width: 0 !important;
+  opacity: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  transform: translateY(-0.35rem) !important;
 }
 
 body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
@@ -57,23 +82,6 @@ body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + 
 }
 
 @media (max-width: 760px) {
-  body.bk-apiary-list-compact-top #root > div {
-    padding-top: 0.35rem !important;
-  }
-
-  body.bk-apiary-list-compact-top #root div:has(> input[placeholder="Search apiaries..."]) > div:first-child {
-    margin-bottom: 0.35rem !important;
-    padding: 0.45rem 0.5rem !important;
-    gap: 0.45rem !important;
-  }
-
-  body.bk-apiary-list-compact-top #root div:has(> input[placeholder="Search apiaries..."]) > div:first-child > button,
-  body.bk-apiary-list-compact-top #bkDeleteApiaryButton,
-  body.bk-apiary-list-compact-top #bkCancelDeleteApiaryButton {
-    padding: 0.62rem 0.48rem !important;
-    font-size: 0.92rem !important;
-  }
-
   body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
     max-height: calc(100vh - 4.8rem) !important;
   }
