@@ -1,19 +1,7 @@
-/* On Apiaries scroll, hide only the top two lines and leave the rest of the screen intact. */
+/* On Apiaries scroll, hide only the top two marked lines and leave everything else intact. */
 
-/* Line 1: main Dashboard / Apiaries / Export header. */
-body.bk-apiaries-list-only #root > div > div.mb-4 {
-  max-height: 12rem !important;
-  overflow: hidden !important;
-  transition:
-    max-height 340ms ease,
-    opacity 260ms ease,
-    margin 340ms ease,
-    transform 340ms ease !important;
-}
-
-/* Line 2: Search apiaries input. */
-body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] {
-  max-height: 5rem !important;
+body.bk-apiaries-list-only .bk-apiary-compact-main-line,
+body.bk-apiaries-list-only .bk-apiary-compact-search-line {
   overflow: hidden !important;
   transition:
     max-height 340ms ease,
@@ -25,8 +13,17 @@ body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] {
     transform 340ms ease !important;
 }
 
-/* Hide only those two lines after the Apiary names are scrolled. */
-body.bk-apiary-list-compact-top #root > div > div.mb-4 {
+/* Line 1: Dashboard / Apiaries / Export header. */
+body.bk-apiaries-list-only .bk-apiary-compact-main-line {
+  max-height: 12rem !important;
+}
+
+/* Line 2: Search apiaries input. */
+body.bk-apiaries-list-only .bk-apiary-compact-search-line {
+  max-height: 5rem !important;
+}
+
+body.bk-apiary-list-compact-top .bk-apiary-compact-main-line {
   max-height: 0 !important;
   margin-bottom: 0 !important;
   opacity: 0 !important;
@@ -34,7 +31,7 @@ body.bk-apiary-list-compact-top #root > div > div.mb-4 {
   transform: translateY(-0.55rem) !important;
 }
 
-body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] {
+body.bk-apiary-list-compact-top .bk-apiary-compact-search-line {
   height: 0 !important;
   max-height: 0 !important;
   min-height: 0 !important;
@@ -47,27 +44,11 @@ body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] {
   transform: translateY(-0.35rem) !important;
 }
 
-/* Do not change the Add Apiary / Delete Apiary row. */
-body.bk-apiary-list-compact-top #root div:has(> input[placeholder="Search apiaries..."]) > div:first-child {
-  position: static !important;
-  top: auto !important;
-  z-index: auto !important;
-  margin: 0 0 0.5rem !important;
-  padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-/* Do not hide or resize the dropdown/header row, data rows, or the list area. */
-body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div,
-body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div > div.grid,
-body.bk-apiary-list-compact-top #root input[placeholder="Search apiaries..."] + div > div:not(.grid) {
-  max-height: revert !important;
-  height: auto !important;
-  margin: revert !important;
-  padding: revert !important;
-  opacity: 1 !important;
+/* Keep the Add Apiary / Delete Apiary row exactly as it already is. */
+body.bk-apiary-list-compact-top .bk-apiary-compact-button-line,
+body.bk-apiary-list-compact-top .bk-apiary-compact-button-line button,
+body.bk-apiary-list-compact-top #bkApiaryListControls,
+body.bk-apiary-list-compact-top #bkDeleteApiaryButton,
+body.bk-apiary-list-compact-top #bkCancelDeleteApiaryButton {
   transform: none !important;
-  pointer-events: auto !important;
 }
