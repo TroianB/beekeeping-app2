@@ -21,6 +21,7 @@ import "./apiary-mobile.js";
 import "./apiary-list-only.js";
 import "./apiary-detail-back-arrow.js";
 import "./apiary-edit-fix.js";
+import "./apiary-add-number-cleanup.js";
 import "./apiary-edit-cancel-return.js";
 import "./apiary-list-metric-dropdown.js";
 import "./apiary-list-compact-top.js";
