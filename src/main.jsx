@@ -11,6 +11,7 @@ import "./apiary-info-screen.css";
 import "./apiary-list-screen-text.css";
 import "./apiary-edit-screen-text.css";
 import "./apiary-list-compact-top.css";
+import "./apiary-region-area.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
@@ -19,6 +20,7 @@ import "./apiary-edit-fix.js";
 import "./apiary-edit-cancel-return.js";
 import "./apiary-list-metric-dropdown.js";
 import "./apiary-list-compact-top.js";
+import "./apiary-region-area.js";
 import "./dashboard-apiary-swipe.js";
 
 createRoot(document.getElementById("root")).render(
