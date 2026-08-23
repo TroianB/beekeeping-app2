@@ -1,6 +1,8 @@
 const BK_REGION_STORAGE_KEY = 'bk.regionAreas';
 const BK_REGION_SEARCH_SELECTOR = '#root input[placeholder="Search apiaries..."]';
+const BK_NO_REGION_LABEL = 'No Region';
 let bkRegionRaf = 0;
+let bkRegionUpdatingList = false;
 
 function bkNorm(value) {
   return String(value || '').trim().toLowerCase();
@@ -13,6 +15,14 @@ function bkIsOldDefaultRegion(value) {
 function bkCleanRegion(value) {
   const region = String(value || '').trim();
   return bkIsOldDefaultRegion(region) ? '' : region;
+}
+
+function bkRegionDisplayName(region) {
+  return bkCleanRegion(region) || BK_NO_REGION_LABEL;
+}
+
+function bkRegionKey(region) {
+  return bkCleanRegion(region) ? `region:${bkNorm(region)}` : 'region:__none__';
 }
 
 function bkReadJson(key, fallback) {
@@ -281,6 +291,7 @@ function bkEnsureRegionControl(modal) {
       if (input) input.value = '';
       bkSetControlRegion(control, region);
       bkRefreshRegionControls();
+      bkApplyRegionGrouping();
     });
 
     control.querySelector('.bk-region-area-delete-button')?.addEventListener('click', () => {
@@ -290,7 +301,7 @@ function bkEnsureRegionControl(modal) {
       bkDeleteRegion(region);
       bkSetControlRegion(control, '');
       bkRefreshRegionControls();
-      bkApplyRegionBordersOnly();
+      bkApplyRegionGrouping();
     });
   }
 
@@ -324,44 +335,103 @@ function bkGetApiaryRowName(row) {
     || '';
 }
 
-function bkApplyRegionBordersOnly() {
+function bkMakeRegionHeader(region, count, groupOrder) {
+  const header = document.createElement('div');
+  header.className = 'bk-region-area-header';
+  header.dataset.regionArea = bkRegionDisplayName(region);
+  header.dataset.regionKey = bkRegionKey(region);
+  header.dataset.regionCount = String(count);
+  header.style.order = String(groupOrder);
+  header.innerHTML = `<span>Region/Area</span><strong></strong><em></em>`;
+  header.querySelector('strong').textContent = bkRegionDisplayName(region);
+  header.querySelector('em').textContent = `${count} Apiar${count === 1 ? 'y' : 'ies'}`;
+  return header;
+}
+
+function bkCurrentHeaderSignature(list) {
+  return Array.from(list.querySelectorAll(':scope > .bk-region-area-header')).map((header) => {
+    return `${header.dataset.regionKey}:${header.dataset.regionCount}`;
+  }).join('|');
+}
+
+function bkApplyRegionGrouping() {
+  if (bkRegionUpdatingList) return;
   const list = bkGetApiaryListScroller();
   if (!list) return;
-
-  list.querySelectorAll(':scope > .bk-region-area-header').forEach((header) => header.remove());
 
   const rows = Array.from(list.children).filter((row) => {
     return row instanceof HTMLElement && row.querySelector('input[type="checkbox"]');
   });
 
-  let previousRegion = null;
+  const grouped = new Map();
   rows.forEach((row) => {
-    const region = bkRegionForApiaryName(bkGetApiaryRowName(row));
-    const firstInArea = Boolean(region) && previousRegion !== region;
-    previousRegion = region || previousRegion;
-
-    row.classList.toggle('bk-region-area-row', Boolean(region));
-    row.classList.toggle('bk-region-area-first-row', firstInArea);
-    if (region) row.dataset.regionArea = region;
-    else delete row.dataset.regionArea;
+    const name = bkGetApiaryRowName(row);
+    const region = bkRegionForApiaryName(name);
+    const key = bkRegionKey(region);
+    if (!grouped.has(key)) grouped.set(key, { region, rows: [] });
+    grouped.get(key).rows.push(row);
   });
+
+  const orderedRegions = bkAllRegions().map((region) => ({ key: bkRegionKey(region), region }));
+  if (grouped.has(bkRegionKey(''))) orderedRegions.push({ key: bkRegionKey(''), region: '' });
+  Array.from(grouped.values()).forEach((group) => {
+    const key = bkRegionKey(group.region);
+    if (!orderedRegions.some((entry) => entry.key === key)) orderedRegions.push({ key, region: group.region });
+  });
+
+  const activeGroups = orderedRegions.filter((entry) => grouped.has(entry.key));
+  const desiredHeaderSignature = activeGroups.map((entry) => {
+    return `${entry.key}:${grouped.get(entry.key).rows.length}`;
+  }).join('|');
+  const currentHeaderSignature = bkCurrentHeaderSignature(list);
+
+  bkRegionUpdatingList = true;
+  try {
+    list.classList.add('bk-region-area-list-grouped');
+
+    activeGroups.forEach((entry, groupIndex) => {
+      const group = grouped.get(entry.key);
+      const groupBaseOrder = (groupIndex + 1) * 10000;
+      group.rows.forEach((row, rowIndex) => {
+        const number = rowIndex + 1;
+        row.classList.add('bk-region-area-row');
+        row.classList.toggle('bk-region-area-first-row', number === 1);
+        row.dataset.regionArea = bkRegionDisplayName(group.region);
+        row.dataset.regionKey = entry.key;
+        row.dataset.regionNumber = String(number);
+        row.style.order = String(groupBaseOrder + number);
+      });
+    });
+
+    if (currentHeaderSignature !== desiredHeaderSignature) {
+      list.querySelectorAll(':scope > .bk-region-area-header').forEach((header) => header.remove());
+      activeGroups.forEach((entry, groupIndex) => {
+        const group = grouped.get(entry.key);
+        list.appendChild(bkMakeRegionHeader(group.region, group.rows.length, (groupIndex + 1) * 10000));
+      });
+    }
+  } finally {
+    window.requestAnimationFrame(() => {
+      bkRegionUpdatingList = false;
+    });
+  }
 }
 
 function bkScheduleRegionSave(names, region) {
   [0, 60, 160, 360, 760, 1300].forEach((delay) => {
     window.setTimeout(() => {
       names.filter(Boolean).forEach((name) => bkSaveRegionForApiaryName(name, region));
-      bkApplyRegionBordersOnly();
+      bkApplyRegionGrouping();
     }, delay);
   });
 }
 
 function bkScheduleRegionWork() {
-  if (bkRegionRaf) return;
+  if (bkRegionUpdatingList || bkRegionRaf) return;
   bkRegionRaf = window.requestAnimationFrame(() => {
     bkRegionRaf = 0;
     bkWireApiaryRegionForms();
-    bkApplyRegionBordersOnly();
+    bkApplyRegionGrouping();
   });
 }
 
