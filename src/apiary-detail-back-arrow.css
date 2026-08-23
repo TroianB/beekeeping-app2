@@ -1,0 +1,33 @@
+/* Apiary information screen back header. */
+#bkApiaryDetailBack > span {
+  display: none !important;
+}
+
+#bkApiaryDetailBack button {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.85rem !important;
+}
+
+#bkApiaryDetailBack .bk-apiary-detail-back-title {
+  color: inherit !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  opacity: 1 !important;
+}
+
+#bkApiaryDetailBack .bk-apiary-detail-back-arrow {
+  color: #facc15 !important;
+  font-size: 1.35rem !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+  opacity: 1 !important;
+}
+
+@media (max-width: 760px) {
+  #bkApiaryDetailBack button {
+    width: 100% !important;
+  }
+}
