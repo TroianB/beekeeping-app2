@@ -3,19 +3,23 @@ body.bk-apiaries-list-only #root .bk-region-list-filter-cell {
   min-width: 0 !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: stretch !important;
+  width: 100% !important;
 }
 
 body.bk-apiaries-list-only #root .bk-region-list-filter-select {
   width: 100% !important;
   min-width: 0 !important;
-  border-radius: 0.8rem !important;
+  min-height: 3.25rem !important;
+  border-radius: 0.95rem !important;
   border: 1px solid rgba(234, 179, 8, 0.55) !important;
-  background: rgba(0, 0, 0, 0.64) !important;
+  background: rgba(0, 0, 0, 0.72) !important;
   color: #fde047 !important;
-  padding: 0.55rem 0.65rem !important;
-  font-size: 1rem !important;
+  padding: 0.8rem 0.55rem !important;
+  font-size: 1.35rem !important;
   line-height: 1.1 !important;
   font-weight: 950 !important;
+  text-align: center !important;
   cursor: pointer !important;
 }
 
@@ -30,15 +34,23 @@ body.bk-apiaries-list-only #root .bk-region-area-filter-hidden {
 }
 
 @media (max-width: 760px) {
+  body.bk-apiaries-list-only #root .bk-region-list-filter-cell {
+    grid-column: 1 / 3 !important;
+    justify-self: stretch !important;
+  }
+
   body.bk-apiaries-list-only #root .bk-region-list-filter-select {
-    font-size: 0.82rem !important;
-    padding: 0.45rem 0.45rem !important;
+    min-height: 2.65rem !important;
+    font-size: 1.05rem !important;
+    padding: 0.68rem 0.35rem !important;
+    text-align: left !important;
   }
 }
 
 @media (max-width: 390px) {
   body.bk-apiaries-list-only #root .bk-region-list-filter-select {
-    font-size: 0.72rem !important;
-    padding: 0.38rem 0.35rem !important;
+    min-height: 2.35rem !important;
+    font-size: 0.92rem !important;
+    padding: 0.58rem 0.25rem !important;
   }
 }
