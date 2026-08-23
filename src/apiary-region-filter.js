@@ -44,6 +44,13 @@ function bkRegionFilterUnique(values) {
   });
 }
 
+function bkRegionFilterSortRegions(regions) {
+  return [...(regions || [])].sort((a, b) => String(a).localeCompare(String(b), undefined, {
+    sensitivity: 'base',
+    numeric: true,
+  }));
+}
+
 function bkRegionFilterReadHives() {
   const hives = bkRegionFilterReadJson('bk.hives', []);
   return Array.isArray(hives) ? hives : [];
@@ -61,7 +68,7 @@ function bkRegionFilterAllRegions() {
   const fromStore = Array.isArray(store.areas) ? store.areas : [];
   const fromNames = Object.values(store.byName || {});
   const fromHives = bkRegionFilterReadHives().map((hive) => hive?.regionArea);
-  return bkRegionFilterUnique([...fromStore, ...fromNames, ...fromHives]);
+  return bkRegionFilterSortRegions(bkRegionFilterUnique([...fromStore, ...fromNames, ...fromHives]));
 }
 
 function bkRegionFilterGetStoredValue() {
