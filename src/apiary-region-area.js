@@ -3,6 +3,7 @@ const BK_REGION_SEARCH_SELECTOR = '#root input[placeholder="Search apiaries..."]
 const BK_NO_REGION_LABEL = 'No Region';
 let bkRegionRaf = 0;
 let bkRegionUpdatingList = false;
+let bkDraggedRegionKey = '';
 
 function bkNorm(value) {
   return String(value || '').trim().toLowerCase();
@@ -50,17 +51,30 @@ function bkUniqueRegions(values) {
   });
 }
 
+function bkUniqueKeys(values) {
+  const seen = new Set();
+  return (values || []).map((value) => String(value || '').trim()).filter(Boolean).filter((key) => {
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function bkReadRegionStore() {
   const raw = bkReadJson(BK_REGION_STORAGE_KEY, null);
   const areas = bkUniqueRegions(Array.isArray(raw?.areas) ? raw.areas : []);
   const byName = raw?.byName && typeof raw.byName === 'object' ? raw.byName : {};
-  return { areas, byName };
+  const regionOrder = bkUniqueKeys(Array.isArray(raw?.regionOrder) ? raw.regionOrder : areas.map(bkRegionKey));
+  return { areas, byName, regionOrder };
 }
 
 function bkWriteRegionStore(store) {
+  const areas = bkUniqueRegions(store.areas || []);
+  const regionOrder = bkUniqueKeys([...(store.regionOrder || []), ...areas.map(bkRegionKey)]);
   bkWriteJson(BK_REGION_STORAGE_KEY, {
-    areas: bkUniqueRegions(store.areas || []),
+    areas,
     byName: store.byName || {},
+    regionOrder,
   });
 }
 
@@ -101,6 +115,7 @@ function bkSaveRegionForApiaryName(name, region) {
   store.byName = { ...(store.byName || {}) };
   if (cleanRegion) {
     store.areas = bkUniqueRegions([...(store.areas || []), cleanRegion]);
+    store.regionOrder = bkUniqueKeys([...(store.regionOrder || []), bkRegionKey(cleanRegion)]);
     store.byName[cleanName] = cleanRegion;
   } else {
     Object.keys(store.byName).forEach((key) => {
@@ -127,7 +142,9 @@ function bkDeleteRegion(region) {
   if (!cleanRegion) return;
 
   const store = bkReadRegionStore();
+  const deletedKey = bkRegionKey(cleanRegion);
   store.areas = bkUniqueRegions(store.areas || []).filter((area) => bkNorm(area) !== bkNorm(cleanRegion));
+  store.regionOrder = bkUniqueKeys(store.regionOrder || []).filter((key) => key !== deletedKey);
   store.byName = { ...(store.byName || {}) };
   Object.keys(store.byName).forEach((name) => {
     if (bkNorm(store.byName[name]) === bkNorm(cleanRegion)) delete store.byName[name];
@@ -287,6 +304,7 @@ function bkEnsureRegionControl(modal) {
 
       const store = bkReadRegionStore();
       store.areas = bkUniqueRegions([...(store.areas || []), region]);
+      store.regionOrder = bkUniqueKeys([...(store.regionOrder || []), bkRegionKey(region)]);
       bkWriteRegionStore(store);
       if (input) input.value = '';
       bkSetControlRegion(control, region);
@@ -335,14 +353,38 @@ function bkGetApiaryRowName(row) {
     || '';
 }
 
+function bkRegionFromKey(key, regions) {
+  if (key === bkRegionKey('')) return '';
+  return regions.find((region) => bkRegionKey(region) === key) || '';
+}
+
+function bkOrderedRegionEntries(grouped) {
+  const regions = bkAllRegions();
+  const store = bkReadRegionStore();
+  const orderKeys = bkUniqueKeys([...(store.regionOrder || []), ...regions.map(bkRegionKey)]);
+
+  if (grouped.has(bkRegionKey('')) && !orderKeys.includes(bkRegionKey(''))) {
+    orderKeys.push(bkRegionKey(''));
+  }
+
+  Array.from(grouped.values()).forEach((group) => {
+    const key = bkRegionKey(group.region);
+    if (!orderKeys.includes(key)) orderKeys.push(key);
+  });
+
+  return orderKeys.map((key) => ({ key, region: bkRegionFromKey(key, regions) })).filter((entry) => grouped.has(entry.key));
+}
+
 function bkMakeRegionHeader(region, count, groupOrder) {
   const header = document.createElement('div');
   header.className = 'bk-region-area-header';
+  header.draggable = true;
   header.dataset.regionArea = bkRegionDisplayName(region);
   header.dataset.regionKey = bkRegionKey(region);
   header.dataset.regionCount = String(count);
   header.style.order = String(groupOrder);
-  header.innerHTML = `<span>Region/Area</span><strong></strong><em></em>`;
+  header.title = 'Drag this Region/Area to move the whole group';
+  header.innerHTML = `<span>Drag Region/Area</span><strong></strong><em></em>`;
   header.querySelector('strong').textContent = bkRegionDisplayName(region);
   header.querySelector('em').textContent = `${count} Apiar${count === 1 ? 'y' : 'ies'}`;
   return header;
@@ -350,8 +392,31 @@ function bkMakeRegionHeader(region, count, groupOrder) {
 
 function bkCurrentHeaderSignature(list) {
   return Array.from(list.querySelectorAll(':scope > .bk-region-area-header')).map((header) => {
-    return `${header.dataset.regionKey}:${header.dataset.regionCount}`;
+    return `${header.style.order}:${header.dataset.regionKey}:${header.dataset.regionCount}`;
   }).join('|');
+}
+
+function bkMoveRegionKeyBefore(fromKey, toKey) {
+  if (!fromKey || !toKey || fromKey === toKey) return;
+
+  const regions = bkAllRegions();
+  const currentKeys = Array.from(document.querySelectorAll('.bk-region-area-header')).map((header) => header.dataset.regionKey).filter(Boolean);
+  const store = bkReadRegionStore();
+  const order = bkUniqueKeys([...(store.regionOrder || []), ...regions.map(bkRegionKey), ...currentKeys]);
+
+  const fromIndex = order.indexOf(fromKey);
+  const toIndex = order.indexOf(toKey);
+  if (fromIndex < 0 || toIndex < 0) return;
+
+  const [moved] = order.splice(fromIndex, 1);
+  const nextToIndex = order.indexOf(toKey);
+  order.splice(nextToIndex, 0, moved);
+
+  const byKey = new Map(regions.map((region) => [bkRegionKey(region), region]));
+  store.regionOrder = order;
+  store.areas = order.map((key) => byKey.get(key)).filter(Boolean);
+  bkWriteRegionStore(store);
+  bkApplyRegionGrouping();
 }
 
 function bkApplyRegionGrouping() {
@@ -372,16 +437,9 @@ function bkApplyRegionGrouping() {
     grouped.get(key).rows.push(row);
   });
 
-  const orderedRegions = bkAllRegions().map((region) => ({ key: bkRegionKey(region), region }));
-  if (grouped.has(bkRegionKey(''))) orderedRegions.push({ key: bkRegionKey(''), region: '' });
-  Array.from(grouped.values()).forEach((group) => {
-    const key = bkRegionKey(group.region);
-    if (!orderedRegions.some((entry) => entry.key === key)) orderedRegions.push({ key, region: group.region });
-  });
-
-  const activeGroups = orderedRegions.filter((entry) => grouped.has(entry.key));
-  const desiredHeaderSignature = activeGroups.map((entry) => {
-    return `${entry.key}:${grouped.get(entry.key).rows.length}`;
+  const activeGroups = bkOrderedRegionEntries(grouped);
+  const desiredHeaderSignature = activeGroups.map((entry, groupIndex) => {
+    return `${(groupIndex + 1) * 10000}:${entry.key}:${grouped.get(entry.key).rows.length}`;
   }).join('|');
   const currentHeaderSignature = bkCurrentHeaderSignature(list);
 
@@ -434,6 +492,43 @@ function bkScheduleRegionWork() {
     bkApplyRegionGrouping();
   });
 }
+
+document.addEventListener('dragstart', (event) => {
+  const header = event.target.closest?.('.bk-region-area-header');
+  if (!header) return;
+
+  bkDraggedRegionKey = header.dataset.regionKey || '';
+  header.classList.add('bk-region-area-header-dragging');
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('text/plain', bkDraggedRegionKey);
+}, true);
+
+document.addEventListener('dragover', (event) => {
+  const header = event.target.closest?.('.bk-region-area-header');
+  if (!header || !bkDraggedRegionKey || header.dataset.regionKey === bkDraggedRegionKey) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+  header.classList.add('bk-region-area-header-drag-over');
+}, true);
+
+document.addEventListener('dragleave', (event) => {
+  event.target.closest?.('.bk-region-area-header')?.classList.remove('bk-region-area-header-drag-over');
+}, true);
+
+document.addEventListener('drop', (event) => {
+  const header = event.target.closest?.('.bk-region-area-header');
+  if (!header || !bkDraggedRegionKey || header.dataset.regionKey === bkDraggedRegionKey) return;
+  event.preventDefault();
+  document.querySelectorAll('.bk-region-area-header-drag-over').forEach((item) => item.classList.remove('bk-region-area-header-drag-over'));
+  bkMoveRegionKeyBefore(bkDraggedRegionKey, header.dataset.regionKey || '');
+}, true);
+
+document.addEventListener('dragend', () => {
+  bkDraggedRegionKey = '';
+  document.querySelectorAll('.bk-region-area-header-dragging, .bk-region-area-header-drag-over').forEach((item) => {
+    item.classList.remove('bk-region-area-header-dragging', 'bk-region-area-header-drag-over');
+  });
+}, true);
 
 document.addEventListener('click', (event) => {
   const menuClick = event.target.closest?.('.bk-region-area-control');
