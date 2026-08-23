@@ -6,8 +6,13 @@ function bkNorm(value) {
   return String(value || '').trim().toLowerCase();
 }
 
+function bkIsOldDefaultRegion(value) {
+  return /^unassigned\s+area$/i.test(String(value || '').trim());
+}
+
 function bkCleanRegion(value) {
-  return String(value || '').trim();
+  const region = String(value || '').trim();
+  return bkIsOldDefaultRegion(region) ? '' : region;
 }
 
 function bkReadJson(key, fallback) {
