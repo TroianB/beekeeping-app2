@@ -3,6 +3,7 @@ const BK_REGION_FILTER_SEARCH_SELECTOR = '#root input[placeholder="Search apiari
 const BK_REGION_FILTER_ALL = '__all_regions__';
 const BK_REGION_FILTER_NO_REGION_KEY = 'region:__none__';
 const BK_REGION_FILTER_NO_REGION_LABEL = 'No Region';
+const BK_REGION_FILTER_HIDDEN_CLASS = 'bk-region-area-filter-hidden';
 let bkRegionFilterRaf = 0;
 let bkRegionFilterApplying = false;
 
@@ -130,7 +131,7 @@ function bkRegionFilterEnsureDropdown(scroller) {
     select.addEventListener('mousedown', (event) => event.stopPropagation());
     select.addEventListener('change', () => {
       bkRegionFilterSetStoredValue(select.value || BK_REGION_FILTER_ALL);
-      bkRegionFilterApply();
+      bkRegionFilterApplyRepeated();
     });
     cell.appendChild(select);
   }
@@ -159,7 +160,9 @@ function bkRegionFilterEnsureDropdown(scroller) {
 
 function bkRegionFilterSetHidden(element, hidden) {
   if (!element) return;
-  if (Boolean(element.hidden) !== Boolean(hidden)) element.hidden = Boolean(hidden);
+  // Use a class instead of the HTML hidden attribute because other list CSS uses display:grid !important.
+  if (element.hidden) element.hidden = false;
+  element.classList.toggle(BK_REGION_FILTER_HIDDEN_CLASS, Boolean(hidden));
 }
 
 function bkRegionFilterApply() {
@@ -189,6 +192,12 @@ function bkRegionFilterApply() {
   }
 }
 
+function bkRegionFilterApplyRepeated() {
+  [0, 40, 120, 260, 520].forEach((delay) => {
+    window.setTimeout(bkRegionFilterApply, delay);
+  });
+}
+
 function bkRegionFilterSchedule() {
   if (bkRegionFilterApplying || bkRegionFilterRaf) return;
   bkRegionFilterRaf = window.requestAnimationFrame(() => {
@@ -200,6 +209,8 @@ function bkRegionFilterSchedule() {
 new MutationObserver(bkRegionFilterSchedule).observe(document.documentElement, {
   childList: true,
   subtree: true,
+  attributes: true,
+  attributeFilter: ['data-region-key', 'data-region-area', 'data-region-number', 'class'],
 });
 
 bkRegionFilterSchedule();
