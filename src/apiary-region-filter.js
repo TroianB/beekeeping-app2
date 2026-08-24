@@ -154,37 +154,25 @@ function bkRegionFilterAddRegion() {
     return;
   }
 
+  const currentFilter = bkRegionFilterGetStoredValue();
   const store = bkRegionFilterReadStore();
   store.areas = bkRegionFilterUnique([...(store.areas || []), name]);
   store.regionOrder = Array.from(new Set([...(store.regionOrder || []), bkRegionFilterKey(name)]));
   bkRegionFilterWriteStore(store);
-  bkRegionFilterSetStoredValue(bkRegionFilterKey(name));
+  bkRegionFilterSetStoredValue(currentFilter);
   bkRegionFilterApplyRepeated();
 }
 
 function bkRegionFilterDeleteRegion(regionKey) {
-  let targetKey = regionKey;
+  if (!regionKey || regionKey === BK_REGION_FILTER_ALL || regionKey === BK_REGION_FILTER_NO_REGION_KEY) return;
   const regions = bkRegionFilterAllRegions();
-
-  if (!targetKey || targetKey === BK_REGION_FILTER_ALL || targetKey === BK_REGION_FILTER_NO_REGION_KEY) {
-    if (!regions.length) return;
-    const typed = bkRegionFilterClean(window.prompt(`Region to delete:\n${regions.join(', ')}`) || '');
-    if (!typed) return;
-    const matched = regions.find((item) => bkRegionFilterNorm(item) === bkRegionFilterNorm(typed));
-    if (!matched) {
-      window.alert('Region not found.');
-      return;
-    }
-    targetKey = bkRegionFilterKey(matched);
-  }
-
-  const region = regions.find((item) => bkRegionFilterKey(item) === targetKey);
+  const region = regions.find((item) => bkRegionFilterKey(item) === regionKey);
   if (!region) return;
   if (!window.confirm(`Delete Region/Area "${region}"?`)) return;
 
   const store = bkRegionFilterReadStore();
   store.areas = (store.areas || []).filter((item) => bkRegionFilterNorm(item) !== bkRegionFilterNorm(region));
-  store.regionOrder = (store.regionOrder || []).filter((key) => key !== targetKey);
+  store.regionOrder = (store.regionOrder || []).filter((key) => key !== regionKey);
   store.byName = { ...(store.byName || {}) };
   Object.keys(store.byName).forEach((name) => {
     if (bkRegionFilterNorm(store.byName[name]) === bkRegionFilterNorm(region)) delete store.byName[name];
@@ -198,8 +186,57 @@ function bkRegionFilterDeleteRegion(regionKey) {
     return copy;
   });
   bkRegionFilterWriteJson('bk.hives', hives);
-  bkRegionFilterSetStoredValue(BK_REGION_FILTER_ALL);
+
+  if (bkRegionFilterGetStoredValue() === regionKey) {
+    bkRegionFilterSetStoredValue(BK_REGION_FILTER_ALL);
+  }
+  bkRegionFilterCloseDeleteWindow();
   bkRegionFilterApplyRepeated();
+}
+
+function bkRegionFilterCloseDeleteWindow() {
+  document.getElementById('bkRegionDeleteWindow')?.remove();
+}
+
+function bkRegionFilterOpenDeleteWindow() {
+  bkRegionFilterCloseDeleteWindow();
+  const regions = bkRegionFilterAllRegions();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'bkRegionDeleteWindow';
+  overlay.innerHTML = `
+    <div class="bk-region-delete-dialog" role="dialog" aria-modal="true" aria-labelledby="bkRegionDeleteTitle">
+      <div id="bkRegionDeleteTitle" class="bk-region-delete-title">Delete Region</div>
+      <div class="bk-region-delete-help">Select a Region to delete.</div>
+      <div class="bk-region-delete-list"></div>
+      <div class="bk-region-delete-actions">
+        <button type="button" class="bk-region-delete-cancel">Cancel</button>
+      </div>
+    </div>
+  `;
+
+  const list = overlay.querySelector('.bk-region-delete-list');
+  if (!regions.length) {
+    const empty = document.createElement('div');
+    empty.className = 'bk-region-delete-empty';
+    empty.textContent = 'No Regions to delete.';
+    list.appendChild(empty);
+  } else {
+    regions.forEach((region) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'bk-region-delete-option';
+      button.textContent = region;
+      button.addEventListener('click', () => bkRegionFilterDeleteRegion(bkRegionFilterKey(region)));
+      list.appendChild(button);
+    });
+  }
+
+  overlay.querySelector('.bk-region-delete-cancel')?.addEventListener('click', bkRegionFilterCloseDeleteWindow);
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) bkRegionFilterCloseDeleteWindow();
+  });
+  document.body.appendChild(overlay);
 }
 
 function bkRegionFilterEnsureManagementButtons() {
@@ -221,8 +258,7 @@ function bkRegionFilterEnsureManagementButtons() {
     });
     row.querySelector('#bkDeleteRegionButton')?.addEventListener('click', (event) => {
       event.stopPropagation();
-      const select = document.getElementById('bkRegionAreaFilter');
-      bkRegionFilterDeleteRegion(select?.value || BK_REGION_FILTER_ALL);
+      bkRegionFilterOpenDeleteWindow();
     });
   }
 
@@ -318,6 +354,10 @@ function bkRegionFilterSchedule() {
     bkRegionFilterApply();
   });
 }
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') bkRegionFilterCloseDeleteWindow();
+});
 
 new MutationObserver(bkRegionFilterSchedule).observe(document.documentElement, {
   childList: true,
