@@ -66,10 +66,6 @@ function getCompactApiaryScroller() {
   }) || null;
 }
 
-function readPageScrollTop() {
-  return window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
-}
-
 function applyCompactApiaryTop() {
   compactRaf = 0;
   markCompactApiaryLines();
@@ -80,9 +76,12 @@ function applyCompactApiaryTop() {
   const blocked = document.body.classList.contains('bk-apiary-detail-open')
     || document.body.classList.contains('bk-apiary-edit-open');
 
+  // Only the Apiary list's own scroll position controls compact mode.
+  // Using window/page scroll here caused a feedback loop: collapsing the header
+  // changed window.scrollY, which immediately expanded it again, creating the
+  // visible jumping/jiggling effect.
   const listScrolled = Boolean(scroller && scroller.scrollTop > 10);
-  const pageScrolled = readPageScrollTop() > 10;
-  const shouldCompact = Boolean(apiariesActive && !blocked && (listScrolled || pageScrolled));
+  const shouldCompact = Boolean(apiariesActive && !blocked && listScrolled);
 
   document.body.classList.toggle('bk-apiary-list-compact-top', shouldCompact);
 }
@@ -104,8 +103,6 @@ function watchCompactApiaryScroller() {
   updateCompactApiaryTop();
 }
 
-window.addEventListener('scroll', updateCompactApiaryTop, { passive: true });
-document.addEventListener('scroll', updateCompactApiaryTop, true);
 window.addEventListener('resize', updateCompactApiaryTop, { passive: true });
 window.addEventListener('bk-open-apiary-detail', () => {
   document.body.classList.remove('bk-apiary-list-compact-top');
