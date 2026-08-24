@@ -15,6 +15,11 @@ function getApiaryDetailPanel() {
 function scrollApiaryDetailsIntoView() {
   if (!window.matchMedia("(max-width: 768px)").matches) return;
 
+  // In list-only mode the detail screen is fixed and slides over the list.
+  // Calling scrollIntoView on that fixed panel also moves the page underneath it,
+  // which can cause a visible jump when opening an Apiary.
+  if (document.body.classList.contains('bk-apiaries-list-only')) return;
+
   window.setTimeout(() => {
     const detailPanel = getApiaryDetailPanel();
     if (!detailPanel) return;
