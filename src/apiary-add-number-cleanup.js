@@ -15,16 +15,19 @@ function bkSetNativeInputValue(input, value) {
 function bkNotifyReact(input, value) {
   bkSetNativeInputValue(input, value);
   input.dispatchEvent(new Event('input', { bubbles: true }));
-  input.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
 function bkHandleAddApiaryNumberFocus(input) {
   if (!input || input.tagName !== 'INPUT' || input.type !== 'number') return;
   if (!bkAddApiaryModal(input)) return;
+
   if (String(input.value) === '0') {
+    // Clear only the visible native value here. Do not dispatch an input/change
+    // event for the empty string because the React onChange handler converts
+    // empty input straight back to 0. The next real keystroke will update React.
     requestAnimationFrame(() => {
       if (document.activeElement === input && String(input.value) === '0') {
-        bkNotifyReact(input, '');
+        bkSetNativeInputValue(input, '');
       }
     });
   }
