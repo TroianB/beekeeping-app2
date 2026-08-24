@@ -113,6 +113,16 @@ function bkRegionFilterGetScroller() {
   return scroller instanceof HTMLElement ? scroller : null;
 }
 
+function bkRegionFilterGetTopButtonRow() {
+  const search = document.querySelector(BK_REGION_FILTER_SEARCH_SELECTOR);
+  const container = search?.parentElement;
+  if (!container) return null;
+  return Array.from(container.children).find((child) => {
+    if (!(child instanceof HTMLElement)) return false;
+    return Array.from(child.querySelectorAll('button')).some((button) => button.textContent.trim().toLowerCase().includes('add apiary'));
+  }) || null;
+}
+
 function bkRegionFilterRows(scroller) {
   return Array.from(scroller?.children || []).filter((row) => {
     return row instanceof HTMLElement && row.querySelector('input[type="checkbox"]');
@@ -134,16 +144,47 @@ function bkRegionFilterEntries(scroller) {
   return entries;
 }
 
+function bkRegionFilterAddRegion() {
+  const name = bkRegionFilterClean(window.prompt('New Region name:') || '');
+  if (!name) return;
+
+  const existing = bkRegionFilterAllRegions();
+  if (existing.some((region) => bkRegionFilterNorm(region) === bkRegionFilterNorm(name))) {
+    window.alert('This Region already exists.');
+    return;
+  }
+
+  const store = bkRegionFilterReadStore();
+  store.areas = bkRegionFilterUnique([...(store.areas || []), name]);
+  store.regionOrder = Array.from(new Set([...(store.regionOrder || []), bkRegionFilterKey(name)]));
+  bkRegionFilterWriteStore(store);
+  bkRegionFilterSetStoredValue(bkRegionFilterKey(name));
+  bkRegionFilterApplyRepeated();
+}
+
 function bkRegionFilterDeleteRegion(regionKey) {
-  if (!regionKey || regionKey === BK_REGION_FILTER_ALL || regionKey === BK_REGION_FILTER_NO_REGION_KEY) return;
+  let targetKey = regionKey;
   const regions = bkRegionFilterAllRegions();
-  const region = regions.find((item) => bkRegionFilterKey(item) === regionKey);
+
+  if (!targetKey || targetKey === BK_REGION_FILTER_ALL || targetKey === BK_REGION_FILTER_NO_REGION_KEY) {
+    if (!regions.length) return;
+    const typed = bkRegionFilterClean(window.prompt(`Region to delete:\n${regions.join(', ')}`) || '');
+    if (!typed) return;
+    const matched = regions.find((item) => bkRegionFilterNorm(item) === bkRegionFilterNorm(typed));
+    if (!matched) {
+      window.alert('Region not found.');
+      return;
+    }
+    targetKey = bkRegionFilterKey(matched);
+  }
+
+  const region = regions.find((item) => bkRegionFilterKey(item) === targetKey);
   if (!region) return;
   if (!window.confirm(`Delete Region/Area "${region}"?`)) return;
 
   const store = bkRegionFilterReadStore();
   store.areas = (store.areas || []).filter((item) => bkRegionFilterNorm(item) !== bkRegionFilterNorm(region));
-  store.regionOrder = (store.regionOrder || []).filter((key) => key !== regionKey);
+  store.regionOrder = (store.regionOrder || []).filter((key) => key !== targetKey);
   store.byName = { ...(store.byName || {}) };
   Object.keys(store.byName).forEach((name) => {
     if (bkRegionFilterNorm(store.byName[name]) === bkRegionFilterNorm(region)) delete store.byName[name];
@@ -161,37 +202,55 @@ function bkRegionFilterDeleteRegion(regionKey) {
   bkRegionFilterApplyRepeated();
 }
 
+function bkRegionFilterEnsureManagementButtons() {
+  const topRow = bkRegionFilterGetTopButtonRow();
+  const search = document.querySelector(BK_REGION_FILTER_SEARCH_SELECTOR);
+  if (!topRow || !search) return;
+
+  let row = document.getElementById('bkRegionManagementControls');
+  if (!row) {
+    row = document.createElement('div');
+    row.id = 'bkRegionManagementControls';
+    row.innerHTML = `
+      <button type="button" id="bkAddRegionButton">Add Region</button>
+      <button type="button" id="bkDeleteRegionButton">Delete Region</button>
+    `;
+    row.querySelector('#bkAddRegionButton')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      bkRegionFilterAddRegion();
+    });
+    row.querySelector('#bkDeleteRegionButton')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const select = document.getElementById('bkRegionAreaFilter');
+      bkRegionFilterDeleteRegion(select?.value || BK_REGION_FILTER_ALL);
+    });
+  }
+
+  if (row.parentElement !== topRow.parentElement || row.previousElementSibling !== topRow) {
+    topRow.insertAdjacentElement('afterend', row);
+  }
+}
+
 function bkRegionFilterEnsureDropdown(scroller) {
   const cell = bkRegionFilterGetHeaderCell();
   if (!cell) return null;
 
   cell.classList.add('bk-region-list-filter-cell');
-  let wrap = cell.querySelector('.bk-region-list-filter-wrap');
-  if (!wrap) {
+  let select = cell.querySelector('#bkRegionAreaFilter');
+  if (!select) {
     cell.textContent = '';
-    wrap = document.createElement('div');
-    wrap.className = 'bk-region-list-filter-wrap';
-    wrap.innerHTML = `
-      <select id="bkRegionAreaFilter" class="bk-region-list-filter-select" aria-label="Filter Apiaries by Region or Area"></select>
-      <button type="button" class="bk-region-list-delete-button">Delete Region</button>
-    `;
-    cell.appendChild(wrap);
-
-    const select = wrap.querySelector('#bkRegionAreaFilter');
-    const deleteButton = wrap.querySelector('.bk-region-list-delete-button');
-    ['click', 'pointerdown', 'mousedown'].forEach((name) => {
-      select.addEventListener(name, (event) => event.stopPropagation());
-      deleteButton.addEventListener(name, (event) => event.stopPropagation());
-    });
+    select = document.createElement('select');
+    select.id = 'bkRegionAreaFilter';
+    select.className = 'bk-region-list-filter-select';
+    select.setAttribute('aria-label', 'Filter Apiaries by Region or Area');
+    ['click', 'pointerdown', 'mousedown'].forEach((name) => select.addEventListener(name, (event) => event.stopPropagation()));
     select.addEventListener('change', () => {
       bkRegionFilterSetStoredValue(select.value || BK_REGION_FILTER_ALL);
       bkRegionFilterApplyRepeated();
     });
-    deleteButton.addEventListener('click', () => bkRegionFilterDeleteRegion(select.value));
+    cell.appendChild(select);
   }
 
-  const select = wrap.querySelector('#bkRegionAreaFilter');
-  const deleteButton = wrap.querySelector('.bk-region-list-delete-button');
   const entries = bkRegionFilterEntries(scroller);
   const signature = entries.map((entry) => `${entry.value}:${entry.label}`).join('\u0001');
   if (select.dataset.regionFilterSignature !== signature) {
@@ -211,8 +270,6 @@ function bkRegionFilterEnsureDropdown(scroller) {
   const nextValue = validValues.includes(storedValue) ? storedValue : BK_REGION_FILTER_ALL;
   if (select.value !== nextValue) select.value = nextValue;
   if (storedValue !== nextValue) bkRegionFilterSetStoredValue(nextValue);
-
-  deleteButton.disabled = nextValue === BK_REGION_FILTER_ALL || nextValue === BK_REGION_FILTER_NO_REGION_KEY;
   return select;
 }
 
@@ -229,6 +286,7 @@ function bkRegionFilterApply() {
 
   bkRegionFilterApplying = true;
   try {
+    bkRegionFilterEnsureManagementButtons();
     const select = bkRegionFilterEnsureDropdown(scroller);
     const filterValue = select?.value || BK_REGION_FILTER_ALL;
     const showAll = filterValue === BK_REGION_FILTER_ALL;
