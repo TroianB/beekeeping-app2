@@ -1,3 +1,5 @@
+let bkCleaningAddApiaryNumber = false;
+
 function bkAddApiaryNumberModalTitle(modal) {
   const panel = modal?.children?.[0];
   const title = panel?.children?.[0];
@@ -15,17 +17,25 @@ function bkSetAddApiaryInputValue(input, value) {
   else input.value = value;
 }
 
+function bkSetAddApiaryInputValueAndNotify(input, value) {
+  if (!input || input.value === value) return;
+  bkCleaningAddApiaryNumber = true;
+  bkSetAddApiaryInputValue(input, value);
+  input.dispatchEvent(new Event('input', { bubbles: true }));
+  bkCleaningAddApiaryNumber = false;
+}
+
 function bkCleanAddApiaryNumberInput(input, { clearPlainZero = false } = {}) {
-  if (!input || input.type !== 'number' || !bkIsAddApiaryNumberModal(input)) return;
+  if (bkCleaningAddApiaryNumber || !input || input.type !== 'number' || !bkIsAddApiaryNumberModal(input)) return;
 
   const value = String(input.value ?? '');
   if (clearPlainZero && value === '0') {
-    bkSetAddApiaryInputValue(input, '');
+    bkSetAddApiaryInputValueAndNotify(input, '');
     return;
   }
 
   const cleaned = value.replace(/^0+(?=\d)/, '');
-  if (cleaned !== value) bkSetAddApiaryInputValue(input, cleaned);
+  if (cleaned !== value) bkSetAddApiaryInputValueAndNotify(input, cleaned);
 }
 
 document.addEventListener('focusin', (event) => {
