@@ -102,7 +102,11 @@ function updateRowHighlights() {
 function hideNativeDeleteButtons() {
   if (!getSearchInput()) return;
   document.querySelectorAll('button').forEach((button) => {
-    if (button.id === 'bkDeleteApiaryButton' || button.id === 'bkCancelDeleteApiaryButton') return;
+    if (
+      button.id === 'bkDeleteApiaryButton'
+      || button.id === 'bkCancelDeleteApiaryButton'
+      || button.id === 'bkDeleteRegionButton'
+    ) return;
     const text = button.textContent.trim().toLowerCase();
     if (text === 'delete' || text.startsWith('delete ')) {
       button.style.display = 'none';
