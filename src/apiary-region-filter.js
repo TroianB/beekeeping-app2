@@ -34,6 +34,12 @@ function bkRegionFilterReadJson(key, fallback) {
   }
 }
 
+function bkRegionFilterWriteJson(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {}
+}
+
 function bkRegionFilterUnique(values) {
   const seen = new Set();
   return (values || []).map(bkRegionFilterClean).filter(Boolean).filter((region) => {
@@ -60,7 +66,16 @@ function bkRegionFilterReadStore() {
   const raw = bkRegionFilterReadJson('bk.regionAreas', null);
   const areas = Array.isArray(raw?.areas) ? raw.areas : [];
   const byName = raw?.byName && typeof raw.byName === 'object' ? raw.byName : {};
-  return { areas, byName };
+  const regionOrder = Array.isArray(raw?.regionOrder) ? raw.regionOrder : [];
+  return { areas, byName, regionOrder };
+}
+
+function bkRegionFilterWriteStore(store) {
+  bkRegionFilterWriteJson('bk.regionAreas', {
+    areas: bkRegionFilterUnique(store.areas || []),
+    byName: store.byName || {},
+    regionOrder: Array.from(new Set((store.regionOrder || []).filter(Boolean))),
+  });
 }
 
 function bkRegionFilterAllRegions() {
@@ -105,9 +120,7 @@ function bkRegionFilterRows(scroller) {
 }
 
 function bkRegionFilterHasNoRegionRows(scroller) {
-  return bkRegionFilterRows(scroller).some((row) => {
-    return (row.dataset.regionKey || '') === BK_REGION_FILTER_NO_REGION_KEY;
-  });
+  return bkRegionFilterRows(scroller).some((row) => (row.dataset.regionKey || '') === BK_REGION_FILTER_NO_REGION_KEY);
 }
 
 function bkRegionFilterEntries(scroller) {
@@ -121,28 +134,64 @@ function bkRegionFilterEntries(scroller) {
   return entries;
 }
 
+function bkRegionFilterDeleteRegion(regionKey) {
+  if (!regionKey || regionKey === BK_REGION_FILTER_ALL || regionKey === BK_REGION_FILTER_NO_REGION_KEY) return;
+  const regions = bkRegionFilterAllRegions();
+  const region = regions.find((item) => bkRegionFilterKey(item) === regionKey);
+  if (!region) return;
+  if (!window.confirm(`Delete Region/Area "${region}"?`)) return;
+
+  const store = bkRegionFilterReadStore();
+  store.areas = (store.areas || []).filter((item) => bkRegionFilterNorm(item) !== bkRegionFilterNorm(region));
+  store.regionOrder = (store.regionOrder || []).filter((key) => key !== regionKey);
+  store.byName = { ...(store.byName || {}) };
+  Object.keys(store.byName).forEach((name) => {
+    if (bkRegionFilterNorm(store.byName[name]) === bkRegionFilterNorm(region)) delete store.byName[name];
+  });
+  bkRegionFilterWriteStore(store);
+
+  const hives = bkRegionFilterReadHives().map((hive) => {
+    if (bkRegionFilterNorm(hive?.regionArea) !== bkRegionFilterNorm(region)) return hive;
+    const copy = { ...hive };
+    delete copy.regionArea;
+    return copy;
+  });
+  bkRegionFilterWriteJson('bk.hives', hives);
+  bkRegionFilterSetStoredValue(BK_REGION_FILTER_ALL);
+  bkRegionFilterApplyRepeated();
+}
+
 function bkRegionFilterEnsureDropdown(scroller) {
   const cell = bkRegionFilterGetHeaderCell();
   if (!cell) return null;
 
   cell.classList.add('bk-region-list-filter-cell');
-  let select = cell.querySelector('#bkRegionAreaFilter');
-  if (!select) {
+  let wrap = cell.querySelector('.bk-region-list-filter-wrap');
+  if (!wrap) {
     cell.textContent = '';
-    select = document.createElement('select');
-    select.id = 'bkRegionAreaFilter';
-    select.className = 'bk-region-list-filter-select';
-    select.setAttribute('aria-label', 'Filter Apiaries by Region or Area');
-    select.addEventListener('click', (event) => event.stopPropagation());
-    select.addEventListener('pointerdown', (event) => event.stopPropagation());
-    select.addEventListener('mousedown', (event) => event.stopPropagation());
+    wrap = document.createElement('div');
+    wrap.className = 'bk-region-list-filter-wrap';
+    wrap.innerHTML = `
+      <select id="bkRegionAreaFilter" class="bk-region-list-filter-select" aria-label="Filter Apiaries by Region or Area"></select>
+      <button type="button" class="bk-region-list-delete-button">Delete Region</button>
+    `;
+    cell.appendChild(wrap);
+
+    const select = wrap.querySelector('#bkRegionAreaFilter');
+    const deleteButton = wrap.querySelector('.bk-region-list-delete-button');
+    ['click', 'pointerdown', 'mousedown'].forEach((name) => {
+      select.addEventListener(name, (event) => event.stopPropagation());
+      deleteButton.addEventListener(name, (event) => event.stopPropagation());
+    });
     select.addEventListener('change', () => {
       bkRegionFilterSetStoredValue(select.value || BK_REGION_FILTER_ALL);
       bkRegionFilterApplyRepeated();
     });
-    cell.appendChild(select);
+    deleteButton.addEventListener('click', () => bkRegionFilterDeleteRegion(select.value));
   }
 
+  const select = wrap.querySelector('#bkRegionAreaFilter');
+  const deleteButton = wrap.querySelector('.bk-region-list-delete-button');
   const entries = bkRegionFilterEntries(scroller);
   const signature = entries.map((entry) => `${entry.value}:${entry.label}`).join('\u0001');
   if (select.dataset.regionFilterSignature !== signature) {
@@ -162,12 +211,13 @@ function bkRegionFilterEnsureDropdown(scroller) {
   const nextValue = validValues.includes(storedValue) ? storedValue : BK_REGION_FILTER_ALL;
   if (select.value !== nextValue) select.value = nextValue;
   if (storedValue !== nextValue) bkRegionFilterSetStoredValue(nextValue);
+
+  deleteButton.disabled = nextValue === BK_REGION_FILTER_ALL || nextValue === BK_REGION_FILTER_NO_REGION_KEY;
   return select;
 }
 
 function bkRegionFilterSetHidden(element, hidden) {
   if (!element) return;
-  // Use a class instead of the HTML hidden attribute because other list CSS uses display:grid !important.
   if (element.hidden) element.hidden = false;
   element.classList.toggle(BK_REGION_FILTER_HIDDEN_CLASS, Boolean(hidden));
 }
@@ -200,9 +250,7 @@ function bkRegionFilterApply() {
 }
 
 function bkRegionFilterApplyRepeated() {
-  [0, 40, 120, 260, 520].forEach((delay) => {
-    window.setTimeout(bkRegionFilterApply, delay);
-  });
+  [0, 40, 120, 260, 520].forEach((delay) => window.setTimeout(bkRegionFilterApply, delay));
 }
 
 function bkRegionFilterSchedule() {
