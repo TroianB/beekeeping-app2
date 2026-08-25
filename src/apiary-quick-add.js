@@ -10,7 +10,6 @@ function bkQuickRestoreReturnFlag() {
   } catch {}
 }
 
-// This module runs before React is mounted, so restore the one-time Apiaries flag first.
 bkQuickRestoreReturnFlag();
 
 function bkQuickReadJson(key, fallback) {
@@ -92,7 +91,6 @@ function bkQuickClearReturnToApiaries() {
 function bkQuickReturnToApiaries() {
   if (!bkQuickShouldReturnToApiaries()) return false;
 
-  // Only clear the flag once the Apiaries list is actually visible.
   if (document.querySelector(BK_QUICK_ADD_SEARCH)) {
     bkQuickClearReturnToApiaries();
     return true;
@@ -163,7 +161,7 @@ function bkQuickSave() {
 
   bkQuickMarkReturnToApiaries();
   bkQuickClose();
-  window.location.reload();
+  window.dispatchEvent(new CustomEvent('bk:quick-apiary-added', { detail: newApiary }));
 }
 
 function bkQuickOpen() {
