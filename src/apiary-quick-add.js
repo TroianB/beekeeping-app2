@@ -59,19 +59,30 @@ function bkQuickClose() {
   document.getElementById('bkQuickAddApiary')?.remove();
 }
 
+function bkQuickShouldReturnToApiaries() {
+  try { return sessionStorage.getItem(BK_QUICK_ADD_RETURN_KEY) === '1'; } catch { return false; }
+}
+
+function bkQuickClearReturnToApiaries() {
+  try { sessionStorage.removeItem(BK_QUICK_ADD_RETURN_KEY); } catch {}
+}
+
 function bkQuickReturnToApiaries() {
-  let shouldReturn = false;
-  try { shouldReturn = sessionStorage.getItem(BK_QUICK_ADD_RETURN_KEY) === '1'; } catch {}
-  if (!shouldReturn) return false;
+  if (!bkQuickShouldReturnToApiaries()) return false;
+
+  // Only clear the flag once the Apiaries list is actually visible.
+  if (document.querySelector(BK_QUICK_ADD_SEARCH)) {
+    bkQuickClearReturnToApiaries();
+    return true;
+  }
 
   const button = Array.from(document.querySelectorAll('button')).find((item) => {
     return item.textContent.trim().toLowerCase() === 'apiaries';
   });
   if (!button) return false;
 
-  try { sessionStorage.removeItem(BK_QUICK_ADD_RETURN_KEY); } catch {}
   button.click();
-  return true;
+  return false;
 }
 
 function bkQuickSave() {
@@ -199,4 +210,4 @@ new MutationObserver(() => {
   bkQuickReturnToApiaries();
 }).observe(document.documentElement, { childList: true, subtree: true });
 
-[0, 50, 150, 350, 700].forEach((delay) => window.setTimeout(bkQuickReturnToApiaries, delay));
+[0, 50, 150, 350, 700, 1200, 2000, 3000].forEach((delay) => window.setTimeout(bkQuickReturnToApiaries, delay));
