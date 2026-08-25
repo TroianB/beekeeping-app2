@@ -43,9 +43,26 @@ function renderApp() {
   );
 }
 
+function forceApiariesTab() {
+  const button = Array.from(document.querySelectorAll("button")).find(
+    (item) => item.textContent.trim().toLowerCase() === "apiaries"
+  );
+  if (!button) return false;
+  button.click();
+  return true;
+}
+
 window.addEventListener("bk:quick-apiary-added", () => {
+  try {
+    sessionStorage.setItem("bk.returnToApiariesAfterQuickAdd", "1");
+  } catch {}
+
   appVersion += 1;
   renderApp();
+
+  [0, 25, 100, 250, 500].forEach((delay) => {
+    window.setTimeout(forceApiariesTab, delay);
+  });
 });
 
 renderApp();
