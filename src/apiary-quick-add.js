@@ -1,5 +1,5 @@
 const BK_QUICK_ADD_SEARCH = '#root input[placeholder="Search apiaries..."]';
-const BK_QUICK_ADD_RETURN_KEY = 'bk.returnToApiariesAfterDelete';
+const BK_QUICK_ADD_RETURN_KEY = 'bk.returnToApiariesAfterQuickAdd';
 
 function bkQuickReadJson(key, fallback) {
   try {
@@ -57,6 +57,21 @@ function bkQuickToday() {
 
 function bkQuickClose() {
   document.getElementById('bkQuickAddApiary')?.remove();
+}
+
+function bkQuickReturnToApiaries() {
+  let shouldReturn = false;
+  try { shouldReturn = sessionStorage.getItem(BK_QUICK_ADD_RETURN_KEY) === '1'; } catch {}
+  if (!shouldReturn) return false;
+
+  const button = Array.from(document.querySelectorAll('button')).find((item) => {
+    return item.textContent.trim().toLowerCase() === 'apiaries';
+  });
+  if (!button) return false;
+
+  try { sessionStorage.removeItem(BK_QUICK_ADD_RETURN_KEY); } catch {}
+  button.click();
+  return true;
 }
 
 function bkQuickSave() {
@@ -179,3 +194,9 @@ document.addEventListener('click', (event) => {
 document.addEventListener('keydown', (event) => {
   if (event.key === 'Escape') bkQuickClose();
 });
+
+new MutationObserver(() => {
+  bkQuickReturnToApiaries();
+}).observe(document.documentElement, { childList: true, subtree: true });
+
+[0, 50, 150, 350, 700].forEach((delay) => window.setTimeout(bkQuickReturnToApiaries, delay));
