@@ -3,9 +3,12 @@
   inset: 0 !important;
   z-index: 1200 !important;
   display: grid !important;
-  place-items: center !important;
+  align-items: start !important;
+  justify-items: center !important;
   padding: 1rem !important;
+  padding-top: calc(1rem + env(safe-area-inset-top, 0px)) !important;
   background: rgba(0,0,0,.78) !important;
+  overflow-y: auto !important;
 }
 #bkQuickAddApiary .bk-quick-apiary-dialog {
   width: min(28rem, calc(100vw - 2rem)) !important;
@@ -70,8 +73,9 @@
 }
 @media (max-width: 520px) {
   #bkQuickAddApiary {
-    align-items: end !important;
+    align-items: start !important;
     padding: .65rem !important;
+    padding-top: calc(.65rem + env(safe-area-inset-top, 0px)) !important;
     padding-bottom: calc(.65rem + env(safe-area-inset-bottom, 0px)) !important;
   }
   #bkQuickAddApiary .bk-quick-apiary-dialog {
