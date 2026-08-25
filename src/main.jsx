@@ -32,8 +32,20 @@ import "./apiary-region-edit.js";
 import "./apiary-quick-add.js";
 import "./dashboard-apiary-swipe.js";
 
-createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <MonitoringShell />
-  </React.StrictMode>
-);
+const root = createRoot(document.getElementById("root"));
+let appVersion = 0;
+
+function renderApp() {
+  root.render(
+    <React.StrictMode>
+      <MonitoringShell key={appVersion} />
+    </React.StrictMode>
+  );
+}
+
+window.addEventListener("bk:quick-apiary-added", () => {
+  appVersion += 1;
+  renderApp();
+});
+
+renderApp();
