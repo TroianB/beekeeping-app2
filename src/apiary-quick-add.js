@@ -101,12 +101,11 @@ function bkQuickSave() {
     treatmentDate: '',
   };
 
-  // Appending to storage preserves the Apiary at the bottom of its Region group.
   bkQuickWriteJson('bk.hives', [...list, newApiary]);
 
   const store = bkQuickReadJson('bk.regionAreas', null) || {};
-  const areas = Array.isArray(store.areas) ? store.areas : [];
-  const regionOrder = Array.isArray(store.regionOrder) ? store.regionOrder : [];
+  const areas = Array.isArray(store.areas) ? [...store.areas] : [];
+  const regionOrder = Array.isArray(store.regionOrder) ? [...store.regionOrder] : [];
   const byName = store.byName && typeof store.byName === 'object' ? { ...store.byName } : {};
   if (!areas.some((item) => bkQuickNorm(item) === bkQuickNorm(region))) areas.push(region);
   const regionKey = `region:${bkQuickNorm(region)}`;
@@ -168,8 +167,9 @@ function bkQuickOpen() {
 document.addEventListener('click', (event) => {
   const button = event.target.closest?.('button');
   if (!button || !document.querySelector(BK_QUICK_ADD_SEARCH)) return;
-  if (button.textContent.trim().toLowerCase() !== 'add apiary') return;
   if (button.closest('#bkQuickAddApiary')) return;
+  const text = button.textContent.trim().toLowerCase();
+  if (!text.includes('add apiary')) return;
   event.preventDefault();
   event.stopPropagation();
   event.stopImmediatePropagation?.();
