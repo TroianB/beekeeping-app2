@@ -1,5 +1,17 @@
 const BK_QUICK_ADD_SEARCH = '#root input[placeholder="Search apiaries..."]';
 const BK_QUICK_ADD_RETURN_KEY = 'bk.returnToApiariesAfterQuickAdd';
+const BK_QUICK_ADD_PERSIST_KEY = 'bk2.returnToApiariesAfterQuickAddPersistent';
+
+function bkQuickRestoreReturnFlag() {
+  try {
+    if (localStorage.getItem(BK_QUICK_ADD_PERSIST_KEY) === '1') {
+      sessionStorage.setItem(BK_QUICK_ADD_RETURN_KEY, '1');
+    }
+  } catch {}
+}
+
+// This module runs before React is mounted, so restore the one-time Apiaries flag first.
+bkQuickRestoreReturnFlag();
 
 function bkQuickReadJson(key, fallback) {
   try {
@@ -60,11 +72,21 @@ function bkQuickClose() {
 }
 
 function bkQuickShouldReturnToApiaries() {
-  try { return sessionStorage.getItem(BK_QUICK_ADD_RETURN_KEY) === '1'; } catch { return false; }
+  try {
+    return sessionStorage.getItem(BK_QUICK_ADD_RETURN_KEY) === '1' || localStorage.getItem(BK_QUICK_ADD_PERSIST_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function bkQuickMarkReturnToApiaries() {
+  try { sessionStorage.setItem(BK_QUICK_ADD_RETURN_KEY, '1'); } catch {}
+  try { localStorage.setItem(BK_QUICK_ADD_PERSIST_KEY, '1'); } catch {}
 }
 
 function bkQuickClearReturnToApiaries() {
   try { sessionStorage.removeItem(BK_QUICK_ADD_RETURN_KEY); } catch {}
+  try { localStorage.removeItem(BK_QUICK_ADD_PERSIST_KEY); } catch {}
 }
 
 function bkQuickReturnToApiaries() {
@@ -139,7 +161,7 @@ function bkQuickSave() {
   byName[name] = region;
   bkQuickWriteJson('bk.regionAreas', { areas, regionOrder, byName });
 
-  try { sessionStorage.setItem(BK_QUICK_ADD_RETURN_KEY, '1'); } catch {}
+  bkQuickMarkReturnToApiaries();
   bkQuickClose();
   window.location.reload();
 }
