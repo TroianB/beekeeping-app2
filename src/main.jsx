@@ -65,4 +65,25 @@ window.addEventListener("bk:quick-apiary-added", () => {
   });
 });
 
+// Keep the user on the Apiaries page after deleting one or more selected apiaries.
+document.addEventListener("click", (event) => {
+  const button = event.target.closest?.("button");
+  if (!button) return;
+
+  const search = document.querySelector('#root input[placeholder="Search apiaries..."]');
+  if (!search) return;
+
+  const text = button.textContent.trim().toLowerCase();
+  if (!(text === "delete" || text === "delete apiary" || text === "delete apiaries")) return;
+  if (text.includes("region")) return;
+
+  const hasSelectedApiary = Array.from(document.querySelectorAll('#root input[type="checkbox"]'))
+    .some((checkbox) => checkbox.checked);
+  if (!hasSelectedApiary) return;
+
+  [0, 25, 100, 250, 500].forEach((delay) => {
+    window.setTimeout(forceApiariesTab, delay);
+  });
+}, true);
+
 renderApp();
