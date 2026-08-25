@@ -1,0 +1,88 @@
+#bkQuickAddApiary {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1200 !important;
+  display: grid !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(0,0,0,.78) !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-dialog {
+  width: min(28rem, calc(100vw - 2rem)) !important;
+  border: 1px solid rgba(234,179,8,.55) !important;
+  border-radius: 1rem !important;
+  background: #050505 !important;
+  padding: 1rem !important;
+  box-shadow: 0 20px 55px rgba(0,0,0,.7) !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-title {
+  color: #fde047 !important;
+  font-size: 1.45rem !important;
+  font-weight: 950 !important;
+  margin-bottom: .9rem !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-field {
+  display: grid !important;
+  gap: .35rem !important;
+  margin-top: .75rem !important;
+  color: #fde68a !important;
+  font-weight: 850 !important;
+}
+#bkQuickAddApiary input,
+#bkQuickAddApiary select {
+  width: 100% !important;
+  min-height: 3rem !important;
+  border: 1px solid rgba(234,179,8,.45) !important;
+  border-radius: .8rem !important;
+  background: rgba(0,0,0,.7) !important;
+  color: #fef3c7 !important;
+  padding: .72rem .8rem !important;
+  font-size: 1rem !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-error {
+  min-height: 1.4rem !important;
+  margin-top: .55rem !important;
+  color: #fca5a5 !important;
+  font-size: .92rem !important;
+  font-weight: 800 !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-actions {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: .6rem !important;
+  margin-top: .85rem !important;
+}
+#bkQuickAddApiary button {
+  min-height: 2.9rem !important;
+  border-radius: .8rem !important;
+  padding: .7rem .8rem !important;
+  font-weight: 950 !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-cancel {
+  border: 1px solid rgba(234,179,8,.4) !important;
+  background: rgba(234,179,8,.08) !important;
+  color: #fde047 !important;
+}
+#bkQuickAddApiary .bk-quick-apiary-save {
+  border: 1px solid rgba(234,179,8,.7) !important;
+  background: #eab308 !important;
+  color: #000 !important;
+}
+@media (max-width: 520px) {
+  #bkQuickAddApiary {
+    align-items: end !important;
+    padding: .65rem !important;
+    padding-bottom: calc(.65rem + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  #bkQuickAddApiary .bk-quick-apiary-dialog {
+    width: 100% !important;
+    max-height: calc(100dvh - 1.3rem) !important;
+    overflow-y: auto !important;
+    padding: .9rem !important;
+  }
+  #bkQuickAddApiary .bk-quick-apiary-title { font-size: 1.25rem !important; }
+  #bkQuickAddApiary input,
+  #bkQuickAddApiary select { min-height: 3.2rem !important; font-size: 1.05rem !important; }
+  #bkQuickAddApiary .bk-quick-apiary-actions { grid-template-columns: 1fr !important; }
+  #bkQuickAddApiary button { min-height: 3.15rem !important; }
+}
