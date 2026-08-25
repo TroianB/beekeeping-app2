@@ -76,7 +76,13 @@ function Stat({ title, value, accent="text-yellow-100" }) { return <Card><Header
 function DetailRow({ label, value, valueClass="" }) { return <div className="flex items-center justify-between rounded-xl border border-yellow-500/20 bg-black/30 px-3 py-2"><span className="opacity-80">{label}</span><span className={`font-bold ${valueClass}`}>{value}</span></div>; }
 
 export default function BeekeepingApp() {
-  const [tab, setTab] = useState("dashboard");
+  const [tab, setTab] = useState(() => {
+    try {
+      return sessionStorage.getItem("bk.returnToApiariesAfterQuickAdd") === "1" ? "apiaries" : "dashboard";
+    } catch {
+      return "dashboard";
+    }
+  });
   const [hives, setHives] = useState(() => cleanHives(storage.get("bk.hives", seedHives)));
   const [tasks, setTasks] = useState(() => storage.get("bk.tasks", seedTasks));
   const [inventory, setInventory] = useState(() => storage.get("bk.inventory", { boxes: 120 }));
