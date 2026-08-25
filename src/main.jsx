@@ -15,6 +15,7 @@ import "./apiary-list-compact-top.css";
 import "./apiary-region-area.css";
 import "./apiary-region-filter.css";
 import "./apiary-region-edit.css";
+import "./apiary-quick-add.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
@@ -28,6 +29,7 @@ import "./apiary-list-compact-top.js";
 import "./apiary-region-area.js";
 import "./apiary-region-filter.js";
 import "./apiary-region-edit.js";
+import "./apiary-quick-add.js";
 import "./dashboard-apiary-swipe.js";
 
 createRoot(document.getElementById("root")).render(
