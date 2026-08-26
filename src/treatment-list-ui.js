@@ -1,6 +1,7 @@
 let bkTreatmentUiRaf = 0;
 let bkTreatmentModal = null;
 let bkTreatmentActiveBlock = null;
+let bkTreatmentAddBusy = false;
 
 function bkTreatmentBlocks() {
   return Array.from(document.querySelectorAll('#root .fixed.inset-0.z-50 .space-y-2')).filter((box) => {
@@ -32,6 +33,7 @@ function bkTreatmentCloseModal() {
   bkTreatmentModal?.remove();
   bkTreatmentModal = null;
   bkTreatmentActiveBlock = null;
+  bkTreatmentAddBusy = false;
 }
 
 function bkTreatmentRenderModalList(modal, block) {
@@ -81,26 +83,108 @@ function bkTreatmentShowAddRow(modal) {
   window.setTimeout(() => input?.focus(), 0);
 }
 
-function bkTreatmentRefreshAfterAdd(modal, block, treatmentName, attempt = 0) {
-  if (!modal?.isConnected) return;
-  const currentBlock = bkTreatmentCurrentBlock(block);
-  if (currentBlock) bkTreatmentActiveBlock = currentBlock;
-  const select = bkTreatmentSelectFromBlock(currentBlock);
-  const exists = Array.from(select?.options || []).some((option) => {
-    return String(option.value || '').trim().toLowerCase() === String(treatmentName || '').trim().toLowerCase();
-  });
+function bkTreatmentSetAddBusy(modal, busy) {
+  bkTreatmentAddBusy = busy;
+  const save = modal?.querySelector('.bk-treatment-modal-add-save');
+  const add = modal?.querySelector('.bk-treatment-modal-add');
+  if (save) {
+    save.disabled = busy;
+    save.textContent = busy ? 'Saving…' : 'Save';
+  }
+  if (add) add.disabled = busy;
+}
 
-  if (exists) {
-    bkTreatmentHideAddRow(modal);
-    bkTreatmentRenderModalList(modal, currentBlock);
-    const remove = modal.querySelector('.bk-treatment-modal-remove');
-    const realRemove = currentBlock?.querySelector('.bk-remove-treatment-button');
-    if (remove) remove.disabled = Boolean(realRemove?.disabled);
+function bkTreatmentWaitForNativeAddForm(modal, treatmentName) {
+  const root = document.getElementById('root');
+  if (!root || !modal?.isConnected) {
+    bkTreatmentSetAddBusy(modal, false);
     return;
   }
 
-  if (attempt >= 40) return;
-  window.setTimeout(() => bkTreatmentRefreshAfterAdd(modal, currentBlock, treatmentName, attempt + 1), 25);
+  let finished = false;
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    observer.disconnect();
+    clearTimeout(timeout);
+  };
+
+  const tryFill = () => {
+    const currentBlock = bkTreatmentCurrentBlock(bkTreatmentActiveBlock);
+    if (!currentBlock) return false;
+    bkTreatmentActiveBlock = currentBlock;
+
+    const nativeInput = Array.from(currentBlock.querySelectorAll('input')).find((item) => /new treatment name/i.test(String(item.placeholder || '')));
+    if (!nativeInput) return false;
+
+    const nativeAdd = Array.from(currentBlock.querySelectorAll('button')).find((button) => button.textContent.trim() === 'Add');
+    if (!nativeAdd) return false;
+
+    finish();
+
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    descriptor?.set?.call(nativeInput, treatmentName);
+    nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+    requestAnimationFrame(() => {
+      const liveBlock = bkTreatmentCurrentBlock(currentBlock);
+      const liveAdd = Array.from(liveBlock?.querySelectorAll('button') || []).find((button) => button.textContent.trim() === 'Add');
+      liveAdd?.click();
+      bkTreatmentWaitForNewOption(modal, treatmentName);
+    });
+    return true;
+  };
+
+  const observer = new MutationObserver(() => tryFill());
+  observer.observe(root, { childList: true, subtree: true });
+  const timeout = window.setTimeout(() => {
+    finish();
+    bkTreatmentSetAddBusy(modal, false);
+  }, 2000);
+
+  tryFill();
+}
+
+function bkTreatmentWaitForNewOption(modal, treatmentName) {
+  const root = document.getElementById('root');
+  if (!root || !modal?.isConnected) {
+    bkTreatmentSetAddBusy(modal, false);
+    return;
+  }
+
+  let finished = false;
+  const finish = () => {
+    if (finished) return;
+    finished = true;
+    observer.disconnect();
+    clearTimeout(timeout);
+  };
+
+  const tryRefresh = () => {
+    const currentBlock = bkTreatmentCurrentBlock(bkTreatmentActiveBlock);
+    if (!currentBlock) return false;
+    bkTreatmentActiveBlock = currentBlock;
+    const select = bkTreatmentSelectFromBlock(currentBlock);
+    const exists = Array.from(select?.options || []).some((option) => String(option.value || '').trim().toLowerCase() === treatmentName.toLowerCase());
+    if (!exists) return false;
+
+    finish();
+    bkTreatmentHideAddRow(modal);
+    bkTreatmentRenderModalList(modal, currentBlock);
+    bkTreatmentSetAddBusy(modal, false);
+    return true;
+  };
+
+  const observer = new MutationObserver(() => tryRefresh());
+  observer.observe(root, { childList: true, subtree: true });
+  const timeout = window.setTimeout(() => {
+    finish();
+    bkTreatmentSetAddBusy(modal, false);
+    bkTreatmentRenderModalList(modal, bkTreatmentActiveBlock);
+  }, 2000);
+
+  tryRefresh();
 }
 
 function bkTreatmentRefreshAfterRemove(modal, block, removedName, attempt = 0) {
@@ -127,66 +211,25 @@ function bkTreatmentRefreshAfterRemove(modal, block, removedName, attempt = 0) {
   window.setTimeout(() => bkTreatmentRefreshAfterRemove(modal, currentBlock, removedName, attempt + 1), 25);
 }
 
-function bkTreatmentCommitAdd(modal, block) {
+function bkTreatmentCommitAdd(modal) {
+  if (bkTreatmentAddBusy) return;
   const input = modal?.querySelector('.bk-treatment-modal-add-input');
   const name = String(input?.value || '').trim();
-  let currentBlock = bkTreatmentCurrentBlock(block);
+  const currentBlock = bkTreatmentCurrentBlock(bkTreatmentActiveBlock);
   if (!name || !currentBlock) return;
-  bkTreatmentActiveBlock = currentBlock;
 
-  const realAddToggle = currentBlock.querySelector('.bk-new-treatment-button');
-  realAddToggle?.click();
-
-  window.setTimeout(() => {
-    currentBlock = bkTreatmentCurrentBlock(currentBlock);
-    if (!currentBlock) return;
-    bkTreatmentActiveBlock = currentBlock;
-
-    const nativeInput = Array.from(currentBlock.querySelectorAll('input')).find((item) => {
-      return /new treatment name/i.test(String(item.placeholder || ''));
-    });
-    const nativeAdd = Array.from(currentBlock.querySelectorAll('button')).find((button) => {
-      return button.textContent.trim() === 'Add';
-    });
-
-    if (!nativeInput || !nativeAdd) {
-      window.setTimeout(() => bkTreatmentCommitAddIntoNative(modal, currentBlock, name, 1), 25);
-      return;
-    }
-    bkTreatmentFillAndSaveNative(modal, currentBlock, nativeInput, nativeAdd, name);
-  }, 0);
-}
-
-function bkTreatmentCommitAddIntoNative(modal, block, name, attempt = 0) {
-  if (!modal?.isConnected || attempt > 20) return;
-  const currentBlock = bkTreatmentCurrentBlock(block);
-  if (!currentBlock) return;
-  bkTreatmentActiveBlock = currentBlock;
-
-  const nativeInput = Array.from(currentBlock.querySelectorAll('input')).find((item) => {
-    return /new treatment name/i.test(String(item.placeholder || ''));
-  });
-  const nativeAdd = Array.from(currentBlock.querySelectorAll('button')).find((button) => button.textContent.trim() === 'Add');
-
-  if (!nativeInput || !nativeAdd) {
-    window.setTimeout(() => bkTreatmentCommitAddIntoNative(modal, currentBlock, name, attempt + 1), 25);
+  const select = bkTreatmentSelectFromBlock(currentBlock);
+  const alreadyExists = Array.from(select?.options || []).some((option) => String(option.value || '').trim().toLowerCase() === name.toLowerCase());
+  if (alreadyExists) {
+    bkTreatmentHideAddRow(modal);
+    bkTreatmentRenderModalList(modal, currentBlock);
     return;
   }
-  bkTreatmentFillAndSaveNative(modal, currentBlock, nativeInput, nativeAdd, name);
-}
 
-function bkTreatmentFillAndSaveNative(modal, block, nativeInput, nativeAdd, name) {
-  const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-  descriptor?.set?.call(nativeInput, name);
-  nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
-  nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
-
-  window.setTimeout(() => {
-    const liveBlock = bkTreatmentCurrentBlock(block);
-    const liveAdd = Array.from(liveBlock?.querySelectorAll('button') || []).find((button) => button.textContent.trim() === 'Add');
-    liveAdd?.click();
-    bkTreatmentRefreshAfterAdd(modal, liveBlock, name);
-  }, 0);
+  bkTreatmentActiveBlock = currentBlock;
+  bkTreatmentSetAddBusy(modal, true);
+  currentBlock.querySelector('.bk-new-treatment-button')?.click();
+  bkTreatmentWaitForNativeAddForm(modal, name);
 }
 
 function bkTreatmentOpenModal(block) {
@@ -217,11 +260,13 @@ function bkTreatmentOpenModal(block) {
   });
 
   modal.querySelector('.bk-treatment-modal-add')?.addEventListener('click', () => bkTreatmentShowAddRow(modal));
-  modal.querySelector('.bk-treatment-modal-add-save')?.addEventListener('click', () => bkTreatmentCommitAdd(modal, bkTreatmentActiveBlock));
-  modal.querySelector('.bk-treatment-modal-add-cancel')?.addEventListener('click', () => bkTreatmentHideAddRow(modal));
+  modal.querySelector('.bk-treatment-modal-add-save')?.addEventListener('click', () => bkTreatmentCommitAdd(modal));
+  modal.querySelector('.bk-treatment-modal-add-cancel')?.addEventListener('click', () => {
+    if (!bkTreatmentAddBusy) bkTreatmentHideAddRow(modal);
+  });
   modal.querySelector('.bk-treatment-modal-add-input')?.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') bkTreatmentCommitAdd(modal, bkTreatmentActiveBlock);
-    if (event.key === 'Escape') bkTreatmentHideAddRow(modal);
+    if (event.key === 'Enter') bkTreatmentCommitAdd(modal);
+    if (event.key === 'Escape' && !bkTreatmentAddBusy) bkTreatmentHideAddRow(modal);
   });
 
   const remove = modal.querySelector('.bk-treatment-modal-remove');
@@ -282,7 +327,7 @@ document.addEventListener('click', (event) => {
 }, true);
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape' && bkTreatmentModal) bkTreatmentCloseModal();
+  if (event.key === 'Escape' && bkTreatmentModal && !bkTreatmentAddBusy) bkTreatmentCloseModal();
 }, true);
 
 bkTreatmentSchedule();
