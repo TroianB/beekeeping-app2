@@ -55,9 +55,17 @@ function bkActionSync() {
     });
   }
 
-  /* Apiary row owns the slot immediately after the original React row. */
-  if (row.parentElement !== originalRow.parentElement || row.previousElementSibling !== originalRow) {
+  const parent = originalRow.parentElement;
+  if (!parent) return;
+
+  /* This is the ONLY script that owns the ordering of these rows. */
+  if (row.parentElement !== parent || row.previousElementSibling !== originalRow) {
     originalRow.insertAdjacentElement('afterend', row);
+  }
+
+  const regionRow = document.getElementById('bkRegionManagementControls');
+  if (regionRow && (regionRow.parentElement !== parent || regionRow.previousElementSibling !== row)) {
+    row.insertAdjacentElement('afterend', regionRow);
   }
 
   const sourceDelete = bkActionGetDelete();
