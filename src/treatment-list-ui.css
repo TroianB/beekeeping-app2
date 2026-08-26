@@ -1,0 +1,79 @@
+#root .bk-treatment-picker {
+  display: grid !important;
+  gap: 0.55rem !important;
+}
+
+#root .bk-treatment-toolbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.45rem !important;
+  flex-wrap: nowrap !important;
+}
+
+#root .bk-treatment-toolbar .bk-new-treatment-button,
+#root .bk-treatment-toolbar .bk-remove-treatment-button {
+  min-height: 2.25rem !important;
+  padding: 0.42rem 0.6rem !important;
+  font-size: 0.82rem !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-treatment-toolbar .bk-remove-treatment-button {
+  margin-left: 0 !important;
+}
+
+#root .bk-treatment-native-select {
+  display: none !important;
+}
+
+#root .bk-treatment-old-select-row {
+  display: none !important;
+}
+
+#root .bk-treatment-list {
+  display: grid !important;
+  gap: 0.35rem !important;
+  max-height: 13rem !important;
+  overflow-y: auto !important;
+  border: 1px solid rgba(234, 179, 8, 0.32) !important;
+  border-radius: 0.9rem !important;
+  background: rgba(0, 0, 0, 0.3) !important;
+  padding: 0.5rem !important;
+}
+
+#root .bk-treatment-option {
+  width: 100% !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.35) !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  color: #fef3c7 !important;
+  padding: 0.62rem 0.75rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 850 !important;
+  text-align: left !important;
+}
+
+#root .bk-treatment-option-selected {
+  background: #eab308 !important;
+  color: #000 !important;
+  border-color: #facc15 !important;
+}
+
+@media (max-width: 520px) {
+  #root .bk-treatment-toolbar {
+    gap: 0.35rem !important;
+  }
+
+  #root .bk-treatment-toolbar .bk-new-treatment-button,
+  #root .bk-treatment-toolbar .bk-remove-treatment-button {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.45rem !important;
+  }
+
+  #root .bk-treatment-option {
+    font-size: 0.95rem !important;
+  }
+}
