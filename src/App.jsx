@@ -145,12 +145,75 @@ export default function BeekeepingApp() {
   }
 
   function TreatmentControls({ form, setForm }) {
+    const [pickerOpen, setPickerOpen] = useState(false);
     const [adding, setAdding] = useState(false);
     const [name, setName] = useState("");
-    const setIn = (value) => { if (Boolean(form.inTreatment) === Boolean(value)) return; setForm((p) => ({ ...p, inTreatment:Boolean(value), treatmentDate:todayISO() })); };
-    const addName = () => { const clean = name.trim(); if (!clean) return; if (!treatments.includes(clean)) setTreatments((p) => [...p, clean]); setForm((p) => ({ ...p, treatmentName:clean })); setName(""); setAdding(false); };
-    const removeName = () => { const selected = String(form.treatmentName || "").trim(); if (!selected) return; setTreatments((p) => p.filter((t) => t !== selected)); setForm((p) => ({ ...p, treatmentName:"" })); };
-    return <div className="space-y-2"><div className="flex items-center gap-2"><Button variant={form.inTreatment ? "solid" : "outline"} onClick={() => setIn(true)}>In</Button><Button variant={!form.inTreatment ? "solid" : "outline"} onClick={() => setIn(false)}>Out</Button><span className="text-xs opacity-80">{form.treatmentDate ? fmtDMY(form.treatmentDate) : "—"}</span></div>{form.inTreatment && <div className="space-y-2"><div className="grid grid-cols-1 gap-2 sm:grid-cols-[1fr,auto]"><select value={form.treatmentName || ""} onChange={(e) => setForm((p) => ({ ...p, treatmentName:e.target.value }))} className="w-full rounded-xl border border-yellow-500/30 bg-black/40 px-3 py-2 text-yellow-100"><option value="">— Select —</option>{treatments.map((t) => <option key={t} value={t}>{t}</option>)}</select><Button variant="outline" disabled={!form.treatmentName} className="bk-remove-treatment-button text-red-300" onClick={removeName}>Remove Treatment</Button></div>{adding ? <div className="flex gap-2"><Input placeholder="New treatment name" value={name} onChange={(e) => setName(e.target.value)} /><Button variant="outline" onClick={addName}>Add</Button><Button variant="outline" onClick={() => { setAdding(false); setName(""); }}>Cancel</Button></div> : <Button variant="outline" className="bk-new-treatment-button" onClick={() => setAdding(true)}>+ Add Treatment</Button>}</div>}</div>;
+
+    const closePicker = () => {
+      setPickerOpen(false);
+      setAdding(false);
+      setName("");
+    };
+
+    const setIn = (value) => {
+      if (value) {
+        setForm((p) => ({ ...p, inTreatment:true, treatmentDate:p.treatmentDate || todayISO() }));
+        setPickerOpen(true);
+      } else {
+        setForm((p) => ({ ...p, inTreatment:false, treatmentDate:todayISO() }));
+        closePicker();
+      }
+    };
+
+    const addName = () => {
+      const clean = name.trim();
+      if (!clean) return;
+      setTreatments((prev) => prev.some((item) => norm(item) === norm(clean)) ? prev : [...prev, clean]);
+      setName("");
+      setAdding(false);
+    };
+
+    const removeName = () => {
+      const selected = String(form.treatmentName || "").trim();
+      if (!selected) return;
+      setTreatments((prev) => prev.filter((item) => norm(item) !== norm(selected)));
+      setForm((p) => ({ ...p, treatmentName:"" }));
+    };
+
+    const chooseTreatment = (treatmentName) => {
+      setForm((p) => ({ ...p, inTreatment:true, treatmentName, treatmentDate:p.treatmentDate || todayISO() }));
+      closePicker();
+    };
+
+    return <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <Button variant={form.inTreatment ? "solid" : "outline"} onClick={() => setIn(true)}>In</Button>
+        <Button variant={!form.inTreatment ? "solid" : "outline"} onClick={() => setIn(false)}>Out</Button>
+        <span className="text-xs opacity-80">{form.treatmentDate ? fmtDMY(form.treatmentDate) : "—"}</span>
+      </div>
+
+      {form.inTreatment && form.treatmentName && <button type="button" onClick={() => setPickerOpen(true)} className="w-full rounded-xl border border-yellow-500/30 bg-black/40 px-3 py-2 text-left font-semibold text-yellow-100">{form.treatmentName}</button>}
+
+      {pickerOpen && <div className="bk-treatment-modal" onMouseDown={(e) => { if (e.target === e.currentTarget) closePicker(); }}>
+        <div className="bk-treatment-modal-card" role="dialog" aria-modal="true" aria-label="Treatments">
+          <div className="bk-treatment-modal-toolbar">
+            <button type="button" className="bk-treatment-modal-add" onClick={() => setAdding(true)}>Add</button>
+            <button type="button" className="bk-treatment-modal-remove" disabled={!form.treatmentName} onClick={removeName}>Remove</button>
+          </div>
+
+          {adding && <div className="bk-treatment-modal-add-row">
+            <input autoFocus type="text" className="bk-treatment-modal-add-input" placeholder="New treatment name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addName(); if (e.key === "Escape") { setAdding(false); setName(""); } }} />
+            <button type="button" className="bk-treatment-modal-add-save" onClick={addName}>Save</button>
+            <button type="button" className="bk-treatment-modal-add-cancel" onClick={() => { setAdding(false); setName(""); }}>Cancel</button>
+          </div>}
+
+          <div className="bk-treatment-modal-list">
+            {treatments.length === 0 && <div className="bk-treatment-modal-empty">No treatments yet.</div>}
+            {treatments.map((treatment) => <button type="button" key={treatment} className={`bk-treatment-modal-option ${norm(treatment) === norm(form.treatmentName) ? "bk-treatment-modal-option-selected" : ""}`} onClick={() => chooseTreatment(treatment)}>{treatment}</button>)}
+          </div>
+        </div>
+      </div>}
+    </div>;
   }
 
   function Apiaries() {
