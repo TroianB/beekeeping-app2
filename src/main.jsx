@@ -32,7 +32,6 @@ import "./apiary-region-area.js";
 import "./apiary-region-filter.js";
 import "./apiary-region-edit.js";
 import "./apiary-quick-add.js";
-import "./treatment-list-ui.js";
 import "./dashboard-apiary-swipe.js";
 
 const root = createRoot(document.getElementById("root"));
