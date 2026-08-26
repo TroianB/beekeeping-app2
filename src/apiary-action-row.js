@@ -52,6 +52,13 @@ function bkActionSync() {
     `;
 
     row.querySelector('#bkAddApiaryProxy')?.addEventListener('click', () => {
+      if (bkActionInDeleteMode()) {
+        const source = bkActionGetDelete();
+        if (!source || source.disabled) return;
+        source.click();
+        bkActionScheduleSync();
+        return;
+      }
       bkActionGetOriginalAdd()?.click();
     });
 
@@ -81,31 +88,45 @@ function bkActionSync() {
   }
 
   const deleteMode = bkActionInDeleteMode();
-  const addProxy = row.querySelector('#bkAddApiaryProxy');
-  if (addProxy) {
-    if (addProxy.textContent !== 'Add Apiary') addProxy.textContent = 'Add Apiary';
-    addProxy.classList.remove('bk-cancel-mode');
-  }
-
   const sourceDelete = bkActionGetDelete();
+  const addProxy = row.querySelector('#bkAddApiaryProxy');
   const proxyDelete = row.querySelector('#bkDeleteApiaryProxy');
-  if (proxyDelete) {
-    if (deleteMode) {
+
+  if (deleteMode) {
+    if (addProxy) {
+      const selectedDeleteText = sourceDelete?.textContent || 'Delete';
+      if (addProxy.textContent !== selectedDeleteText) addProxy.textContent = selectedDeleteText;
+      const shouldDisable = Boolean(sourceDelete?.disabled);
+      if (addProxy.disabled !== shouldDisable) addProxy.disabled = shouldDisable;
+      addProxy.classList.add('bk-ready');
+      addProxy.classList.remove('bk-cancel-mode');
+    }
+
+    if (proxyDelete) {
       if (proxyDelete.disabled) proxyDelete.disabled = false;
       if (proxyDelete.textContent !== 'Cancel') proxyDelete.textContent = 'Cancel';
       proxyDelete.classList.add('bk-cancel-mode');
       proxyDelete.classList.remove('bk-ready');
-    } else if (sourceDelete) {
-      const nextDisabled = Boolean(sourceDelete.disabled);
-      const nextText = sourceDelete.textContent || 'Delete Apiary';
-      const nextReady = sourceDelete.classList.contains('bk-ready');
+    }
+    return;
+  }
 
-      if (proxyDelete.disabled !== nextDisabled) proxyDelete.disabled = nextDisabled;
-      if (proxyDelete.textContent !== nextText) proxyDelete.textContent = nextText;
-      proxyDelete.classList.remove('bk-cancel-mode');
-      if (proxyDelete.classList.contains('bk-ready') !== nextReady) {
-        proxyDelete.classList.toggle('bk-ready', nextReady);
-      }
+  if (addProxy) {
+    if (addProxy.disabled) addProxy.disabled = false;
+    if (addProxy.textContent !== 'Add Apiary') addProxy.textContent = 'Add Apiary';
+    addProxy.classList.remove('bk-ready', 'bk-cancel-mode');
+  }
+
+  if (proxyDelete && sourceDelete) {
+    const nextDisabled = Boolean(sourceDelete.disabled);
+    const nextText = sourceDelete.textContent || 'Delete Apiary';
+    const nextReady = sourceDelete.classList.contains('bk-ready');
+
+    if (proxyDelete.disabled !== nextDisabled) proxyDelete.disabled = nextDisabled;
+    if (proxyDelete.textContent !== nextText) proxyDelete.textContent = nextText;
+    proxyDelete.classList.remove('bk-cancel-mode');
+    if (proxyDelete.classList.contains('bk-ready') !== nextReady) {
+      proxyDelete.classList.toggle('bk-ready', nextReady);
     }
   }
 }
