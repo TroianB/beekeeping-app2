@@ -1,4 +1,6 @@
 let bkTreatmentUiRaf = 0;
+let bkTreatmentModal = null;
+let bkTreatmentActiveBlock = null;
 
 function bkTreatmentBlocks() {
   return Array.from(document.querySelectorAll('#root .fixed.inset-0.z-50 .space-y-2')).filter((box) => {
@@ -19,86 +21,90 @@ function bkTreatmentDispatchSelect(select, value) {
   select.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-function bkTreatmentRenderList(wrapper, select) {
-  let list = wrapper.querySelector('.bk-treatment-list');
-  if (!list) {
-    list = document.createElement('div');
-    list.className = 'bk-treatment-list';
-    wrapper.appendChild(list);
-  }
+function bkTreatmentCloseModal() {
+  bkTreatmentModal?.remove();
+  bkTreatmentModal = null;
+  bkTreatmentActiveBlock = null;
+}
+
+function bkTreatmentRenderModalList(modal, block) {
+  const select = bkTreatmentSelectFromBlock(block);
+  const list = modal?.querySelector('.bk-treatment-modal-list');
+  if (!select || !list) return;
 
   const options = Array.from(select.options || []).filter((option) => String(option.value || '').trim());
-  const signature = options.map((option) => `${option.value}\u0001${option.textContent}`).join('\u0002');
-  if (list.dataset.signature !== signature) {
-    list.dataset.signature = signature;
-    list.replaceChildren();
-    options.forEach((option) => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'bk-treatment-option';
-      button.dataset.treatmentValue = option.value;
-      button.textContent = option.textContent;
-      button.addEventListener('click', () => bkTreatmentDispatchSelect(select, option.value));
-      list.appendChild(button);
-    });
+  list.replaceChildren();
+
+  if (options.length === 0) {
+    const empty = document.createElement('div');
+    empty.className = 'bk-treatment-modal-empty';
+    empty.textContent = 'No treatments yet.';
+    list.appendChild(empty);
+    return;
   }
 
-  list.querySelectorAll('.bk-treatment-option').forEach((button) => {
-    button.classList.toggle('bk-treatment-option-selected', button.dataset.treatmentValue === select.value);
+  options.forEach((option) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'bk-treatment-modal-option';
+    if (option.value === select.value) button.classList.add('bk-treatment-modal-option-selected');
+    button.textContent = option.textContent;
+    button.addEventListener('click', () => {
+      bkTreatmentDispatchSelect(select, option.value);
+      bkTreatmentCloseModal();
+    });
+    list.appendChild(button);
   });
 }
 
-function bkTreatmentEnsureToolbar(wrapper, treatmentBox) {
-  let toolbar = wrapper.querySelector('.bk-treatment-toolbar');
-  if (!toolbar) {
-    toolbar = document.createElement('div');
-    toolbar.className = 'bk-treatment-toolbar';
-    wrapper.prepend(toolbar);
+function bkTreatmentOpenModal(block) {
+  if (!block) return;
+  bkTreatmentCloseModal();
+  bkTreatmentActiveBlock = block;
+
+  const modal = document.createElement('div');
+  modal.className = 'bk-treatment-modal';
+  modal.innerHTML = `
+    <div class="bk-treatment-modal-card" role="dialog" aria-modal="true" aria-label="Treatments">
+      <div class="bk-treatment-modal-toolbar">
+        <button type="button" class="bk-treatment-modal-add">Add</button>
+        <button type="button" class="bk-treatment-modal-remove">Remove</button>
+      </div>
+      <div class="bk-treatment-modal-list"></div>
+    </div>
+  `;
+
+  modal.addEventListener('click', (event) => {
+    if (event.target === modal) bkTreatmentCloseModal();
+  });
+
+  modal.querySelector('.bk-treatment-modal-add')?.addEventListener('click', () => {
+    block.querySelector('.bk-new-treatment-button')?.click();
+    bkTreatmentCloseModal();
+  });
+
+  const remove = modal.querySelector('.bk-treatment-modal-remove');
+  const realRemove = block.querySelector('.bk-remove-treatment-button');
+  if (remove) {
+    remove.disabled = Boolean(realRemove?.disabled);
+    remove.addEventListener('click', () => {
+      if (remove.disabled) return;
+      realRemove?.click();
+      bkTreatmentCloseModal();
+    });
   }
 
-  let add = toolbar.querySelector('.bk-treatment-add-proxy');
-  if (!add) {
-    add = document.createElement('button');
-    add.type = 'button';
-    add.className = 'bk-treatment-add-proxy';
-    add.textContent = 'Add Treatment';
-    add.addEventListener('click', () => treatmentBox.querySelector('.bk-new-treatment-button')?.click());
-    toolbar.appendChild(add);
-  }
-
-  let remove = toolbar.querySelector('.bk-treatment-remove-proxy');
-  if (!remove) {
-    remove = document.createElement('button');
-    remove.type = 'button';
-    remove.className = 'bk-treatment-remove-proxy';
-    remove.textContent = 'Remove Treatment';
-    remove.addEventListener('click', () => treatmentBox.querySelector('.bk-remove-treatment-button')?.click());
-    toolbar.appendChild(remove);
-  }
-
-  const realRemove = treatmentBox.querySelector('.bk-remove-treatment-button');
-  remove.disabled = Boolean(realRemove?.disabled);
+  document.body.appendChild(modal);
+  bkTreatmentModal = modal;
+  bkTreatmentRenderModalList(modal, block);
 }
 
-function bkTreatmentPrepareBlock(treatmentBox) {
-  const select = bkTreatmentSelectFromBlock(treatmentBox);
+function bkTreatmentPrepareBlock(block) {
+  const select = bkTreatmentSelectFromBlock(block);
   if (!select) return;
-
-  let wrapper = treatmentBox.querySelector(':scope > .bk-treatment-picker');
-  if (!wrapper) {
-    wrapper = document.createElement('div');
-    wrapper.className = 'bk-treatment-picker';
-    treatmentBox.insertBefore(wrapper, treatmentBox.firstChild);
-  }
-
-  bkTreatmentEnsureToolbar(wrapper, treatmentBox);
-
   select.classList.add('bk-treatment-native-select');
-  if (select.parentElement) select.parentElement.classList.add('bk-treatment-old-select-row');
-  treatmentBox.querySelector('.bk-new-treatment-button')?.classList.add('bk-treatment-original-control');
-  treatmentBox.querySelector('.bk-remove-treatment-button')?.classList.add('bk-treatment-original-control');
-
-  bkTreatmentRenderList(wrapper, select);
+  block.querySelector('.bk-new-treatment-button')?.classList.add('bk-treatment-original-control');
+  block.querySelector('.bk-remove-treatment-button')?.classList.add('bk-treatment-original-control');
 }
 
 function bkTreatmentApply() {
@@ -111,15 +117,27 @@ function bkTreatmentSchedule() {
   bkTreatmentUiRaf = window.requestAnimationFrame(bkTreatmentApply);
 }
 
+function bkTreatmentFindBlockFromInButton(button) {
+  const row = button?.parentElement;
+  const treatmentRoot = row?.parentElement;
+  if (!treatmentRoot) return null;
+  return bkTreatmentBlocks().find((block) => treatmentRoot.contains(block)) || null;
+}
+
 new MutationObserver(bkTreatmentSchedule).observe(document.documentElement, { childList: true, subtree: true });
-document.addEventListener('change', (event) => {
-  if (event.target.matches?.('.bk-treatment-native-select')) bkTreatmentSchedule();
-}, true);
 
 document.addEventListener('click', (event) => {
   const button = event.target.closest?.('button');
   if (!button || button.textContent.trim() !== 'In') return;
-  window.setTimeout(bkTreatmentSchedule, 0);
+  window.setTimeout(() => {
+    bkTreatmentSchedule();
+    const block = bkTreatmentFindBlockFromInButton(button) || bkTreatmentBlocks()[0];
+    if (block) bkTreatmentOpenModal(block);
+  }, 0);
+}, true);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && bkTreatmentModal) bkTreatmentCloseModal();
 }, true);
 
 bkTreatmentSchedule();
