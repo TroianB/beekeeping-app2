@@ -7,6 +7,7 @@ const APIARY_METRICS = {
 };
 
 let metricApplying = false;
+let metricRaf = 0;
 
 function getMetricValue() {
   try {
@@ -49,21 +50,28 @@ function rowApiaryName(row) {
   const spans = Array.from(row.children).filter((child) => child.tagName === 'SPAN');
   return spans[0]?.textContent?.trim() || '';
 }
-function setLastUpdateValue(row) {
+function setLastUpdateValue(row, apiaries) {
   const cells = Array.from(row.children);
   const target = cells[2];
   if (!target) return;
-  if (!target.dataset.bkOriginalMetricValue) target.dataset.bkOriginalMetricValue = target.textContent;
+
+  if (target.dataset.bkOriginalMetricValue === undefined) {
+    target.dataset.bkOriginalMetricValue = target.textContent;
+  }
+
   const name = normMetric(rowApiaryName(row));
-  const apiary = readApiariesForMetric().find((item) => normMetric(item?.name) === name);
-  target.textContent = formatLastUpdate(apiary?.lastInspection);
-  target.classList.add('bk-last-update-value');
+  const apiary = apiaries.find((item) => normMetric(item?.name) === name);
+  const nextText = formatLastUpdate(apiary?.lastInspection);
+
+  if (target.textContent !== nextText) target.textContent = nextText;
+  if (!target.classList.contains('bk-last-update-value')) target.classList.add('bk-last-update-value');
 }
 function restoreTotalValue(row) {
   const target = row.children?.[2];
   if (!target) return;
-  if (target.dataset.bkOriginalMetricValue !== undefined) target.textContent = target.dataset.bkOriginalMetricValue;
-  target.classList.remove('bk-last-update-value');
+  const original = target.dataset.bkOriginalMetricValue;
+  if (original !== undefined && target.textContent !== original) target.textContent = original;
+  if (target.classList.contains('bk-last-update-value')) target.classList.remove('bk-last-update-value');
 }
 
 function ensureMetricDropdown(header) {
@@ -81,11 +89,11 @@ function ensureMetricDropdown(header) {
       <option value="lastUpdate">Last Update</option>
     `;
     ['click','pointerdown','mousedown'].forEach((type) => select.addEventListener(type, (event) => event.stopPropagation()));
-    select.addEventListener('change', () => { setMetricValue(select.value); applyApiaryMetricDropdown(); });
+    select.addEventListener('change', () => { setMetricValue(select.value); scheduleApiaryMetricDropdown(); });
     cells[2].textContent = '';
     cells[2].appendChild(select);
   }
-  select.value = getMetricValue();
+  if (select.value !== getMetricValue()) select.value = getMetricValue();
   return select;
 }
 function clearMetricCellStyles(cell) {
@@ -123,18 +131,37 @@ function applyMetricGrid(element) {
 function applyApiaryMetricDropdown() {
   if (metricApplying) return;
   metricApplying = true;
-  window.requestAnimationFrame(() => {
-    const card = getApiaryMetricCard(); const header = getApiaryMetricHeader(card);
-    if (!card || !header) { document.body.classList.remove('bk-apiary-metric-dropdown'); metricApplying=false; return; }
-    const metricKey = getMetricValue();
-    const selectedIndex = APIARY_METRICS[metricKey]?.index ?? 2;
-    document.body.classList.add('bk-apiary-metric-dropdown');
-    ensureMetricDropdown(header); applyMetricGrid(header); showHeaderDropdownCell(Array.from(header.children));
-    getApiaryMetricRows(card).forEach((row) => {
-      if (metricKey === 'lastUpdate') setLastUpdateValue(row); else restoreTotalValue(row);
-      applyMetricGrid(row); showOnlySelectedRowMetric(Array.from(row.children), selectedIndex);
-    });
-    metricApplying=false;
+  const card = getApiaryMetricCard();
+  const header = getApiaryMetricHeader(card);
+  if (!card || !header) {
+    document.body.classList.remove('bk-apiary-metric-dropdown');
+    metricApplying = false;
+    return;
+  }
+
+  const metricKey = getMetricValue();
+  const selectedIndex = APIARY_METRICS[metricKey]?.index ?? 2;
+  const apiaries = metricKey === 'lastUpdate' ? readApiariesForMetric() : [];
+  document.body.classList.add('bk-apiary-metric-dropdown');
+
+  ensureMetricDropdown(header);
+  applyMetricGrid(header);
+  showHeaderDropdownCell(Array.from(header.children));
+
+  getApiaryMetricRows(card).forEach((row) => {
+    if (metricKey === 'lastUpdate') setLastUpdateValue(row, apiaries);
+    else restoreTotalValue(row);
+    applyMetricGrid(row);
+    showOnlySelectedRowMetric(Array.from(row.children), selectedIndex);
+  });
+
+  metricApplying = false;
+}
+function scheduleApiaryMetricDropdown() {
+  if (metricRaf) return;
+  metricRaf = window.requestAnimationFrame(() => {
+    metricRaf = 0;
+    applyApiaryMetricDropdown();
   });
 }
 function installApiaryMetricDropdownStyles() {
@@ -157,5 +184,5 @@ body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placehold
   document.head.appendChild(style);
 }
 installApiaryMetricDropdownStyles();
-new MutationObserver(applyApiaryMetricDropdown).observe(document.documentElement,{childList:true,subtree:true});
-applyApiaryMetricDropdown();
+new MutationObserver(scheduleApiaryMetricDropdown).observe(document.documentElement,{childList:true,subtree:true});
+scheduleApiaryMetricDropdown();
