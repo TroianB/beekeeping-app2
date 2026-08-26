@@ -1,18 +1,38 @@
 let bkTreatmentUiRaf = 0;
 let bkTreatmentModal = null;
 let bkTreatmentActiveBlock = null;
+let bkTreatmentActiveFormModal = null;
 let bkTreatmentAddBusy = false;
 
-function bkTreatmentBlocks() {
-  return Array.from(document.querySelectorAll('#root .fixed.inset-0.z-50 .space-y-2')).filter((box) => {
+function bkTreatmentBlocks(root = document) {
+  return Array.from(root.querySelectorAll('#root .fixed.inset-0.z-50 .space-y-2, .space-y-2')).filter((box) => {
+    return box.querySelector('.bk-remove-treatment-button') && box.querySelector('.bk-new-treatment-button') && box.querySelector('select');
+  });
+}
+
+function bkTreatmentFormModalFromBlock(block) {
+  return block?.closest?.('#root .fixed.inset-0.z-50') || null;
+}
+
+function bkTreatmentBlocksInActiveModal() {
+  const modal = bkTreatmentActiveFormModal;
+  if (!modal?.isConnected) return [];
+  return Array.from(modal.querySelectorAll('.space-y-2')).filter((box) => {
     return box.querySelector('.bk-remove-treatment-button') && box.querySelector('.bk-new-treatment-button') && box.querySelector('select');
   });
 }
 
 function bkTreatmentCurrentBlock(block) {
   if (block?.isConnected) return block;
-  const blocks = bkTreatmentBlocks();
-  return blocks[0] || null;
+
+  const scoped = bkTreatmentBlocksInActiveModal();
+  if (scoped.length) return scoped[0];
+
+  if (!bkTreatmentActiveFormModal) {
+    const blocks = bkTreatmentBlocks(document);
+    return blocks[0] || null;
+  }
+  return null;
 }
 
 function bkTreatmentSelectFromBlock(block) {
@@ -33,6 +53,7 @@ function bkTreatmentCloseModal() {
   bkTreatmentModal?.remove();
   bkTreatmentModal = null;
   bkTreatmentActiveBlock = null;
+  bkTreatmentActiveFormModal = null;
   bkTreatmentAddBusy = false;
 }
 
@@ -95,7 +116,7 @@ function bkTreatmentSetAddBusy(modal, busy) {
 }
 
 function bkTreatmentWaitForNativeAddForm(modal, treatmentName) {
-  const root = document.getElementById('root');
+  const root = bkTreatmentActiveFormModal || document.getElementById('root');
   if (!root || !modal?.isConnected) {
     bkTreatmentSetAddBusy(modal, false);
     return;
@@ -147,7 +168,7 @@ function bkTreatmentWaitForNativeAddForm(modal, treatmentName) {
 }
 
 function bkTreatmentWaitForNewOption(modal, treatmentName) {
-  const root = document.getElementById('root');
+  const root = bkTreatmentActiveFormModal || document.getElementById('root');
   if (!root || !modal?.isConnected) {
     bkTreatmentSetAddBusy(modal, false);
     return;
@@ -237,6 +258,7 @@ function bkTreatmentOpenModal(block) {
   if (!currentBlock) return;
   bkTreatmentCloseModal();
   bkTreatmentActiveBlock = currentBlock;
+  bkTreatmentActiveFormModal = bkTreatmentFormModalFromBlock(currentBlock);
 
   const modal = document.createElement('div');
   modal.className = 'bk-treatment-modal';
@@ -299,7 +321,7 @@ function bkTreatmentPrepareBlock(block) {
 
 function bkTreatmentApply() {
   bkTreatmentUiRaf = 0;
-  bkTreatmentBlocks().forEach(bkTreatmentPrepareBlock);
+  bkTreatmentBlocks(document).forEach(bkTreatmentPrepareBlock);
 }
 
 function bkTreatmentSchedule() {
@@ -311,7 +333,9 @@ function bkTreatmentFindBlockFromInButton(button) {
   const row = button?.parentElement;
   const treatmentRoot = row?.parentElement;
   if (!treatmentRoot) return null;
-  return bkTreatmentBlocks().find((block) => treatmentRoot.contains(block)) || null;
+  return Array.from(treatmentRoot.querySelectorAll('.space-y-2')).find((block) => {
+    return block.querySelector('.bk-remove-treatment-button') && block.querySelector('.bk-new-treatment-button') && block.querySelector('select');
+  }) || null;
 }
 
 new MutationObserver(bkTreatmentSchedule).observe(document.documentElement, { childList: true, subtree: true });
@@ -321,7 +345,7 @@ document.addEventListener('click', (event) => {
   if (!button || button.textContent.trim() !== 'In') return;
   window.setTimeout(() => {
     bkTreatmentSchedule();
-    const block = bkTreatmentFindBlockFromInButton(button) || bkTreatmentBlocks()[0];
+    const block = bkTreatmentFindBlockFromInButton(button);
     if (block) bkTreatmentOpenModal(block);
   }, 0);
 }, true);
