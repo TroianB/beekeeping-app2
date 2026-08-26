@@ -1,10 +1,15 @@
 let bkTreatmentUiRaf = 0;
 
-function bkTreatmentSelects() {
-  return Array.from(document.querySelectorAll('#root select')).filter((select) => {
-    return Array.from(select.options || []).some((option) => /select/i.test(String(option.textContent || '')))
-      && select.closest('.fixed.inset-0.z-50');
+function bkTreatmentBlocks() {
+  return Array.from(document.querySelectorAll('#root .fixed.inset-0.z-50 .space-y-2')).filter((box) => {
+    return box.querySelector('.bk-remove-treatment-button') && box.querySelector('.bk-new-treatment-button') && box.querySelector('select');
   });
+}
+
+function bkTreatmentSelectFromBlock(block) {
+  if (!block) return null;
+  const selects = Array.from(block.querySelectorAll('select'));
+  return selects.find((select) => Array.from(select.options || []).some((option) => String(option.value || '').trim())) || selects[0] || null;
 }
 
 function bkTreatmentDispatchSelect(select, value) {
@@ -43,9 +48,41 @@ function bkTreatmentRenderList(wrapper, select) {
   });
 }
 
-function bkTreatmentPrepareSelect(select) {
-  const treatmentBox = select.closest('.space-y-2');
-  if (!treatmentBox) return;
+function bkTreatmentEnsureToolbar(wrapper, treatmentBox) {
+  let toolbar = wrapper.querySelector('.bk-treatment-toolbar');
+  if (!toolbar) {
+    toolbar = document.createElement('div');
+    toolbar.className = 'bk-treatment-toolbar';
+    wrapper.prepend(toolbar);
+  }
+
+  let add = toolbar.querySelector('.bk-treatment-add-proxy');
+  if (!add) {
+    add = document.createElement('button');
+    add.type = 'button';
+    add.className = 'bk-treatment-add-proxy';
+    add.textContent = 'Add Treatment';
+    add.addEventListener('click', () => treatmentBox.querySelector('.bk-new-treatment-button')?.click());
+    toolbar.appendChild(add);
+  }
+
+  let remove = toolbar.querySelector('.bk-treatment-remove-proxy');
+  if (!remove) {
+    remove = document.createElement('button');
+    remove.type = 'button';
+    remove.className = 'bk-treatment-remove-proxy';
+    remove.textContent = 'Remove Treatment';
+    remove.addEventListener('click', () => treatmentBox.querySelector('.bk-remove-treatment-button')?.click());
+    toolbar.appendChild(remove);
+  }
+
+  const realRemove = treatmentBox.querySelector('.bk-remove-treatment-button');
+  remove.disabled = Boolean(realRemove?.disabled);
+}
+
+function bkTreatmentPrepareBlock(treatmentBox) {
+  const select = bkTreatmentSelectFromBlock(treatmentBox);
+  if (!select) return;
 
   let wrapper = treatmentBox.querySelector(':scope > .bk-treatment-picker');
   if (!wrapper) {
@@ -54,36 +91,19 @@ function bkTreatmentPrepareSelect(select) {
     treatmentBox.insertBefore(wrapper, treatmentBox.firstChild);
   }
 
-  let toolbar = wrapper.querySelector('.bk-treatment-toolbar');
-  if (!toolbar) {
-    toolbar = document.createElement('div');
-    toolbar.className = 'bk-treatment-toolbar';
-    wrapper.appendChild(toolbar);
-  }
-
-  const remove = treatmentBox.querySelector('.bk-remove-treatment-button');
-  const add = treatmentBox.querySelector('.bk-new-treatment-button');
-
-  if (add && add.parentElement !== toolbar) {
-    add.textContent = 'Add Treatment';
-    toolbar.appendChild(add);
-  }
-  if (remove && remove.parentElement !== toolbar) {
-    remove.textContent = 'Remove Treatment';
-    toolbar.appendChild(remove);
-  }
+  bkTreatmentEnsureToolbar(wrapper, treatmentBox);
 
   select.classList.add('bk-treatment-native-select');
-  if (select.parentElement && select.parentElement !== wrapper) {
-    select.parentElement.classList.add('bk-treatment-old-select-row');
-  }
+  if (select.parentElement) select.parentElement.classList.add('bk-treatment-old-select-row');
+  treatmentBox.querySelector('.bk-new-treatment-button')?.classList.add('bk-treatment-original-control');
+  treatmentBox.querySelector('.bk-remove-treatment-button')?.classList.add('bk-treatment-original-control');
 
   bkTreatmentRenderList(wrapper, select);
 }
 
 function bkTreatmentApply() {
   bkTreatmentUiRaf = 0;
-  bkTreatmentSelects().forEach(bkTreatmentPrepareSelect);
+  bkTreatmentBlocks().forEach(bkTreatmentPrepareBlock);
 }
 
 function bkTreatmentSchedule() {
