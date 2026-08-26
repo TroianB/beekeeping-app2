@@ -10,24 +10,33 @@
   flex-wrap: nowrap !important;
 }
 
-#root .bk-treatment-toolbar .bk-new-treatment-button,
-#root .bk-treatment-toolbar .bk-remove-treatment-button {
+#root .bk-treatment-add-proxy,
+#root .bk-treatment-remove-proxy {
   min-height: 2.25rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.45) !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: #fde047 !important;
   padding: 0.42rem 0.6rem !important;
   font-size: 0.82rem !important;
+  font-weight: 900 !important;
   line-height: 1 !important;
   white-space: nowrap !important;
 }
 
-#root .bk-treatment-toolbar .bk-remove-treatment-button {
-  margin-left: 0 !important;
+#root .bk-treatment-remove-proxy {
+  color: #fca5a5 !important;
+  border-color: rgba(248, 113, 113, 0.45) !important;
 }
 
-#root .bk-treatment-native-select {
-  display: none !important;
+#root .bk-treatment-remove-proxy:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
 }
 
-#root .bk-treatment-old-select-row {
+#root .bk-treatment-native-select,
+#root .bk-treatment-old-select-row,
+#root .bk-treatment-original-control {
   display: none !important;
 }
 
@@ -65,8 +74,8 @@
     gap: 0.35rem !important;
   }
 
-  #root .bk-treatment-toolbar .bk-new-treatment-button,
-  #root .bk-treatment-toolbar .bk-remove-treatment-button {
+  #root .bk-treatment-add-proxy,
+  #root .bk-treatment-remove-proxy {
     flex: 1 1 0 !important;
     min-width: 0 !important;
     font-size: 0.75rem !important;
