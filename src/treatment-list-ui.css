@@ -124,6 +124,40 @@
   text-align: center !important;
 }
 
+@media (min-width: 900px) {
+  .bk-treatment-modal {
+    padding: 2rem !important;
+  }
+
+  .bk-treatment-modal-card {
+    width: 34rem !important;
+    max-width: 34rem !important;
+    max-height: 70vh !important;
+    padding: 1.1rem !important;
+    gap: 0.85rem !important;
+  }
+
+  .bk-treatment-modal-toolbar {
+    grid-template-columns: auto auto !important;
+    justify-content: start !important;
+  }
+
+  .bk-treatment-modal-add,
+  .bk-treatment-modal-remove,
+  .bk-treatment-modal-add-save,
+  .bk-treatment-modal-add-cancel {
+    min-width: 7rem !important;
+  }
+
+  .bk-treatment-modal-list {
+    max-height: 28rem !important;
+  }
+
+  .bk-treatment-modal-option {
+    min-height: 3rem !important;
+  }
+}
+
 @media (max-width: 520px) {
   .bk-treatment-modal {
     place-items: start center !important;
