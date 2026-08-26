@@ -37,6 +37,13 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
   color: #fecaca !important;
 }
 
+/* Desktop: separate the Apiary action row from the Region action row. */
+@media (min-width: 761px) {
+  body.bk-apiaries-list-only #bkRegionManagementControls {
+    margin-top: 0.75rem !important;
+  }
+}
+
 @media (max-width: 760px) {
   body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
   body.bk-apiaries-list-only #bkDeleteApiaryButton,
