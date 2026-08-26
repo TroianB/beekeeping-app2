@@ -30,6 +30,7 @@ import "./apiary-list-compact-top.js";
 import "./apiary-region-area.js";
 import "./apiary-region-filter.js";
 import "./apiary-region-edit.js";
+import "./apiary-region-edit-label-fix.js";
 import "./apiary-quick-add.js";
 import "./dashboard-apiary-swipe.js";
 
