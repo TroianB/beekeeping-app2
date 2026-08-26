@@ -1,4 +1,5 @@
 const BK_ACTION_SEARCH = '#root input[placeholder="Search apiaries..."]';
+let bkActionRaf = 0;
 
 function bkActionGetOriginalRow() {
   const search = document.querySelector(BK_ACTION_SEARCH);
@@ -50,6 +51,7 @@ function bkActionSync() {
       const source = bkActionGetDelete();
       if (!source || source.disabled) return;
       source.click();
+      bkActionScheduleSync();
     });
   }
 
@@ -60,20 +62,33 @@ function bkActionSync() {
   const sourceDelete = bkActionGetDelete();
   const proxyDelete = row.querySelector('#bkDeleteApiaryProxy');
   if (proxyDelete && sourceDelete) {
-    proxyDelete.disabled = sourceDelete.disabled;
-    proxyDelete.textContent = sourceDelete.textContent || 'Delete Apiary';
-    proxyDelete.classList.toggle('bk-ready', sourceDelete.classList.contains('bk-ready'));
+    const nextDisabled = Boolean(sourceDelete.disabled);
+    const nextText = sourceDelete.textContent || 'Delete Apiary';
+    const nextReady = sourceDelete.classList.contains('bk-ready');
+
+    if (proxyDelete.disabled !== nextDisabled) proxyDelete.disabled = nextDisabled;
+    if (proxyDelete.textContent !== nextText) proxyDelete.textContent = nextText;
+    if (proxyDelete.classList.contains('bk-ready') !== nextReady) {
+      proxyDelete.classList.toggle('bk-ready', nextReady);
+    }
   }
 }
 
-new MutationObserver(() => window.requestAnimationFrame(bkActionSync)).observe(document.documentElement, {
+function bkActionScheduleSync() {
+  if (bkActionRaf) return;
+  bkActionRaf = window.requestAnimationFrame(() => {
+    bkActionRaf = 0;
+    bkActionSync();
+  });
+}
+
+/* Only watch structural React changes. Do not observe class/disabled changes that this helper also writes. */
+new MutationObserver(bkActionScheduleSync).observe(document.documentElement, {
   childList: true,
-  subtree: true,
-  attributes: true,
-  attributeFilter: ['class', 'disabled']
+  subtree: true
 });
 
-document.addEventListener('change', bkActionSync, true);
-document.addEventListener('click', () => window.setTimeout(bkActionSync, 0), true);
+document.addEventListener('change', bkActionScheduleSync, true);
+document.addEventListener('click', () => window.setTimeout(bkActionScheduleSync, 0), true);
 
 bkActionSync();
