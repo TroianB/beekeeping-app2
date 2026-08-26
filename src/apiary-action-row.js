@@ -24,6 +24,14 @@ function bkActionGetDelete() {
   return document.getElementById('bkDeleteApiaryButton');
 }
 
+function bkActionGetCancel() {
+  return document.getElementById('bkCancelDeleteApiaryButton');
+}
+
+function bkActionInDeleteMode() {
+  return document.body.classList.contains('bk-apiary-delete-mode');
+}
+
 function bkActionSync() {
   const search = document.querySelector(BK_ACTION_SEARCH);
   if (!search) {
@@ -44,6 +52,11 @@ function bkActionSync() {
     `;
 
     row.querySelector('#bkAddApiaryProxy')?.addEventListener('click', () => {
+      if (bkActionInDeleteMode()) {
+        bkActionGetCancel()?.click();
+        bkActionScheduleSync();
+        return;
+      }
       bkActionGetOriginalAdd()?.click();
     });
 
@@ -58,7 +71,6 @@ function bkActionSync() {
   const parent = originalRow.parentElement;
   if (!parent) return;
 
-  /* This is the ONLY script that owns the ordering of these rows. */
   if (row.parentElement !== parent || row.previousElementSibling !== originalRow) {
     originalRow.insertAdjacentElement('afterend', row);
   }
@@ -66,6 +78,14 @@ function bkActionSync() {
   const regionRow = document.getElementById('bkRegionManagementControls');
   if (regionRow && (regionRow.parentElement !== parent || regionRow.previousElementSibling !== row)) {
     row.insertAdjacentElement('afterend', regionRow);
+  }
+
+  const deleteMode = bkActionInDeleteMode();
+  const addProxy = row.querySelector('#bkAddApiaryProxy');
+  if (addProxy) {
+    const nextText = deleteMode ? 'Cancel' : 'Add Apiary';
+    if (addProxy.textContent !== nextText) addProxy.textContent = nextText;
+    addProxy.classList.toggle('bk-cancel-mode', deleteMode);
   }
 
   const sourceDelete = bkActionGetDelete();
