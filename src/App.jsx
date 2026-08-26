@@ -147,18 +147,21 @@ export default function BeekeepingApp() {
   function TreatmentControls({ form, setForm }) {
     const [pickerOpen, setPickerOpen] = useState(false);
     const [adding, setAdding] = useState(false);
+    const [removing, setRemoving] = useState(false);
     const [name, setName] = useState("");
     const [visibleTreatments, setVisibleTreatments] = useState(() => storage.get("bk.treatments", treatments));
 
     const closePicker = () => {
       setPickerOpen(false);
       setAdding(false);
+      setRemoving(false);
       setName("");
     };
 
     const setIn = (value) => {
       if (value) {
         setVisibleTreatments(storage.get("bk.treatments", treatments));
+        setRemoving(false);
         setForm((p) => ({ ...p, inTreatment:true, treatmentDate:p.treatmentDate || todayISO() }));
         setPickerOpen(true);
       } else {
@@ -178,23 +181,36 @@ export default function BeekeepingApp() {
       });
       setName("");
       setAdding(false);
+      setRemoving(false);
       setPickerOpen(true);
     };
 
-    const removeName = () => {
-      const selected = String(form.treatmentName || "").trim();
-      if (!selected) return;
+    const removeTreatment = (treatmentName) => {
+      const clean = String(treatmentName || "").trim();
+      if (!clean) return;
       setVisibleTreatments((prev) => {
-        const next = prev.filter((item) => norm(item) !== norm(selected));
+        const next = prev.filter((item) => norm(item) !== norm(clean));
         storage.set("bk.treatments", next);
         return next;
       });
-      setForm((p) => ({ ...p, treatmentName:"" }));
+      if (norm(form.treatmentName) === norm(clean)) {
+        setForm((p) => ({ ...p, treatmentName:"" }));
+      }
+      setRemoving(false);
+      setPickerOpen(true);
     };
 
     const chooseTreatment = (treatmentName) => {
       setForm((p) => ({ ...p, inTreatment:true, treatmentName, treatmentDate:p.treatmentDate || todayISO() }));
       closePicker();
+    };
+
+    const handleTreatmentClick = (treatmentName) => {
+      if (removing) {
+        removeTreatment(treatmentName);
+        return;
+      }
+      chooseTreatment(treatmentName);
     };
 
     return <div className="space-y-2">
@@ -204,14 +220,16 @@ export default function BeekeepingApp() {
         <span className="text-xs opacity-80">{form.treatmentDate ? fmtDMY(form.treatmentDate) : "—"}</span>
       </div>
 
-      {form.inTreatment && form.treatmentName && <button type="button" onClick={() => { setVisibleTreatments(storage.get("bk.treatments", treatments)); setPickerOpen(true); }} className="w-full rounded-xl border border-yellow-500/30 bg-black/40 px-3 py-2 text-left font-semibold text-yellow-100">{form.treatmentName}</button>}
+      {form.inTreatment && form.treatmentName && <button type="button" onClick={() => { setVisibleTreatments(storage.get("bk.treatments", treatments)); setRemoving(false); setPickerOpen(true); }} className="w-full rounded-xl border border-yellow-500/30 bg-black/40 px-3 py-2 text-left font-semibold text-yellow-100">{form.treatmentName}</button>}
 
       {pickerOpen && <div className="bk-treatment-modal" onMouseDown={(e) => { if (e.target === e.currentTarget) closePicker(); }}>
         <div className="bk-treatment-modal-card" role="dialog" aria-modal="true" aria-label="Treatments">
           <div className="bk-treatment-modal-toolbar">
-            <button type="button" className="bk-treatment-modal-add" onClick={() => setAdding(true)}>Add</button>
-            <button type="button" className="bk-treatment-modal-remove" disabled={!form.treatmentName} onClick={removeName}>Remove</button>
+            <button type="button" className="bk-treatment-modal-add" onClick={() => { setRemoving(false); setAdding(true); }}>Add</button>
+            <button type="button" className="bk-treatment-modal-remove" disabled={visibleTreatments.length === 0} onClick={() => { setAdding(false); setName(""); setRemoving((value) => !value); }}>Remove</button>
           </div>
+
+          {removing && <div className="px-1 text-sm font-semibold text-red-300">Select a treatment from the list to remove it.</div>}
 
           {adding && <div className="bk-treatment-modal-add-row">
             <input autoFocus type="text" className="bk-treatment-modal-add-input" placeholder="New treatment name" value={name} onChange={(e) => setName(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") addName(); if (e.key === "Escape") { setAdding(false); setName(""); } }} />
@@ -221,7 +239,7 @@ export default function BeekeepingApp() {
 
           <div className="bk-treatment-modal-list">
             {visibleTreatments.length === 0 && <div className="bk-treatment-modal-empty">No treatments yet.</div>}
-            {visibleTreatments.map((treatment) => <button type="button" key={treatment} className={`bk-treatment-modal-option ${norm(treatment) === norm(form.treatmentName) ? "bk-treatment-modal-option-selected" : ""}`} onClick={() => chooseTreatment(treatment)}>{treatment}</button>)}
+            {visibleTreatments.map((treatment) => <button type="button" key={treatment} className={`bk-treatment-modal-option ${!removing && norm(treatment) === norm(form.treatmentName) ? "bk-treatment-modal-option-selected" : ""} ${removing ? "text-red-300" : ""}`} onClick={() => handleTreatmentClick(treatment)}>{treatment}</button>)}
           </div>
         </div>
       </div>}
