@@ -1,8 +1,57 @@
-/* Edit Region controls inside the Add/Edit Apiary Region dropdown. */
+/* Edit Region controls inside the Edit Apiary screen. */
+#root .bk-edit-name-row {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 0.65rem !important;
+}
+
+#root .bk-edit-name-label,
+#root .bk-region-area-heading-label {
+  color: #fde68a !important;
+  font-size: 1rem !important;
+  font-weight: 950 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-edit-name-row > input {
+  min-width: 0 !important;
+}
+
+#root .bk-region-area-edit-screen {
+  gap: 0.55rem !important;
+}
+
+#root .bk-region-area-edit-row {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 0.55rem !important;
+  width: 100% !important;
+}
+
+#root .bk-region-area-button-slot {
+  min-width: 0 !important;
+}
+
+#root .bk-region-area-edit-screen .bk-region-area-button {
+  width: 100% !important;
+  min-width: 0 !important;
+  padding: 0.7rem 0.8rem !important;
+  font-size: 1rem !important;
+}
+
 #root .bk-region-area-edit-toggle {
-  border-color: rgba(96, 165, 250, 0.58) !important;
+  min-height: 2.35rem !important;
+  border-radius: 0.7rem !important;
+  border: 1px solid rgba(96, 165, 250, 0.58) !important;
   background: rgba(30, 64, 175, 0.25) !important;
   color: #bfdbfe !important;
+  padding: 0.45rem 0.7rem !important;
+  font-size: 0.82rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
 }
 
 #root .bk-region-area-edit-toggle-active {
@@ -39,9 +88,7 @@
   padding: 0.5rem !important;
 }
 
-#root .bk-region-area-edit-panel[hidden] {
-  display: none !important;
-}
+#root .bk-region-area-edit-panel[hidden] { display: none !important; }
 
 #root .bk-region-area-edit-input {
   width: 100% !important;
@@ -69,12 +116,29 @@
   white-space: nowrap !important;
 }
 
-#root .bk-region-area-edit-cancel {
-  background: rgba(0, 0, 0, 0.34) !important;
-  opacity: 0.88 !important;
-}
+#root .bk-region-area-edit-cancel { background: rgba(0, 0, 0, 0.34) !important; opacity: 0.88 !important; }
 
 @media (max-width: 560px) {
+  #root .bk-edit-name-row,
+  #root .bk-region-area-edit-row {
+    gap: 0.4rem !important;
+  }
+
+  #root .bk-edit-name-label,
+  #root .bk-region-area-heading-label {
+    font-size: 0.9rem !important;
+  }
+
+  #root .bk-region-area-edit-screen .bk-region-area-button {
+    font-size: 0.92rem !important;
+    padding: 0.62rem 0.65rem !important;
+  }
+
+  #root .bk-region-area-edit-toggle {
+    padding: 0.4rem 0.55rem !important;
+    font-size: 0.76rem !important;
+  }
+
   #root .bk-region-area-edit-panel {
     grid-template-columns: 1fr !important;
   }
