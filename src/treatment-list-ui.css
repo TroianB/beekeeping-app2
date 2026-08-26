@@ -1,88 +1,115 @@
-#root .bk-treatment-picker {
-  display: grid !important;
-  gap: 0.55rem !important;
-}
-
-#root .bk-treatment-toolbar {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.45rem !important;
-  flex-wrap: nowrap !important;
-}
-
-#root .bk-treatment-add-proxy,
-#root .bk-treatment-remove-proxy {
-  min-height: 2.25rem !important;
-  border-radius: 0.75rem !important;
-  border: 1px solid rgba(234, 179, 8, 0.45) !important;
-  background: rgba(0, 0, 0, 0.42) !important;
-  color: #fde047 !important;
-  padding: 0.42rem 0.6rem !important;
-  font-size: 0.82rem !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  white-space: nowrap !important;
-}
-
-#root .bk-treatment-remove-proxy {
-  color: #fca5a5 !important;
-  border-color: rgba(248, 113, 113, 0.45) !important;
-}
-
-#root .bk-treatment-remove-proxy:disabled {
-  opacity: 0.45 !important;
-  cursor: not-allowed !important;
-}
-
 #root .bk-treatment-native-select,
-#root .bk-treatment-old-select-row,
 #root .bk-treatment-original-control {
   display: none !important;
 }
 
-#root .bk-treatment-list {
+.bk-treatment-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1600 !important;
   display: grid !important;
-  gap: 0.35rem !important;
-  max-height: 13rem !important;
-  overflow-y: auto !important;
-  border: 1px solid rgba(234, 179, 8, 0.32) !important;
-  border-radius: 0.9rem !important;
-  background: rgba(0, 0, 0, 0.3) !important;
-  padding: 0.5rem !important;
+  place-items: center !important;
+  padding: 1rem !important;
+  background: rgba(0, 0, 0, 0.72) !important;
 }
 
-#root .bk-treatment-option {
-  width: 100% !important;
+.bk-treatment-modal-card {
+  width: min(30rem, calc(100vw - 2rem)) !important;
+  max-height: min(75vh, 38rem) !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+  gap: 0.7rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.55) !important;
+  border-radius: 1rem !important;
+  background: #070707 !important;
+  padding: 0.85rem !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.72) !important;
+}
+
+.bk-treatment-modal-toolbar {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 0.55rem !important;
+}
+
+.bk-treatment-modal-add,
+.bk-treatment-modal-remove {
+  min-height: 2.6rem !important;
   border-radius: 0.75rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.46) !important;
+  background: rgba(234, 179, 8, 0.14) !important;
+  color: #fde047 !important;
+  padding: 0.55rem 0.7rem !important;
+  font-size: 0.88rem !important;
+  font-weight: 950 !important;
+}
+
+.bk-treatment-modal-remove {
+  border-color: rgba(248, 113, 113, 0.48) !important;
+  background: rgba(127, 29, 29, 0.24) !important;
+  color: #fca5a5 !important;
+}
+
+.bk-treatment-modal-remove:disabled {
+  opacity: 0.4 !important;
+  cursor: not-allowed !important;
+}
+
+.bk-treatment-modal-list {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  gap: 0.4rem !important;
+  padding-right: 0.1rem !important;
+}
+
+.bk-treatment-modal-option {
+  width: 100% !important;
+  border-radius: 0.8rem !important;
   border: 1px solid rgba(234, 179, 8, 0.35) !important;
-  background: rgba(0, 0, 0, 0.45) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
   color: #fef3c7 !important;
-  padding: 0.62rem 0.75rem !important;
-  font-size: 0.98rem !important;
-  font-weight: 850 !important;
+  padding: 0.75rem 0.85rem !important;
+  font-size: 1rem !important;
+  font-weight: 900 !important;
   text-align: left !important;
 }
 
-#root .bk-treatment-option-selected {
+.bk-treatment-modal-option-selected {
   background: #eab308 !important;
   color: #000 !important;
   border-color: #facc15 !important;
 }
 
+.bk-treatment-modal-empty {
+  border: 1px dashed rgba(234, 179, 8, 0.35) !important;
+  border-radius: 0.8rem !important;
+  color: #fde68a !important;
+  padding: 0.85rem !important;
+  text-align: center !important;
+}
+
 @media (max-width: 520px) {
-  #root .bk-treatment-toolbar {
-    gap: 0.35rem !important;
+  .bk-treatment-modal {
+    place-items: start center !important;
+    padding: 0.65rem !important;
+    padding-top: calc(0.65rem + env(safe-area-inset-top, 0px)) !important;
   }
 
-  #root .bk-treatment-add-proxy,
-  #root .bk-treatment-remove-proxy {
-    flex: 1 1 0 !important;
-    min-width: 0 !important;
-    font-size: 0.75rem !important;
-    padding: 0.4rem 0.45rem !important;
+  .bk-treatment-modal-card {
+    width: 100% !important;
+    max-height: calc(100dvh - 1.3rem) !important;
   }
 
-  #root .bk-treatment-option {
-    font-size: 0.95rem !important;
+  .bk-treatment-modal-add,
+  .bk-treatment-modal-remove {
+    min-height: 2.8rem !important;
+    font-size: 0.82rem !important;
+  }
+
+  .bk-treatment-modal-option {
+    min-height: 3rem !important;
+    font-size: 1rem !important;
   }
 }
