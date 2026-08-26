@@ -1,8 +1,10 @@
 /* Match Add/Delete Apiary controls to Add/Delete Region controls. */
-body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
-body.bk-apiaries-list-only #bkDeleteApiaryButton,
+body.bk-apiaries-list-only #bkAddApiaryProxy,
+body.bk-apiaries-list-only #bkDeleteApiaryProxy,
 body.bk-apiaries-list-only #bkAddRegionButton,
-body.bk-apiaries-list-only #bkDeleteRegionButton {
+body.bk-apiaries-list-only #bkDeleteRegionButton,
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
+body.bk-apiaries-list-only #bkDeleteApiaryButton {
   width: 9.5rem !important;
   min-width: 9.5rem !important;
   max-width: 9.5rem !important;
@@ -19,22 +21,29 @@ body.bk-apiaries-list-only #bkDeleteRegionButton {
   box-sizing: border-box !important;
 }
 
-body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type {
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
+body.bk-apiaries-list-only #bkAddApiaryProxy {
   border: 1px solid rgba(234, 179, 8, 0.55) !important;
   background: rgba(234, 179, 8, 0.18) !important;
   color: #fde047 !important;
 }
 
-body.bk-apiaries-list-only #bkDeleteApiaryButton {
+body.bk-apiaries-list-only #bkDeleteApiaryButton,
+body.bk-apiaries-list-only #bkDeleteApiaryProxy {
   border: 1px solid rgba(248, 113, 113, 0.55) !important;
   background: rgba(127, 29, 29, 0.34) !important;
   color: #fca5a5 !important;
 }
 
-body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready {
+body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready,
+body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryProxy.bk-ready {
   border-color: rgba(248, 113, 113, 0.75) !important;
   background: rgba(127, 29, 29, 0.62) !important;
   color: #fecaca !important;
+}
+
+#bkApiaryActionRow {
+  display: none;
 }
 
 /* Desktop: separate the Apiary action row from the Region action row. */
@@ -45,27 +54,24 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
 }
 
 @media (max-width: 760px) {
-  /* Use the same two-column structure as the Region button row. */
+  /* Hide the entire old React Apiary action row, including its hidden Delete button and injected wrapper. */
   body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) {
+    display: none !important;
+  }
+
+  /* The visible Apiary row now has exactly the same structure as the Region row. */
+  body.bk-apiaries-list-only #bkApiaryActionRow,
+  body.bk-apiaries-list-only #bkRegionManagementControls {
     display: grid !important;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
     width: 100% !important;
     max-width: 100% !important;
     gap: 0.5rem !important;
+    margin: 0.35rem 0 0.55rem !important;
   }
 
-  body.bk-apiaries-list-only #bkApiaryListControls,
-  body.bk-apiaries-list-only #bkApiaryListControls .bk-apiary-list-controls-inner {
-    display: contents !important;
-  }
-
-  /* Keep the original React Delete button completely out of the layout. */
-  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:not(:first-of-type) {
-    display: none !important;
-  }
-
-  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
-  body.bk-apiaries-list-only #bkDeleteApiaryButton,
+  body.bk-apiaries-list-only #bkAddApiaryProxy,
+  body.bk-apiaries-list-only #bkDeleteApiaryProxy,
   body.bk-apiaries-list-only #bkAddRegionButton,
   body.bk-apiaries-list-only #bkDeleteRegionButton {
     width: 100% !important;
@@ -75,16 +81,11 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
     padding: 0.72rem 0.45rem !important;
     font-size: 0.9rem !important;
   }
-
-  body.bk-apiaries-list-only #bkCancelDeleteApiaryButton {
-    grid-column: 1 / -1 !important;
-    width: 100% !important;
-  }
 }
 
 @media (max-width: 390px) {
-  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
-  body.bk-apiaries-list-only #bkDeleteApiaryButton,
+  body.bk-apiaries-list-only #bkAddApiaryProxy,
+  body.bk-apiaries-list-only #bkDeleteApiaryProxy,
   body.bk-apiaries-list-only #bkAddRegionButton,
   body.bk-apiaries-list-only #bkDeleteRegionButton {
     min-height: 2.85rem !important;
