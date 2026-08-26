@@ -22,6 +22,7 @@ import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
 import "./apiary-list-only.js";
+import "./apiary-action-row.js";
 import "./apiary-delete-no-reload.js";
 import "./apiary-detail-back-arrow.js";
 import "./apiary-edit-fix.js";
