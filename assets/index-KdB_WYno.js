@@ -335,7 +335,7 @@ Error generating stack: `+e.message+`
       <label class="bk-quick-apiary-field">
         <span>Region</span>
         <select id="bkQuickApiaryRegion">
-          <option value="">Select Region</option>
+          <option value="" selected disabled hidden>Select Region</option>
         </select>
       </label>
       <div class="bk-quick-apiary-error" aria-live="polite"></div>
