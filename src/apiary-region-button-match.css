@@ -1,5 +1,11 @@
 /* Match Add/Delete Apiary controls to Add/Delete Region controls. */
-body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button {
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
+body.bk-apiaries-list-only #bkDeleteApiaryButton,
+body.bk-apiaries-list-only #bkAddRegionButton,
+body.bk-apiaries-list-only #bkDeleteRegionButton {
+  width: 9.5rem !important;
+  min-width: 9.5rem !important;
+  max-width: 9.5rem !important;
   min-height: 2.65rem !important;
   border-radius: 0.8rem !important;
   padding: 0.62rem 0.8rem !important;
@@ -7,19 +13,19 @@ body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button {
   line-height: 1.1 !important;
   font-weight: 950 !important;
   white-space: nowrap !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button {
   border: 1px solid rgba(234, 179, 8, 0.55) !important;
   background: rgba(234, 179, 8, 0.18) !important;
   color: #fde047 !important;
 }
 
 body.bk-apiaries-list-only #bkDeleteApiaryButton {
-  min-height: 2.65rem !important;
-  border-radius: 0.8rem !important;
-  padding: 0.62rem 0.8rem !important;
-  font-size: 0.95rem !important;
-  line-height: 1.1 !important;
-  font-weight: 950 !important;
-  white-space: nowrap !important;
   border: 1px solid rgba(248, 113, 113, 0.55) !important;
   background: rgba(127, 29, 29, 0.34) !important;
   color: #fca5a5 !important;
@@ -33,7 +39,12 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
 
 @media (max-width: 760px) {
   body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
-  body.bk-apiaries-list-only #bkDeleteApiaryButton {
+  body.bk-apiaries-list-only #bkDeleteApiaryButton,
+  body.bk-apiaries-list-only #bkAddRegionButton,
+  body.bk-apiaries-list-only #bkDeleteRegionButton {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
     min-height: 3rem !important;
     padding: 0.72rem 0.45rem !important;
     font-size: 0.9rem !important;
@@ -42,7 +53,9 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
 
 @media (max-width: 390px) {
   body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
-  body.bk-apiaries-list-only #bkDeleteApiaryButton {
+  body.bk-apiaries-list-only #bkDeleteApiaryButton,
+  body.bk-apiaries-list-only #bkAddRegionButton,
+  body.bk-apiaries-list-only #bkDeleteRegionButton {
     min-height: 2.85rem !important;
     padding: 0.65rem 0.3rem !important;
     font-size: 0.82rem !important;
