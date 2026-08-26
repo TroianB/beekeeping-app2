@@ -260,12 +260,9 @@ function bkRegionFilterEnsureManagementButtons() {
       event.stopPropagation();
       bkRegionFilterOpenDeleteWindow();
     });
-  }
 
-  const apiaryRow = document.getElementById('bkApiaryActionRow');
-  const anchor = apiaryRow?.parentElement === topRow.parentElement ? apiaryRow : topRow;
-  if (row.parentElement !== anchor.parentElement || row.previousElementSibling !== anchor) {
-    anchor.insertAdjacentElement('afterend', row);
+    /* Initial placement only. apiary-action-row.js owns all later ordering. */
+    topRow.insertAdjacentElement('afterend', row);
   }
 }
 
