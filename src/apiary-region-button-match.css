@@ -1,5 +1,5 @@
 /* Match Add/Delete Apiary controls to Add/Delete Region controls. */
-body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
 body.bk-apiaries-list-only #bkDeleteApiaryButton,
 body.bk-apiaries-list-only #bkAddRegionButton,
 body.bk-apiaries-list-only #bkDeleteRegionButton {
@@ -19,7 +19,7 @@ body.bk-apiaries-list-only #bkDeleteRegionButton {
   box-sizing: border-box !important;
 }
 
-body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button {
+body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type {
   border: 1px solid rgba(234, 179, 8, 0.55) !important;
   background: rgba(234, 179, 8, 0.18) !important;
   color: #fde047 !important;
@@ -38,7 +38,7 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
 }
 
 @media (max-width: 760px) {
-  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
+  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
   body.bk-apiaries-list-only #bkDeleteApiaryButton,
   body.bk-apiaries-list-only #bkAddRegionButton,
   body.bk-apiaries-list-only #bkDeleteRegionButton {
@@ -52,7 +52,7 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryButton.bk-ready 
 }
 
 @media (max-width: 390px) {
-  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button,
+  body.bk-apiaries-list-only #root div:has(> #bkApiaryListControls) > button:first-of-type,
   body.bk-apiaries-list-only #bkDeleteApiaryButton,
   body.bk-apiaries-list-only #bkAddRegionButton,
   body.bk-apiaries-list-only #bkDeleteRegionButton {
