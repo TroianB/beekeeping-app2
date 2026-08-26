@@ -185,6 +185,10 @@ function bkIsApiaryFormModal(modal) {
   return title === 'add apiary' || title.startsWith('edit ');
 }
 
+function bkIsEditApiaryModal(modal) {
+  return bkGetModalTitle(modal).toLowerCase().startsWith('edit ');
+}
+
 function bkGetNameInput(modal) {
   const panel = modal?.children?.[0];
   const labels = Array.from(panel?.querySelectorAll?.('label') || []);
@@ -209,8 +213,14 @@ function bkSetControlRegion(control, region) {
   const cleanRegion = bkCleanRegion(region);
   const value = control.querySelector('.bk-region-area-value');
   const button = control.querySelector('.bk-region-area-button');
+  const modal = control.closest?.('#root .fixed.inset-0.z-50');
+  const isEditApiary = bkIsEditApiaryModal(modal);
   if (value) value.value = cleanRegion;
-  if (button) button.textContent = cleanRegion ? `Region/Area: ${cleanRegion} ▾` : 'Region/Area ▾';
+  if (button) {
+    button.textContent = isEditApiary
+      ? (cleanRegion ? `${cleanRegion} ▾` : 'Select Region ▾')
+      : (cleanRegion ? `Region/Area: ${cleanRegion} ▾` : 'Region/Area ▾');
+  }
   bkRenderRegionMenu(control);
 }
 
@@ -618,28 +628,39 @@ document.addEventListener('dragend', () => {
 
 document.addEventListener('click', (event) => {
   const menuClick = event.target.closest?.('.bk-region-area-control');
-  if (!menuClick) bkCloseOtherRegionMenus(null);
+  if (menuClick) return;
+  document.querySelectorAll('.bk-region-area-menu').forEach((menu) => menu.setAttribute('hidden', ''));
+  document.querySelectorAll('.bk-region-area-control').forEach((control) => bkHideRegionPanels(control));
+}, true);
 
+document.addEventListener('click', (event) => {
   const button = event.target.closest?.('button');
-  if (!button) return;
+  if (!button || button.textContent.trim().toLowerCase() !== 'save') return;
   const modal = button.closest('#root .fixed.inset-0.z-50');
   if (!modal || !bkIsApiaryFormModal(modal)) return;
-  if (button.textContent.trim().toLowerCase() !== 'save') return;
 
+  const oldName = bkGetModalTitle(modal).replace(/^edit\s+/i, '').trim();
+  const newName = bkApiaryNameFromModal(modal);
   const control = modal.querySelector('.bk-region-area-control');
   const region = bkGetControlRegion(control);
-  const inputName = bkGetNameInput(modal)?.value?.trim();
-  const titleName = bkGetModalTitle(modal).replace(/^edit\s+/i, '').trim();
-  bkScheduleRegionSave([inputName, titleName], region);
+  bkScheduleRegionSave([oldName, newName], region);
+}, true);
+
+document.addEventListener('click', (event) => {
+  const option = event.target.closest?.('.bk-region-area-option');
+  if (!option) return;
+  const control = option.closest('.bk-region-area-control');
+  if (!control) return;
+  const modal = control.closest('#root .fixed.inset-0.z-50');
+  const name = bkApiaryNameFromModal(modal);
+  const region = bkCleanRegion(option.dataset.regionArea);
+  window.setTimeout(() => bkSaveRegionForApiaryName(name, region), 0);
 }, true);
 
 document.addEventListener('keydown', (event) => {
-  if (event.key === 'Escape') bkCloseOtherRegionMenus(null);
-}, true);
-
-document.addEventListener('input', (event) => {
-  if (event.target.closest?.('.bk-region-area-control')) return;
-  if (event.target.closest?.('#root .fixed.inset-0.z-50')) bkScheduleRegionWork();
+  if (event.key !== 'Escape') return;
+  document.querySelectorAll('.bk-region-area-menu').forEach((menu) => menu.setAttribute('hidden', ''));
+  document.querySelectorAll('.bk-region-area-control').forEach((control) => bkHideRegionPanels(control));
 }, true);
 
 new MutationObserver(bkScheduleRegionWork).observe(document.documentElement, {
