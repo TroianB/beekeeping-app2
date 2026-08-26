@@ -103,6 +103,30 @@ function bkTreatmentRefreshAfterAdd(modal, block, treatmentName, attempt = 0) {
   window.setTimeout(() => bkTreatmentRefreshAfterAdd(modal, currentBlock, treatmentName, attempt + 1), 25);
 }
 
+function bkTreatmentRefreshAfterRemove(modal, block, removedName, attempt = 0) {
+  if (!modal?.isConnected) return;
+  const currentBlock = bkTreatmentCurrentBlock(block);
+  if (currentBlock) bkTreatmentActiveBlock = currentBlock;
+  const select = bkTreatmentSelectFromBlock(currentBlock);
+  const stillExists = Array.from(select?.options || []).some((option) => {
+    return String(option.value || '').trim().toLowerCase() === String(removedName || '').trim().toLowerCase();
+  });
+
+  if (!stillExists) {
+    bkTreatmentRenderModalList(modal, currentBlock);
+    const remove = modal.querySelector('.bk-treatment-modal-remove');
+    const realRemove = currentBlock?.querySelector('.bk-remove-treatment-button');
+    if (remove) remove.disabled = Boolean(realRemove?.disabled);
+    return;
+  }
+
+  if (attempt >= 40) {
+    bkTreatmentRenderModalList(modal, currentBlock);
+    return;
+  }
+  window.setTimeout(() => bkTreatmentRefreshAfterRemove(modal, currentBlock, removedName, attempt + 1), 25);
+}
+
 function bkTreatmentCommitAdd(modal, block) {
   const input = modal?.querySelector('.bk-treatment-modal-add-input');
   const name = String(input?.value || '').trim();
@@ -207,14 +231,11 @@ function bkTreatmentOpenModal(block) {
     remove.addEventListener('click', () => {
       if (remove.disabled) return;
       const liveBlock = bkTreatmentCurrentBlock(bkTreatmentActiveBlock);
+      const liveSelect = bkTreatmentSelectFromBlock(liveBlock);
+      const removedName = String(liveSelect?.value || '').trim();
+      if (!removedName) return;
       liveBlock?.querySelector('.bk-remove-treatment-button')?.click();
-      window.setTimeout(() => {
-        const refreshedBlock = bkTreatmentCurrentBlock(liveBlock);
-        if (refreshedBlock) bkTreatmentActiveBlock = refreshedBlock;
-        bkTreatmentRenderModalList(modal, refreshedBlock);
-        const currentRemove = refreshedBlock?.querySelector('.bk-remove-treatment-button');
-        remove.disabled = Boolean(currentRemove?.disabled);
-      }, 0);
+      bkTreatmentRefreshAfterRemove(modal, liveBlock, removedName);
     });
   }
 
