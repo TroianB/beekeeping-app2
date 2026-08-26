@@ -55,19 +55,9 @@ function bkActionSync() {
     });
   }
 
-  /*
-   * Region management deliberately owns the slot immediately after the
-   * original React action row. Put the mobile Apiary proxy row after the
-   * Region row when it exists. This prevents the two MutationObservers from
-   * endlessly moving their rows in front of each other.
-   */
-  const regionRow = document.getElementById('bkRegionManagementControls');
-  const anchor = regionRow?.parentElement === originalRow.parentElement
-    ? regionRow
-    : originalRow;
-
-  if (row.parentElement !== anchor.parentElement || row.previousElementSibling !== anchor) {
-    anchor.insertAdjacentElement('afterend', row);
+  /* Apiary row owns the slot immediately after the original React row. */
+  if (row.parentElement !== originalRow.parentElement || row.previousElementSibling !== originalRow) {
+    originalRow.insertAdjacentElement('afterend', row);
   }
 
   const sourceDelete = bkActionGetDelete();
@@ -93,7 +83,6 @@ function bkActionScheduleSync() {
   });
 }
 
-/* Only watch structural React changes. Do not observe class/disabled changes that this helper also writes. */
 new MutationObserver(bkActionScheduleSync).observe(document.documentElement, {
   childList: true,
   subtree: true
