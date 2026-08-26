@@ -71,6 +71,25 @@ function bkTreatmentShowAddRow(modal) {
   window.setTimeout(() => input?.focus(), 0);
 }
 
+function bkTreatmentRefreshAfterAdd(modal, block, treatmentName, attempt = 0) {
+  if (!modal?.isConnected || !block?.isConnected) return;
+  const select = bkTreatmentSelectFromBlock(block);
+  const exists = Array.from(select?.options || []).some((option) => {
+    return String(option.value || '').trim().toLowerCase() === String(treatmentName || '').trim().toLowerCase();
+  });
+
+  if (exists || attempt >= 20) {
+    bkTreatmentHideAddRow(modal);
+    bkTreatmentRenderModalList(modal, block);
+    const remove = modal.querySelector('.bk-treatment-modal-remove');
+    const realRemove = block.querySelector('.bk-remove-treatment-button');
+    if (remove) remove.disabled = Boolean(realRemove?.disabled);
+    return;
+  }
+
+  window.setTimeout(() => bkTreatmentRefreshAfterAdd(modal, block, treatmentName, attempt + 1), 25);
+}
+
 function bkTreatmentCommitAdd(modal, block) {
   const input = modal?.querySelector('.bk-treatment-modal-add-input');
   const name = String(input?.value || '').trim();
@@ -95,10 +114,7 @@ function bkTreatmentCommitAdd(modal, block) {
 
     window.setTimeout(() => {
       nativeAdd.click();
-      window.setTimeout(() => {
-        bkTreatmentHideAddRow(modal);
-        bkTreatmentRenderModalList(modal, block);
-      }, 0);
+      bkTreatmentRefreshAfterAdd(modal, block, name);
     }, 0);
   }, 0);
 }
