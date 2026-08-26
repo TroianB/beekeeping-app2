@@ -18,7 +18,7 @@
   max-height: min(75vh, 38rem) !important;
   overflow: hidden !important;
   display: grid !important;
-  grid-template-rows: auto minmax(0, 1fr) !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
   gap: 0.7rem !important;
   border: 1px solid rgba(234, 179, 8, 0.55) !important;
   border-radius: 1rem !important;
@@ -34,7 +34,9 @@
 }
 
 .bk-treatment-modal-add,
-.bk-treatment-modal-remove {
+.bk-treatment-modal-remove,
+.bk-treatment-modal-add-save,
+.bk-treatment-modal-add-cancel {
   min-height: 2.6rem !important;
   border-radius: 0.75rem !important;
   border: 1px solid rgba(234, 179, 8, 0.46) !important;
@@ -54,6 +56,38 @@
 .bk-treatment-modal-remove:disabled {
   opacity: 0.4 !important;
   cursor: not-allowed !important;
+}
+
+.bk-treatment-modal-add-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 0.45rem !important;
+  align-items: center !important;
+}
+
+.bk-treatment-modal-add-row[hidden] {
+  display: none !important;
+}
+
+.bk-treatment-modal-add-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 2.6rem !important;
+  border-radius: 0.75rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.4) !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: #fef3c7 !important;
+  padding: 0.55rem 0.7rem !important;
+  font-size: 0.95rem !important;
+}
+
+.bk-treatment-modal-add-save {
+  background: #eab308 !important;
+  color: #000 !important;
+}
+
+.bk-treatment-modal-add-cancel {
+  background: rgba(0, 0, 0, 0.45) !important;
 }
 
 .bk-treatment-modal-list {
@@ -106,6 +140,14 @@
   .bk-treatment-modal-remove {
     min-height: 2.8rem !important;
     font-size: 0.82rem !important;
+  }
+
+  .bk-treatment-modal-add-row {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .bk-treatment-modal-add-input {
+    grid-column: 1 / -1 !important;
   }
 
   .bk-treatment-modal-option {
