@@ -57,6 +57,52 @@ function bkTreatmentRenderModalList(modal, block) {
   });
 }
 
+function bkTreatmentHideAddRow(modal) {
+  const row = modal?.querySelector('.bk-treatment-modal-add-row');
+  const input = modal?.querySelector('.bk-treatment-modal-add-input');
+  if (row) row.hidden = true;
+  if (input) input.value = '';
+}
+
+function bkTreatmentShowAddRow(modal) {
+  const row = modal?.querySelector('.bk-treatment-modal-add-row');
+  const input = modal?.querySelector('.bk-treatment-modal-add-input');
+  if (row) row.hidden = false;
+  window.setTimeout(() => input?.focus(), 0);
+}
+
+function bkTreatmentCommitAdd(modal, block) {
+  const input = modal?.querySelector('.bk-treatment-modal-add-input');
+  const name = String(input?.value || '').trim();
+  if (!name || !block) return;
+
+  const realAddToggle = block.querySelector('.bk-new-treatment-button');
+  realAddToggle?.click();
+
+  window.setTimeout(() => {
+    const nativeInput = Array.from(block.querySelectorAll('input')).find((item) => {
+      return /new treatment name/i.test(String(item.placeholder || ''));
+    });
+    const nativeAdd = Array.from(block.querySelectorAll('button')).find((button) => {
+      return button.textContent.trim() === 'Add' && !button.classList.contains('bk-treatment-modal-add');
+    });
+
+    if (!nativeInput || !nativeAdd) return;
+    const descriptor = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+    descriptor?.set?.call(nativeInput, name);
+    nativeInput.dispatchEvent(new Event('input', { bubbles: true }));
+    nativeInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+    window.setTimeout(() => {
+      nativeAdd.click();
+      window.setTimeout(() => {
+        bkTreatmentHideAddRow(modal);
+        bkTreatmentRenderModalList(modal, block);
+      }, 0);
+    }, 0);
+  }, 0);
+}
+
 function bkTreatmentOpenModal(block) {
   if (!block) return;
   bkTreatmentCloseModal();
@@ -70,6 +116,11 @@ function bkTreatmentOpenModal(block) {
         <button type="button" class="bk-treatment-modal-add">Add</button>
         <button type="button" class="bk-treatment-modal-remove">Remove</button>
       </div>
+      <div class="bk-treatment-modal-add-row" hidden>
+        <input type="text" class="bk-treatment-modal-add-input" placeholder="New treatment name" />
+        <button type="button" class="bk-treatment-modal-add-save">Save</button>
+        <button type="button" class="bk-treatment-modal-add-cancel">Cancel</button>
+      </div>
       <div class="bk-treatment-modal-list"></div>
     </div>
   `;
@@ -79,8 +130,17 @@ function bkTreatmentOpenModal(block) {
   });
 
   modal.querySelector('.bk-treatment-modal-add')?.addEventListener('click', () => {
-    block.querySelector('.bk-new-treatment-button')?.click();
-    bkTreatmentCloseModal();
+    bkTreatmentShowAddRow(modal);
+  });
+  modal.querySelector('.bk-treatment-modal-add-save')?.addEventListener('click', () => {
+    bkTreatmentCommitAdd(modal, block);
+  });
+  modal.querySelector('.bk-treatment-modal-add-cancel')?.addEventListener('click', () => {
+    bkTreatmentHideAddRow(modal);
+  });
+  modal.querySelector('.bk-treatment-modal-add-input')?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') bkTreatmentCommitAdd(modal, block);
+    if (event.key === 'Escape') bkTreatmentHideAddRow(modal);
   });
 
   const remove = modal.querySelector('.bk-treatment-modal-remove');
@@ -90,7 +150,11 @@ function bkTreatmentOpenModal(block) {
     remove.addEventListener('click', () => {
       if (remove.disabled) return;
       realRemove?.click();
-      bkTreatmentCloseModal();
+      window.setTimeout(() => {
+        bkTreatmentRenderModalList(modal, block);
+        const currentRemove = block.querySelector('.bk-remove-treatment-button');
+        remove.disabled = Boolean(currentRemove?.disabled);
+      }, 0);
     });
   }
 
