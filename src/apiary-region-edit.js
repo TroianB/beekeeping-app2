@@ -84,12 +84,22 @@ function bkRegionEditTriggerRefresh() {
   window.setTimeout(() => marker.remove(), 0);
 }
 
+function bkRegionEditIsEditApiary(control) {
+  const modal = control?.closest?.('#root .fixed.inset-0.z-50');
+  const title = String(modal?.children?.[0]?.children?.[0]?.textContent || '').trim().toLowerCase();
+  return title.startsWith('edit ');
+}
+
 function bkRegionEditSetControlRegion(control, region) {
   const cleanRegion = bkRegionEditClean(region);
   const value = control?.querySelector('.bk-region-area-value');
   const button = control?.querySelector('.bk-region-area-button');
   if (value) value.value = cleanRegion;
-  if (button) button.textContent = cleanRegion ? `Region/Area: ${cleanRegion} ▾` : 'Region/Area ▾';
+  if (button) {
+    button.textContent = bkRegionEditIsEditApiary(control)
+      ? (cleanRegion ? `${cleanRegion} ▾` : 'Select Region ▾')
+      : (cleanRegion ? `Region/Area: ${cleanRegion} ▾` : 'Region/Area ▾');
+  }
 }
 
 function bkRegionEditRenameRegion(oldRegion, newRegion) {
@@ -185,13 +195,28 @@ function bkRegionEditSave(control) {
 function bkRegionEditPrepareControl(control) {
   if (!control || control.dataset.regionEditPrepared === '1') return;
   control.dataset.regionEditPrepared = '1';
-  const deleteToggle = control.querySelector('.bk-region-area-delete-toggle');
-  if (deleteToggle) {
-    deleteToggle.textContent = 'Edit Region';
-    deleteToggle.classList.add('bk-region-area-edit-toggle');
-    deleteToggle.classList.remove('bk-region-area-delete-toggle');
-    deleteToggle.disabled = false;
+
+  if (!bkRegionEditIsEditApiary(control)) return;
+  control.classList.add('bk-region-area-edit-screen');
+
+  let heading = control.querySelector('.bk-region-area-heading');
+  if (!heading) {
+    heading = document.createElement('div');
+    heading.className = 'bk-region-area-heading';
+    heading.innerHTML = `
+      <span class="bk-region-area-heading-label">Region</span>
+      <button type="button" class="bk-region-area-edit-toggle">Edit</button>
+    `;
+    control.insertBefore(heading, control.firstChild);
   }
+
+  const button = control.querySelector('.bk-region-area-button');
+  const current = bkRegionEditClean(control.querySelector('.bk-region-area-value')?.value);
+  if (button) button.textContent = current ? `${current} ▾` : 'Select Region ▾';
+
+  const toolbar = control.querySelector('.bk-region-area-toolbar');
+  if (toolbar) toolbar.hidden = true;
+  control.querySelector('.bk-region-area-add-panel')?.setAttribute('hidden', '');
   control.querySelector('.bk-region-area-delete-panel')?.setAttribute('hidden', '');
 }
 
@@ -210,8 +235,18 @@ document.addEventListener('click', (event) => {
   control.querySelector('.bk-region-area-add-panel')?.setAttribute('hidden', '');
   control.querySelector('.bk-region-area-delete-panel')?.setAttribute('hidden', '');
   bkRegionEditHidePanel(control);
-  control.classList.toggle(BK_REGION_EDIT_ACTIVE_CLASS);
-  editToggle.classList.toggle('bk-region-area-edit-toggle-active', control.classList.contains(BK_REGION_EDIT_ACTIVE_CLASS));
+
+  const becomingActive = !control.classList.contains(BK_REGION_EDIT_ACTIVE_CLASS);
+  control.classList.toggle(BK_REGION_EDIT_ACTIVE_CLASS, becomingActive);
+  editToggle.classList.toggle('bk-region-area-edit-toggle-active', becomingActive);
+
+  const menu = control.querySelector('.bk-region-area-menu');
+  if (becomingActive) {
+    if (menu?.hidden) control.querySelector('.bk-region-area-button')?.click();
+    menu?.removeAttribute('hidden');
+  } else {
+    menu?.setAttribute('hidden', '');
+  }
 }, true);
 
 document.addEventListener('click', (event) => {
