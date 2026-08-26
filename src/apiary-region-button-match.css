@@ -11,7 +11,7 @@ body.bk-apiaries-list-only #bkDeleteApiaryButton {
   min-height: 2.65rem !important;
   border-radius: 0.8rem !important;
   padding: 0.62rem 0.8rem !important;
-  font-size: 0.95rem !important;
+  font-size: 1.05rem !important;
   line-height: 1.1 !important;
   font-weight: 950 !important;
   white-space: nowrap !important;
@@ -79,7 +79,7 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryProxy.bk-ready {
     max-width: none !important;
     min-height: 3rem !important;
     padding: 0.72rem 0.45rem !important;
-    font-size: 0.9rem !important;
+    font-size: 1.05rem !important;
   }
 }
 
@@ -90,6 +90,6 @@ body.bk-apiaries-list-only.bk-apiary-delete-mode #bkDeleteApiaryProxy.bk-ready {
   body.bk-apiaries-list-only #bkDeleteRegionButton {
     min-height: 2.85rem !important;
     padding: 0.65rem 0.3rem !important;
-    font-size: 0.82rem !important;
+    font-size: 0.98rem !important;
   }
 }
