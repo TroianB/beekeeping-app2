@@ -9,6 +9,37 @@
   padding: 0.75rem !important;
 }
 
+#root .bk-region-area-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 0.75rem !important;
+}
+
+#root .bk-region-area-heading-label {
+  color: #fde68a !important;
+  font-size: 0.95rem !important;
+  font-weight: 900 !important;
+}
+
+#root .bk-region-area-edit-toggle {
+  min-height: 0 !important;
+  border-radius: 0.65rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.45) !important;
+  background: rgba(234, 179, 8, 0.12) !important;
+  color: #fde047 !important;
+  padding: 0.28rem 0.55rem !important;
+  font-size: 0.78rem !important;
+  font-weight: 950 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+#root .bk-region-area-edit-toggle-active {
+  background: #eab308 !important;
+  color: #000 !important;
+}
+
 #root .bk-region-area-button {
   width: 100% !important;
   border-radius: 0.9rem !important;
@@ -35,7 +66,9 @@
 
 #root .bk-region-area-menu[hidden],
 #root .bk-region-area-add-panel[hidden],
-#root .bk-region-area-delete-panel[hidden] {
+#root .bk-region-area-delete-panel[hidden],
+#root .bk-region-area-edit-panel[hidden],
+#root .bk-region-area-toolbar[hidden] {
   display: none !important;
 }
 
@@ -74,7 +107,8 @@
 }
 
 #root .bk-region-area-add-panel,
-#root .bk-region-area-delete-panel {
+#root .bk-region-area-delete-panel,
+#root .bk-region-area-edit-panel {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto auto !important;
   gap: 0.45rem !important;
@@ -83,6 +117,35 @@
   border-radius: 0.9rem !important;
   background: rgba(234, 179, 8, 0.08) !important;
   padding: 0.5rem !important;
+}
+
+#root .bk-region-area-edit-input {
+  width: 100% !important;
+  min-width: 0 !important;
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.38) !important;
+  background: rgba(0, 0, 0, 0.55) !important;
+  color: #fef3c7 !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 850 !important;
+}
+
+#root .bk-region-area-edit-save,
+#root .bk-region-area-edit-cancel {
+  border-radius: 0.8rem !important;
+  border: 1px solid rgba(234, 179, 8, 0.42) !important;
+  background: rgba(0, 0, 0, 0.42) !important;
+  color: #fef3c7 !important;
+  padding: 0.65rem 0.75rem !important;
+  font-size: 0.98rem !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+}
+
+#root .bk-region-area-edit-save {
+  background: rgba(234, 179, 8, 0.18) !important;
+  color: #fde047 !important;
 }
 
 #root .bk-region-area-list {
@@ -105,6 +168,14 @@
   font-weight: 900 !important;
   line-height: 1.1 !important;
   text-align: left !important;
+}
+
+#root .bk-region-area-editing-regions .bk-region-area-option::after {
+  content: "Edit";
+  float: right;
+  color: #fde047;
+  font-size: 0.78rem;
+  font-weight: 950;
 }
 
 #root .bk-region-area-option-selected {
@@ -242,13 +313,17 @@ body.bk-apiaries-list-only:not(.bk-apiary-delete-mode) #root input[placeholder="
   #root .bk-region-area-confirm-delete,
   #root .bk-region-area-panel-cancel,
   #root .bk-region-area-new-input,
-  #root .bk-region-area-delete-select {
+  #root .bk-region-area-delete-select,
+  #root .bk-region-area-edit-input,
+  #root .bk-region-area-edit-save,
+  #root .bk-region-area-edit-cancel {
     font-size: 0.95rem !important;
     padding: 0.65rem 0.75rem !important;
   }
 
   #root .bk-region-area-add-panel,
-  #root .bk-region-area-delete-panel {
+  #root .bk-region-area-delete-panel,
+  #root .bk-region-area-edit-panel {
     grid-template-columns: 1fr !important;
   }
 
