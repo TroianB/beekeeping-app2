@@ -52,15 +52,15 @@ function bkActionSync() {
     `;
 
     row.querySelector('#bkAddApiaryProxy')?.addEventListener('click', () => {
+      bkActionGetOriginalAdd()?.click();
+    });
+
+    row.querySelector('#bkDeleteApiaryProxy')?.addEventListener('click', () => {
       if (bkActionInDeleteMode()) {
         bkActionGetCancel()?.click();
         bkActionScheduleSync();
         return;
       }
-      bkActionGetOriginalAdd()?.click();
-    });
-
-    row.querySelector('#bkDeleteApiaryProxy')?.addEventListener('click', () => {
       const source = bkActionGetDelete();
       if (!source || source.disabled) return;
       source.click();
@@ -83,22 +83,29 @@ function bkActionSync() {
   const deleteMode = bkActionInDeleteMode();
   const addProxy = row.querySelector('#bkAddApiaryProxy');
   if (addProxy) {
-    const nextText = deleteMode ? 'Cancel' : 'Add Apiary';
-    if (addProxy.textContent !== nextText) addProxy.textContent = nextText;
-    addProxy.classList.toggle('bk-cancel-mode', deleteMode);
+    if (addProxy.textContent !== 'Add Apiary') addProxy.textContent = 'Add Apiary';
+    addProxy.classList.remove('bk-cancel-mode');
   }
 
   const sourceDelete = bkActionGetDelete();
   const proxyDelete = row.querySelector('#bkDeleteApiaryProxy');
-  if (proxyDelete && sourceDelete) {
-    const nextDisabled = Boolean(sourceDelete.disabled);
-    const nextText = sourceDelete.textContent || 'Delete Apiary';
-    const nextReady = sourceDelete.classList.contains('bk-ready');
+  if (proxyDelete) {
+    if (deleteMode) {
+      if (proxyDelete.disabled) proxyDelete.disabled = false;
+      if (proxyDelete.textContent !== 'Cancel') proxyDelete.textContent = 'Cancel';
+      proxyDelete.classList.add('bk-cancel-mode');
+      proxyDelete.classList.remove('bk-ready');
+    } else if (sourceDelete) {
+      const nextDisabled = Boolean(sourceDelete.disabled);
+      const nextText = sourceDelete.textContent || 'Delete Apiary';
+      const nextReady = sourceDelete.classList.contains('bk-ready');
 
-    if (proxyDelete.disabled !== nextDisabled) proxyDelete.disabled = nextDisabled;
-    if (proxyDelete.textContent !== nextText) proxyDelete.textContent = nextText;
-    if (proxyDelete.classList.contains('bk-ready') !== nextReady) {
-      proxyDelete.classList.toggle('bk-ready', nextReady);
+      if (proxyDelete.disabled !== nextDisabled) proxyDelete.disabled = nextDisabled;
+      if (proxyDelete.textContent !== nextText) proxyDelete.textContent = nextText;
+      proxyDelete.classList.remove('bk-cancel-mode');
+      if (proxyDelete.classList.contains('bk-ready') !== nextReady) {
+        proxyDelete.classList.toggle('bk-ready', nextReady);
+      }
     }
   }
 }
