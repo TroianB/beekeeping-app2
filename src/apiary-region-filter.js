@@ -262,8 +262,10 @@ function bkRegionFilterEnsureManagementButtons() {
     });
   }
 
-  if (row.parentElement !== topRow.parentElement || row.previousElementSibling !== topRow) {
-    topRow.insertAdjacentElement('afterend', row);
+  const apiaryRow = document.getElementById('bkApiaryActionRow');
+  const anchor = apiaryRow?.parentElement === topRow.parentElement ? apiaryRow : topRow;
+  if (row.parentElement !== anchor.parentElement || row.previousElementSibling !== anchor) {
+    anchor.insertAdjacentElement('afterend', row);
   }
 }
 
