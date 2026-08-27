@@ -13,7 +13,19 @@ function bkEditExtraSave(hiveId, patch) {
   const hives = bkEditExtraHives();
   const index = hives.findIndex((hive) => hive.id === hiveId);
   if (index < 0) return;
-  hives[index] = { ...hives[index], ...patch };
+  const current = hives[index] || {};
+  const nucs = patch.nucs == null
+    ? Math.max(0, parseInt(String(current.nucs ?? 0), 10) || 0)
+    : Math.max(0, parseInt(String(patch.nucs ?? 0), 10) || 0);
+  hives[index] = {
+    ...current,
+    ...patch,
+    nucs,
+    numHives:
+      Math.max(0, parseInt(String(current.singleHives ?? 0), 10) || 0) +
+      Math.max(0, parseInt(String(current.doubleHives ?? 0), 10) || 0) +
+      nucs,
+  };
   try { localStorage.setItem('bk.hives', JSON.stringify(hives)); } catch {}
 }
 
@@ -49,10 +61,6 @@ function bkEditExtraApply() {
     input.min = '0';
     input.className = 'w-full rounded-xl border border-yellow-500/30 bg-black/40 px-3 py-2 text-yellow-100';
     input.value = String(Math.max(0, parseInt(String(hive.nucs ?? 0), 10) || 0));
-    input.addEventListener('input', () => {
-      const value = Math.max(0, parseInt(input.value || '0', 10) || 0);
-      bkEditExtraSave(hive.id, { nucs: value });
-    });
     nucsLabel.appendChild(input);
     singlesLabel.insertAdjacentElement('afterend', nucsLabel);
   }
@@ -72,9 +80,30 @@ function bkEditExtraApply() {
       select.appendChild(option);
     });
     select.value = ['Low', 'Medium', 'High'].includes(hive.foodStores) ? hive.foodStores : 'Medium';
-    select.addEventListener('change', () => bkEditExtraSave(hive.id, { foodStores: select.value }));
     foodLabel.appendChild(select);
     nucsLabel.insertAdjacentElement('afterend', foodLabel);
+  }
+
+  if (modal.dataset.bkExtraSaveBound !== '1') {
+    modal.dataset.bkExtraSaveBound = '1';
+    const buttons = Array.from(modal.querySelectorAll('button'));
+    const saveButton = buttons.find((button) => button.textContent.trim() === 'Save');
+    if (saveButton) {
+      saveButton.addEventListener('click', () => {
+        const hiveId = hive.id;
+        const nucsInput = modal.querySelector('#bkEditNucsField input');
+        const foodSelect = modal.querySelector('#bkEditFoodStoresField select');
+        const nucs = Math.max(0, parseInt(String(nucsInput?.value ?? 0), 10) || 0);
+        const foodStores = ['Low', 'Medium', 'High'].includes(foodSelect?.value) ? foodSelect.value : 'Medium';
+
+        /* React saves its form first. Re-apply these two fields after that save,
+           then remount so React reads the committed values back from storage. */
+        window.setTimeout(() => {
+          bkEditExtraSave(hiveId, { nucs, foodStores });
+          window.dispatchEvent(new CustomEvent('bk:apiary-extra-saved'));
+        }, 0);
+      });
+    }
   }
 }
 
