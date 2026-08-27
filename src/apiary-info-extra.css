@@ -1,0 +1,19 @@
+body.bk-apiaries-list-only #bkApiaryFoodStoresSelect {
+  min-width: 9rem;
+  border: 1px solid rgba(234, 179, 8, 0.35);
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fef9c3;
+  padding: 0.45rem 2rem 0.45rem 0.7rem;
+  font: inherit;
+  font-weight: 700;
+  text-align: right;
+}
+
+@media (max-width: 520px) {
+  body.bk-apiaries-list-only #bkApiaryFoodStoresSelect {
+    min-width: 8rem;
+    max-width: 48%;
+    font-size: 1.35rem;
+  }
+}
