@@ -74,5 +74,6 @@ function remountOnApiaries() {
 
 window.addEventListener("bk:quick-apiary-added", remountOnApiaries);
 window.addEventListener("bk:apiaries-deleted", remountOnApiaries);
+window.addEventListener("bk:apiary-extra-saved", remountOnApiaries);
 
 renderApp();
