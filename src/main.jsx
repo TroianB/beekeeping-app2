@@ -36,6 +36,7 @@ import "./apiary-region-filter.js";
 import "./apiary-region-edit.js";
 import "./apiary-quick-add.js";
 import "./apiary-info-extra.js";
+import "./apiary-edit-extra.js";
 import "./dashboard-apiary-swipe.js";
 
 const root = createRoot(document.getElementById("root"));
