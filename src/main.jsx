@@ -19,6 +19,7 @@ import "./apiary-region-edit.css";
 import "./apiary-quick-add.css";
 import "./treatment-list-ui.css";
 import "./apiary-region-button-match.css";
+import "./apiary-name-final.css";
 import "./theme.js";
 import "./csv-controls.js";
 import "./apiary-mobile.js";
