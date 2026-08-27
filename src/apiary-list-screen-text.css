@@ -48,7 +48,7 @@ body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div >
   white-space: nowrap !important;
   font-size: 1.75rem !important;
   line-height: 1.05 !important;
-  font-weight: 950 !important;
+  font-weight: 400 !important;
 }
 
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]) {
