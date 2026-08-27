@@ -9,6 +9,7 @@ import "./apiary-detail-back-arrow.css";
 import "./apiary-edit-fix.css";
 import "./apiary-edit-saved-highlight.css";
 import "./apiary-info-screen.css";
+import "./apiary-info-extra.css";
 import "./apiary-list-screen-text.css";
 import "./apiary-edit-screen-text.css";
 import "./apiary-list-compact-top.css";
@@ -34,6 +35,7 @@ import "./apiary-region-area.js";
 import "./apiary-region-filter.js";
 import "./apiary-region-edit.js";
 import "./apiary-quick-add.js";
+import "./apiary-info-extra.js";
 import "./dashboard-apiary-swipe.js";
 
 const root = createRoot(document.getElementById("root"));
