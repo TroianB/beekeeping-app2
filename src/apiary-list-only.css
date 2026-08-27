@@ -140,7 +140,7 @@ body:not(.bk-apiary-delete-mode) #bkCancelDeleteApiaryButton {
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
   font-size: 1.12rem !important;
   line-height: 1.25 !important;
-  font-weight: 900 !important;
+  font-weight: 400 !important;
   color: #fde68a !important;
 }
 
