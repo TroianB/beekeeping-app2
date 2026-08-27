@@ -14,12 +14,6 @@ function bkInfoExtraHives() {
   }
 }
 
-function bkInfoExtraSaveHives(hives) {
-  try {
-    localStorage.setItem('bk.hives', JSON.stringify(hives));
-  } catch {}
-}
-
 function bkInfoExtraRows(root = document) {
   return Array.from(root.querySelectorAll('.flex.items-center.justify-between.rounded-xl'));
 }
@@ -80,32 +74,16 @@ function bkInfoExtraApplyInformation() {
   if (!foodRow) {
     foodRow = bkInfoExtraMakeRow('Food Stores');
     foodRow.id = 'bkApiaryInfoFoodStores';
-    const select = document.createElement('select');
-    select.id = 'bkApiaryFoodStoresSelect';
-    select.className = 'bk-apiary-food-stores-select';
-    ['Low', 'Medium', 'High'].forEach((optionValue) => {
-      const option = document.createElement('option');
-      option.value = optionValue;
-      option.textContent = optionValue;
-      select.appendChild(option);
-    });
-    select.addEventListener('change', () => {
-      const currentCard = bkInfoExtraInformationCard();
-      const currentHive = bkInfoExtraCurrentHive(currentCard);
-      if (!currentHive) return;
-      const hives = bkInfoExtraHives();
-      const index = hives.findIndex((item) => item.id === currentHive.id);
-      if (index < 0) return;
-      hives[index] = { ...hives[index], foodStores: select.value };
-      bkInfoExtraSaveHives(hives);
-    });
-    foodRow.appendChild(select);
+    const value = document.createElement('span');
+    value.className = 'font-bold text-yellow-100';
+    value.dataset.role = 'food-stores-value';
+    foodRow.appendChild(value);
     nucsRow.insertAdjacentElement('afterend', foodRow);
   }
 
-  const select = foodRow.querySelector('#bkApiaryFoodStoresSelect');
+  const foodValue = foodRow.querySelector('[data-role="food-stores-value"]');
   const nextFood = ['Low', 'Medium', 'High'].includes(hive.foodStores) ? hive.foodStores : 'Medium';
-  if (select && select.value !== nextFood) select.value = nextFood;
+  if (foodValue && foodValue.textContent !== nextFood) foodValue.textContent = nextFood;
 }
 
 function bkInfoExtraFindDashboardStat(title) {
