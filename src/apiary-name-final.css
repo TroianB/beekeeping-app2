@@ -1,15 +1,17 @@
-/* Final override: Apiary names must match Region-name sizing and stay unbold. */
+/* Final override: make Apiary list names match the strong Apiary information heading style. */
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
   font-family: inherit !important;
-  font-size: 1.35rem !important;
-  line-height: 1.05 !important;
-  font-weight: 400 !important;
+  font-size: 1.5rem !important;
+  line-height: 1.12 !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.015em !important;
+  color: #fde68a !important;
 }
 
 @media (max-width: 560px) {
   body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"] {
-    font-size: 1.18rem !important;
-    line-height: 1.05 !important;
-    font-weight: 400 !important;
+    font-size: 1.32rem !important;
+    line-height: 1.12 !important;
+    font-weight: 900 !important;
   }
 }
