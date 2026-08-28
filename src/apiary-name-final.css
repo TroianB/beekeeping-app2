@@ -1,26 +1,18 @@
-/* Final override: style the actual Apiary name cell used by the list code.
-   The list helper reads the Apiary name from the first direct span in each row,
-   so target that element instead of relying on the draggable attribute. */
+/* Final override: match Apiary list names to the Apiary information-page name typography. */
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:first-of-type {
   font-family: inherit !important;
-  font-size: 1.5rem !important;
+  font-size: 2rem !important;
   line-height: 1.15 !important;
-  font-weight: 400 !important;
-  font-synthesis: none !important;
+  font-weight: 600 !important;
   letter-spacing: normal !important;
   color: #fef08a !important;
   text-shadow: none !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
 }
 
 @media (max-width: 560px) {
   body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:first-of-type {
-    font-size: 1.3rem !important;
+    font-size: 2rem !important;
     line-height: 1.15 !important;
-    font-weight: 400 !important;
-    font-synthesis: none !important;
-    text-shadow: none !important;
-    -webkit-font-smoothing: antialiased !important;
+    font-weight: 600 !important;
   }
 }
