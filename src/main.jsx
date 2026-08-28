@@ -2,6 +2,7 @@ import "./app2-storage.js";
 import React from "react";
 import { createRoot } from "react-dom/client";
 import MonitoringShell from "./MonitoringShell.jsx";
+import "./tailwind.css";
 import "./fit-screen.css";
 import "./apiary-column-order.css";
 import "./apiary-list-only.css";
