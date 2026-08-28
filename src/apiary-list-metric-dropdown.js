@@ -122,14 +122,8 @@ function showOnlySelectedRowMetric(cells, selectedIndex) {
     }
   });
 }
-function metricGridColumns() {
-  const width = window.innerWidth || document.documentElement.clientWidth || 1024;
-  if (width <= 390) return '1.8rem minmax(0, 1fr) 5rem';
-  if (width <= 760) return '2rem minmax(0, 1fr) 5.65rem';
-  return '2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr)';
-}
 function applyMetricGrid(element) {
-  element.style.setProperty('grid-template-columns', metricGridColumns(), 'important');
+  element.style.setProperty('grid-template-columns','2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr)','important');
   element.style.setProperty('width','100%','important');
   element.style.setProperty('min-width','0','important');
   element.style.setProperty('align-items','center','important');
@@ -191,6 +185,4 @@ body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placehold
 }
 installApiaryMetricDropdownStyles();
 new MutationObserver(scheduleApiaryMetricDropdown).observe(document.documentElement,{childList:true,subtree:true});
-window.addEventListener('resize', scheduleApiaryMetricDropdown, { passive: true });
-window.addEventListener('orientationchange', scheduleApiaryMetricDropdown, { passive: true });
 scheduleApiaryMetricDropdown();
