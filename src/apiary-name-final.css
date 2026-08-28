@@ -1,18 +1,15 @@
-/* Final override: match Apiary list names to the Apiary information-page name typography. */
+/* Final override: restore the original Apiary list name typography. */
 body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:first-of-type {
   font-family: inherit !important;
-  font-size: 2rem !important;
-  line-height: 1.15 !important;
-  font-weight: 600 !important;
-  letter-spacing: normal !important;
-  color: #fef08a !important;
-  text-shadow: none !important;
+  font-size: 1.35rem !important;
+  line-height: 1.05 !important;
+  font-weight: 400 !important;
 }
 
 @media (max-width: 560px) {
   body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:first-of-type {
-    font-size: 2rem !important;
-    line-height: 1.15 !important;
-    font-weight: 600 !important;
+    font-size: 1.18rem !important;
+    line-height: 1.05 !important;
+    font-weight: 400 !important;
   }
 }
