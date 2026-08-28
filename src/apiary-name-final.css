@@ -14,22 +14,29 @@
   }
 }
 
-@media (max-width: 390px) {
+/* Very small phones can report widths around 393–430 CSS pixels,
+   so use 430px rather than 390px for the compact layout. */
+@media (max-width: 430px) {
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
-    font-size: 1.15rem !important;
-    line-height: 1.15 !important;
+    font-size: 1.1rem !important;
+    line-height: 1.12 !important;
     font-weight: 600 !important;
   }
 
-  /* Put the Region dropdown against the left edge on very small screens. */
+  /* Remove the header's built-in left padding so Region can sit at the far left. */
+  body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid {
+    padding-left: 0 !important;
+  }
+
   body.bk-apiaries-list-only #root .bk-region-list-filter-cell {
     grid-column: 1 / 3 !important;
     justify-self: stretch !important;
     justify-content: flex-start !important;
-    width: calc(100% + 0.15rem) !important;
-    margin-left: -0.15rem !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+    padding-left: 0 !important;
   }
 
   body.bk-apiaries-list-only #root .bk-region-list-filter-select {
@@ -37,14 +44,19 @@
     max-width: none !important;
     min-width: 0 !important;
     margin-left: 0 !important;
-    font-size: 0.85rem !important;
+    font-size: 0.82rem !important;
+    padding-left: 0.3rem !important;
   }
 }
 
-@media (max-width: 350px) {
+@media (max-width: 360px) {
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
-    font-size: 1.08rem !important;
+    font-size: 1rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .bk-region-list-filter-select {
+    font-size: 0.78rem !important;
   }
 }
