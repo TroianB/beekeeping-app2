@@ -1,4 +1,5 @@
 const BK_ACTION_SEARCH = '#root input[placeholder="Search apiaries..."]';
+const BK_ACTION_MOBILE = window.matchMedia('(max-width: 760px)');
 let bkActionRaf = 0;
 
 function bkActionGetOriginalRow() {
@@ -33,6 +34,11 @@ function bkActionInDeleteMode() {
 }
 
 function bkActionSync() {
+  if (!BK_ACTION_MOBILE.matches) {
+    document.getElementById('bkApiaryActionRow')?.remove();
+    return;
+  }
+
   const search = document.querySelector(BK_ACTION_SEARCH);
   if (!search) {
     document.getElementById('bkApiaryActionRow')?.remove();
@@ -146,5 +152,7 @@ new MutationObserver(bkActionScheduleSync).observe(document.documentElement, {
 
 document.addEventListener('change', bkActionScheduleSync, true);
 document.addEventListener('click', () => window.setTimeout(bkActionScheduleSync, 0), true);
+window.addEventListener('resize', bkActionScheduleSync, { passive: true });
+BK_ACTION_MOBILE.addEventListener?.('change', bkActionScheduleSync);
 
 bkActionSync();
