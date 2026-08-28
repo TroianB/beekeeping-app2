@@ -145,14 +145,22 @@ function bkActionScheduleSync() {
   });
 }
 
-new MutationObserver(bkActionScheduleSync).observe(document.documentElement, {
-  childList: true,
-  subtree: true
-});
+const bkActionRoot = document.getElementById('root');
+if (bkActionRoot) {
+  new MutationObserver(bkActionScheduleSync).observe(bkActionRoot, {
+    childList: true,
+    subtree: true
+  });
+}
 
 document.addEventListener('change', bkActionScheduleSync, true);
 document.addEventListener('click', () => window.setTimeout(bkActionScheduleSync, 0), true);
 window.addEventListener('resize', bkActionScheduleSync, { passive: true });
-BK_ACTION_MOBILE.addEventListener?.('change', bkActionScheduleSync);
+
+if (typeof BK_ACTION_MOBILE.addEventListener === 'function') {
+  BK_ACTION_MOBILE.addEventListener('change', bkActionScheduleSync);
+} else if (typeof BK_ACTION_MOBILE.addListener === 'function') {
+  BK_ACTION_MOBILE.addListener(bkActionScheduleSync);
+}
 
 bkActionSync();
