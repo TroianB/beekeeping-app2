@@ -24,9 +24,17 @@
   }
 }
 
-/* The small iPhone screenshot is a 414 CSS-pixel viewport. Target that
-   viewport class without changing the normal <=390px phone layout. */
-@media (min-width: 400px) and (max-width: 430px) {
+/* Exact device class shown in the supplied Safari screenshot: 414x896 @2x.
+   Keep the normal phone breakpoints untouched. */
+@media only screen
+  and (device-width: 414px)
+  and (device-height: 896px)
+  and (-webkit-device-pixel-ratio: 2) {
+  html {
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
   html body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   html body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   html body.bk-apiary-metric-dropdown #root .bk-last-update-value {
@@ -37,8 +45,6 @@
     color: #fef08a !important;
     letter-spacing: normal !important;
     text-shadow: none !important;
-    -webkit-text-size-adjust: 100% !important;
-    text-size-adjust: 100% !important;
   }
 
   html body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
