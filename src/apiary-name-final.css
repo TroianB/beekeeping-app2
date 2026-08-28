@@ -18,8 +18,33 @@
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
-    font-size: 1.3rem !important;
+    font-size: 1.15rem !important;
     line-height: 1.15 !important;
     font-weight: 600 !important;
+  }
+
+  /* Put the Region dropdown against the left edge on very small screens. */
+  body.bk-apiaries-list-only #root .bk-region-list-filter-cell {
+    grid-column: 1 / 3 !important;
+    justify-self: stretch !important;
+    justify-content: flex-start !important;
+    width: calc(100% + 0.15rem) !important;
+    margin-left: -0.15rem !important;
+  }
+
+  body.bk-apiaries-list-only #root .bk-region-list-filter-select {
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    font-size: 0.85rem !important;
+  }
+}
+
+@media (max-width: 350px) {
+  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
+  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
+    font-size: 1.08rem !important;
   }
 }
