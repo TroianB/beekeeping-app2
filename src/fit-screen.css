@@ -6,6 +6,14 @@
   padding-left: 0.5rem !important;
   padding-right: 0.5rem !important;
   padding-top: 3.4rem !important;
+  box-sizing: border-box !important;
+}
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Hide the Export JSON button while keeping Export CSV visible. */
@@ -29,10 +37,14 @@
     gap: 0.25rem !important;
     padding-left: 0.25rem !important;
     padding-right: 0.25rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 
   [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] span {
     font-size: 0.82rem !important;
+    min-width: 0 !important;
   }
 }
 
@@ -44,7 +56,20 @@
   }
 
   [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
-    grid-template-columns: 18px minmax(75px, 1fr) 42px 38px 38px !important;
+    grid-template-columns: 18px minmax(62px, 1fr) 40px 36px 36px !important;
+    gap: 0.2rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #root > .mx-auto {
+    padding-left: 0.15rem !important;
+    padding-right: 0.15rem !important;
+  }
+
+  [class*="grid-cols-[24px_minmax(120px,1fr)_80px_70px_70px]"] {
+    grid-template-columns: 16px minmax(54px, 1fr) 36px 32px 32px !important;
+    gap: 0.15rem !important;
   }
 }
 
@@ -117,6 +142,8 @@ body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div 
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
     font-size: 1.1rem !important;
     font-weight: 900 !important;
+    min-width: 0 !important;
+    overflow-wrap: anywhere !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
@@ -130,23 +157,42 @@ body:not(.light-mode) #root input[placeholder="Search apiaries..."] + div > div 
 @media (max-width: 520px) {
   #root input[placeholder="Search apiaries..."] + div > div.grid,
   #root input[placeholder="Search apiaries..."] + div > div > div.grid {
-    grid-template-columns: 18px minmax(72px, 1fr) 54px 50px 50px !important;
-    gap: 0.28rem !important;
+    grid-template-columns: 18px minmax(62px, 1fr) 48px 44px 44px !important;
+    gap: 0.2rem !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
   #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5) {
-    font-size: 0.92rem !important;
+    font-size: 0.84rem !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(2) {
-    font-size: 1.04rem !important;
+    font-size: 1rem !important;
   }
 
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
   #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
-    font-size: 0.96rem !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+@media (max-width: 390px) {
+  #root input[placeholder="Search apiaries..."] + div > div.grid,
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid {
+    grid-template-columns: 16px minmax(54px, 1fr) 42px 38px 38px !important;
+    gap: 0.15rem !important;
+  }
+
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div.grid > span:nth-child(5),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(3),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(4),
+  #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:nth-child(5) {
+    font-size: 0.8rem !important;
   }
 }
