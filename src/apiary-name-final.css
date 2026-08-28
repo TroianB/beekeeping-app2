@@ -14,9 +14,8 @@
   }
 }
 
-/* Very small phones can report widths around 393–430 CSS pixels,
-   so use 430px rather than 390px for the compact layout. */
-@media (max-width: 430px) {
+/* Only very small screens get the compact text and left-aligned Region filter. */
+@media (max-width: 390px) {
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
@@ -25,7 +24,6 @@
     font-weight: 600 !important;
   }
 
-  /* Remove the header's built-in left padding so Region can sit at the far left. */
   body.bk-apiaries-list-only #root input[placeholder="Search apiaries..."] + div > div.grid {
     padding-left: 0 !important;
   }
@@ -46,17 +44,5 @@
     margin-left: 0 !important;
     font-size: 0.82rem !important;
     padding-left: 0.3rem !important;
-  }
-}
-
-@media (max-width: 360px) {
-  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
-  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
-  body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
-    font-size: 1rem !important;
-  }
-
-  body.bk-apiaries-list-only #root .bk-region-list-filter-select {
-    font-size: 0.78rem !important;
   }
 }
