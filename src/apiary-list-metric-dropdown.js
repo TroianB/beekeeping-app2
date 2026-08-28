@@ -122,17 +122,62 @@ function showOnlySelectedRowMetric(cells, selectedIndex) {
     }
   });
 }
+function metricViewportWidth() {
+  return window.innerWidth || document.documentElement.clientWidth || 1024;
+}
 function metricGridColumns() {
-  const width = window.innerWidth || document.documentElement.clientWidth || 1024;
-  if (width <= 390) return '1.8rem minmax(0, 1fr) 5rem';
+  const width = metricViewportWidth();
+  if (width <= 430) return '1.55rem minmax(0, 1fr) 5rem';
   if (width <= 760) return '2rem minmax(0, 1fr) 5.65rem';
   return '2.45rem minmax(0, 1fr) minmax(8rem, 0.48fr)';
+}
+function metricTextSize() {
+  const width = metricViewportWidth();
+  if (width <= 360) return '0.95rem';
+  if (width <= 430) return '1.05rem';
+  if (width <= 760) return '1.45rem';
+  return '2rem';
 }
 function applyMetricGrid(element) {
   element.style.setProperty('grid-template-columns', metricGridColumns(), 'important');
   element.style.setProperty('width','100%','important');
   element.style.setProperty('min-width','0','important');
   element.style.setProperty('align-items','center','important');
+}
+function applyMetricRowTypography(row) {
+  const size = metricTextSize();
+  Array.from(row.children).forEach((cell) => {
+    if (!(cell instanceof HTMLElement)) return;
+    if (cell.matches('span[draggable="true"]') || cell.matches('span:not([draggable="true"])')) {
+      cell.style.setProperty('font-size', size, 'important');
+      cell.style.setProperty('line-height', '1.15', 'important');
+      cell.style.setProperty('font-weight', '600', 'important');
+      cell.style.setProperty('color', '#fef08a', 'important');
+    }
+  });
+}
+function applyRegionHeaderLayout(header) {
+  const width = metricViewportWidth();
+  const regionCell = header?.querySelector('.bk-region-list-filter-cell');
+  const regionSelect = header?.querySelector('#bkRegionAreaFilter');
+  if (!regionCell || !regionSelect) return;
+
+  if (width <= 430) {
+    header.style.setProperty('padding-left', '0', 'important');
+    regionCell.style.setProperty('grid-column', '1 / 3', 'important');
+    regionCell.style.setProperty('justify-self', 'stretch', 'important');
+    regionCell.style.setProperty('justify-content', 'flex-start', 'important');
+    regionCell.style.setProperty('width', '100%', 'important');
+    regionCell.style.setProperty('margin-left', '0', 'important');
+    regionSelect.style.setProperty('width', '100%', 'important');
+    regionSelect.style.setProperty('max-width', 'none', 'important');
+    regionSelect.style.setProperty('min-width', '0', 'important');
+    regionSelect.style.setProperty('margin-left', '0', 'important');
+    regionSelect.style.setProperty('font-size', width <= 360 ? '0.78rem' : '0.82rem', 'important');
+  } else {
+    header.style.removeProperty('padding-left');
+    regionCell.style.removeProperty('margin-left');
+  }
 }
 function applyApiaryMetricDropdown() {
   if (metricApplying) return;
@@ -153,12 +198,14 @@ function applyApiaryMetricDropdown() {
   ensureMetricDropdown(header);
   applyMetricGrid(header);
   showHeaderDropdownCell(Array.from(header.children));
+  applyRegionHeaderLayout(header);
 
   getApiaryMetricRows(card).forEach((row) => {
     if (metricKey === 'lastUpdate') setLastUpdateValue(row, apiaries);
     else restoreTotalValue(row);
     applyMetricGrid(row);
     showOnlySelectedRowMetric(Array.from(row.children), selectedIndex);
+    applyMetricRowTypography(row);
   });
 
   metricApplying = false;
@@ -184,8 +231,8 @@ body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div
 body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid>span:not([draggable="true"]){justify-self:stretch!important;text-align:center!important;min-width:0!important;width:100%!important;white-space:nowrap!important;font-family:inherit!important;font-size:2rem!important;line-height:1.15!important;font-weight:600!important;color:#fef08a!important;letter-spacing:normal!important;text-shadow:none!important}
 body.bk-apiary-metric-dropdown .bk-last-update-value{font-family:inherit!important;font-size:2rem!important;line-height:1.15!important;font-weight:600!important;color:#fef08a!important;letter-spacing:normal!important;text-shadow:none!important}
 body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."]+div>div>div.grid::before{font-size:1.55rem!important;line-height:1.05!important}
-@media(max-width:760px){body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown{padding:.68rem .35rem;font-size:1.05rem}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid,body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid{grid-template-columns:2rem minmax(0,1fr) 5.65rem!important;gap:.32rem!important}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid>span:nth-child(2){font-size:1.18rem!important}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid>span[draggable="true"],body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid>span:not([draggable="true"]),body.bk-apiary-metric-dropdown .bk-last-update-value{font-size:2rem!important;line-height:1.15!important;font-weight:600!important;color:#fef08a!important}}
-@media(max-width:390px){body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown{font-size:.92rem;padding:.58rem .25rem}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid,body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid{grid-template-columns:1.8rem minmax(0,1fr) 5rem!important;gap:.24rem!important}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid>span[draggable="true"],body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid>span:not([draggable="true"]),body.bk-apiary-metric-dropdown .bk-last-update-value{font-size:2rem!important;line-height:1.15!important;font-weight:600!important;color:#fef08a!important}}
+@media(max-width:760px){body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown{padding:.68rem .35rem;font-size:1.05rem}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid,body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid{grid-template-columns:2rem minmax(0,1fr) 5.65rem!important;gap:.32rem!important}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid>span:nth-child(2){font-size:1.18rem!important}}
+@media(max-width:430px){body.bk-apiary-metric-dropdown #bkApiaryMetricDropdown{font-size:.88rem;padding:.55rem .22rem}body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div.grid,body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."]+div>div>div.grid{grid-template-columns:1.55rem minmax(0,1fr) 5rem!important;gap:.2rem!important}}
 `;
   document.head.appendChild(style);
 }
