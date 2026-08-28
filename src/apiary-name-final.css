@@ -5,7 +5,7 @@
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
     font-family: inherit !important;
-    font-size: 1.18rem !important;
+    font-size: 1.45rem !important;
     line-height: 1.15 !important;
     font-weight: 600 !important;
     color: #fef08a !important;
@@ -18,7 +18,7 @@
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
   body.bk-apiaries-list-only.bk-apiary-metric-dropdown #root .bk-last-update-value {
-    font-size: 0.98rem !important;
+    font-size: 1.3rem !important;
     line-height: 1.15 !important;
     font-weight: 600 !important;
   }
