@@ -23,3 +23,26 @@
     font-weight: 600 !important;
   }
 }
+
+/* The small iPhone screenshot is a 414 CSS-pixel viewport. Target that
+   viewport class without changing the normal <=390px phone layout. */
+@media (min-width: 400px) and (max-width: 430px) {
+  html body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span[draggable="true"],
+  html body.bk-apiary-metric-dropdown #root input[placeholder="Search apiaries..."] + div > div > div.grid > span:not([draggable="true"]),
+  html body.bk-apiary-metric-dropdown #root .bk-last-update-value {
+    font-family: inherit !important;
+    font-size: 1.05rem !important;
+    line-height: 1.12 !important;
+    font-weight: 600 !important;
+    color: #fef08a !important;
+    letter-spacing: normal !important;
+    text-shadow: none !important;
+    -webkit-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+  }
+
+  html body.bk-apiary-metric-dropdown:not(.bk-apiary-delete-mode) #root input[placeholder="Search apiaries..."] + div > div > div.grid::before {
+    font-size: 1.05rem !important;
+    line-height: 1.12 !important;
+  }
+}
