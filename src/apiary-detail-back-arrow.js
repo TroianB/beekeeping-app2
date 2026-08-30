@@ -2,12 +2,16 @@ function bkFixApiaryDetailBackArrow() {
   const bar = document.getElementById('bkApiaryDetailBack');
   if (!bar) return;
 
+  /* The new Apiary Information header owns its own Back + More Records buttons. */
+  if (
+    bar.querySelector('#bkApiaryInformationBackButton')
+    || bar.querySelector('#bkMoreRecordsButton')
+  ) {
+    return;
+  }
+
   const button = bar.querySelector('button');
   if (!button) return;
-
-  Array.from(bar.children).forEach((child) => {
-    if (child !== button) child.remove();
-  });
 
   if (button.dataset.backArrowFixed === '1') return;
   button.dataset.backArrowFixed = '1';
