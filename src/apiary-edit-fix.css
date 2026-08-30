@@ -8,19 +8,22 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 > div {
   z-index: 121 !important;
 }
 
-/* Edit Apiary stays in the original centered popup format on larger screens. */
+/* Edit Apiary keeps its centered width on larger screens, but uses the full screen height. */
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
   display: grid !important;
   place-items: center !important;
   background: rgba(0, 0, 0, 0.7) !important;
-  padding: 1rem !important;
+  padding: 0 !important;
 }
 
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
   width: 100% !important;
   max-width: 36rem !important;
-  max-height: 85vh !important;
-  overflow: auto !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  box-sizing: border-box !important;
   border: 1px solid rgba(234, 179, 8, 0.3) !important;
   background: #000 !important;
   border-radius: 1rem !important;
