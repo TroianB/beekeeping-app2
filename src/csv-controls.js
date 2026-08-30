@@ -107,9 +107,12 @@ function importRows(rows) {
 }
 
 function addCsvImportControls() {
-  const buttonRow = document.querySelector('#root > .mx-auto > div.mb-4.flex > div:last-child');
-  if (!buttonRow) return;
-  if (document.getElementById(CSV_CONTROL_ID)) return;
+  // Only inspect the real React root. Swipe snapshots can contain cloned IDs;
+  // they must never prevent the live Import CSV control from being restored.
+  const root = document.querySelector('body > #root');
+  const buttonRow = root?.querySelector(':scope > .mx-auto > div.mb-4.flex > div:last-child');
+  if (!buttonRow) return false;
+  if (buttonRow.querySelector(`#${CSV_CONTROL_ID}`)) return true;
 
   buttonRow.style.flexWrap = "wrap";
   buttonRow.style.marginRight = "0";
@@ -147,8 +150,19 @@ function addCsvImportControls() {
 
   buttonRow.appendChild(button);
   buttonRow.appendChild(input);
+  return true;
 }
 
-const observer = new MutationObserver(addCsvImportControls);
+// The screen-transition controller calls this immediately after React switches
+// views, so the destination is complete before it is revealed.
+window.bkEnsureCsvImportControls = addCsvImportControls;
+
+const observer = new MutationObserver((mutations) => {
+  const onlySwipeSnapshotChanges = mutations.length > 0 && mutations.every((mutation) => {
+    const target = mutation.target;
+    return target instanceof Element && target.closest('#bkPageSwipeOverlay');
+  });
+  if (!onlySwipeSnapshotChanges) addCsvImportControls();
+});
 observer.observe(document.body, { childList: true, subtree: true });
 addCsvImportControls();
