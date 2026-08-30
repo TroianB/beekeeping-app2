@@ -10,7 +10,9 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] {
   width: 100% !important;
 }
 
-/* Apiary information becomes a sliding screen. It is hidden off the left side until a row is opened. */
+/* Apiary information is hidden off-screen until a row is opened.
+   Keep the base state transition-free so clicking Dashboard/Apiaries changes
+   tabs instantly instead of animating this hidden panel across the viewport. */
 body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   position: fixed !important;
   inset: 0 !important;
@@ -22,16 +24,19 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   background: #0a0a0a !important;
   padding: 0.75rem !important;
   transform: translateX(-105%) !important;
-  transition: transform 260ms ease !important;
+  transition: none !important;
   will-change: transform !important;
 }
 
+/* Animate only an intentional Apiary-list -> Apiary-information navigation. */
 body.bk-apiaries-list-only.bk-apiary-detail-open [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   transform: translateX(0) !important;
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1) !important;
 }
 
 body.bk-apiary-detail-closing [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
   transform: translateX(105%) !important;
+  transition: transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1) !important;
 }
 
 body.bk-apiary-detail-closed-right [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
