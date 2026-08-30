@@ -3,15 +3,33 @@ let pageSwipeStartY = 0;
 let pageSwipeStartedOnForm = false;
 let pageSwipeAnimating = false;
 
+const BK_SCREEN_TRANSITION_MS = 320;
+const BK_SCREEN_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
+
+function installSharedScreenTransitionStyles() {
+  if (document.getElementById('bkSharedScreenTransitionStyles')) return;
+  const style = document.createElement('style');
+  style.id = 'bkSharedScreenTransitionStyles';
+  style.textContent = `
+body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
+  transition: transform ${BK_SCREEN_TRANSITION_MS}ms ${BK_SCREEN_EASING} !important;
+}
+body.bk-apiary-detail-closing [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
+  transition: transform ${BK_SCREEN_TRANSITION_MS}ms ${BK_SCREEN_EASING} !important;
+}
+`;
+  document.head.appendChild(style);
+}
+
 function findMainTabButton(label) {
   const wanted = String(label || '').trim().toLowerCase();
-  return Array.from(document.querySelectorAll('#root button')).find((button) => {
+  return Array.from(document.querySelectorAll('body > #root button')).find((button) => {
     return button.textContent.trim().toLowerCase() === wanted;
   }) || null;
 }
 
 function isApiariesPage() {
-  return Boolean(document.querySelector('#root input[placeholder="Search apiaries..."]'));
+  return Boolean(document.querySelector('body > #root input[placeholder="Search apiaries..."]'));
 }
 
 function isDashboardPage() {
@@ -23,7 +41,7 @@ function isBlockedForPageSwipe(target) {
   if (document.body.classList.contains('bk-apiary-detail-open')) return true;
   if (document.body.classList.contains('bk-apiary-detail-closing')) return true;
   if (document.body.classList.contains('bk-apiary-delete-mode')) return true;
-  if (target?.closest?.('#root .fixed.inset-0.z-50')) return true;
+  if (target?.closest?.('body > #root .fixed.inset-0.z-50')) return true;
   if (target?.closest?.('#bkApiaryDetailBack')) return true;
   if (target?.closest?.('input, textarea, select, button')) return true;
   return false;
@@ -37,10 +55,42 @@ function openApiaries() {
   findMainTabButton('Apiaries')?.click();
 }
 
+function destinationUiReady() {
+  const root = document.querySelector('body > #root');
+  if (!root) return false;
+
+  // Header controls are shared by Dashboard and Apiaries. Import CSV is added
+  // by a compatibility module, so force it in synchronously before revealing.
+  window.bkEnsureCsvImportControls?.();
+  const header = root.querySelector(':scope > .mx-auto > div.mb-4.flex');
+  if (!header) return false;
+  if (!header.querySelector('#bkImportCsvButton')) return false;
+
+  if (isApiariesPage()) {
+    // Let the Apiary-specific injectors finish before the page becomes visible.
+    if (!document.body.classList.contains('bk-apiaries-list-only')) return false;
+    if (!root.querySelector('input[placeholder="Search apiaries..."]')) return false;
+  }
+
+  return true;
+}
+
+function waitForDestinationUi(callback) {
+  const startedAt = performance.now();
+  const check = () => {
+    if (destinationUiReady() || performance.now() - startedAt > 180) {
+      requestAnimationFrame(() => requestAnimationFrame(callback));
+      return;
+    }
+    requestAnimationFrame(check);
+  };
+  check();
+}
+
 function slideToPage(openNextPage, direction) {
   if (pageSwipeAnimating) return;
 
-  const root = document.querySelector('#root');
+  const root = document.querySelector('body > #root');
   if (!root) {
     openNextPage();
     return;
@@ -48,10 +98,8 @@ function slideToPage(openNextPage, direction) {
 
   pageSwipeAnimating = true;
 
-  // Keep a visual copy of the current screen above the app. The real app can
-  // switch pages underneath it, then this copy slides away to reveal the next
-  // screen instead of making the current screen disappear instantly.
   const overlay = document.createElement('div');
+  overlay.id = 'bkPageSwipeOverlay';
   overlay.setAttribute('aria-hidden', 'true');
   overlay.style.position = 'fixed';
   overlay.style.inset = '0';
@@ -63,6 +111,7 @@ function slideToPage(openNextPage, direction) {
   overlay.style.willChange = 'transform';
 
   const snapshot = root.cloneNode(true);
+  snapshot.dataset.bkSwipeSnapshot = '1';
   snapshot.style.width = `${window.innerWidth}px`;
   snapshot.style.minHeight = `${Math.max(document.documentElement.scrollHeight, window.innerHeight)}px`;
   snapshot.style.transform = `translate3d(0, -${window.scrollY}px, 0)`;
@@ -72,25 +121,36 @@ function slideToPage(openNextPage, direction) {
 
   openNextPage();
 
+  let finished = false;
   const finish = () => {
+    if (finished) return;
+    finished = true;
     overlay.remove();
     pageSwipeAnimating = false;
   };
 
-  // Let React paint the destination screen underneath before moving the old
-  // screen sideways. This creates the visible "reveal" during the transition.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      overlay.style.transition = 'transform 320ms cubic-bezier(0.22, 0.61, 0.36, 1)';
-      overlay.style.transform = direction === 'left'
-        ? 'translate3d(-100vw,0,0)'
-        : 'translate3d(100vw,0,0)';
+  // Keep the old screen fully visible until the destination and all of its
+  // controls are ready. Then slide it away in one continuous motion.
+  waitForDestinationUi(() => {
+    if (!overlay.isConnected) {
+      finish();
+      return;
+    }
 
-      overlay.addEventListener('transitionend', finish, { once: true });
-      window.setTimeout(finish, 420);
-    });
+    overlay.style.transition = `transform ${BK_SCREEN_TRANSITION_MS}ms ${BK_SCREEN_EASING}`;
+    overlay.style.transform = direction === 'left'
+      ? 'translate3d(-100vw,0,0)'
+      : 'translate3d(100vw,0,0)';
+
+    overlay.addEventListener('transitionend', finish, { once: true });
+    window.setTimeout(finish, BK_SCREEN_TRANSITION_MS + 140);
   });
 }
+
+// Expose the same transition controller for other full-screen navigation code.
+window.bkSlideScreenTo = slideToPage;
+
+installSharedScreenTransitionStyles();
 
 document.addEventListener('touchstart', (event) => {
   const touch = event.touches[0];
