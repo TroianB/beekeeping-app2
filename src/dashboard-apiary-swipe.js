@@ -6,21 +6,6 @@ let pageSwipeAnimating = false;
 const BK_SCREEN_TRANSITION_MS = 320;
 const BK_SCREEN_EASING = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
 
-function installSharedScreenTransitionStyles() {
-  if (document.getElementById('bkSharedScreenTransitionStyles')) return;
-  const style = document.createElement('style');
-  style.id = 'bkSharedScreenTransitionStyles';
-  style.textContent = `
-body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
-  transition: transform ${BK_SCREEN_TRANSITION_MS}ms ${BK_SCREEN_EASING} !important;
-}
-body.bk-apiary-detail-closing [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
-  transition: transform ${BK_SCREEN_TRANSITION_MS}ms ${BK_SCREEN_EASING} !important;
-}
-`;
-  document.head.appendChild(style);
-}
-
 function findMainTabButton(label) {
   const wanted = String(label || '').trim().toLowerCase();
   return Array.from(document.querySelectorAll('body > #root button')).find((button) => {
@@ -59,20 +44,21 @@ function destinationUiReady() {
   const root = document.querySelector('body > #root');
   if (!root) return false;
 
-  // Header controls are shared by Dashboard and Apiaries. Import CSV is added
-  // by a compatibility module, so force it in synchronously before revealing.
-  window.bkEnsureCsvImportControls?.();
   const header = root.querySelector(':scope > .mx-auto > div.mb-4.flex');
   if (!header) return false;
-  if (!header.querySelector('#bkImportCsvButton')) return false;
 
   if (isApiariesPage()) {
-    // Let the Apiary-specific injectors finish before the page becomes visible.
+    // Apiaries intentionally has no Export/Import controls. Wait only for its
+    // own list UI before revealing it during an actual swipe gesture.
     if (!document.body.classList.contains('bk-apiaries-list-only')) return false;
     if (!root.querySelector('input[placeholder="Search apiaries..."]')) return false;
+    return true;
   }
 
-  return true;
+  // Import CSV exists only on Dashboard. Ensure it is ready before a swipe
+  // reveals Dashboard so the control never appears late.
+  window.bkEnsureCsvImportControls?.();
+  return Boolean(header.querySelector('#bkImportCsvButton'));
 }
 
 function waitForDestinationUi(callback) {
@@ -129,8 +115,6 @@ function slideToPage(openNextPage, direction) {
     pageSwipeAnimating = false;
   };
 
-  // Keep the old screen fully visible until the destination and all of its
-  // controls are ready. Then slide it away in one continuous motion.
   waitForDestinationUi(() => {
     if (!overlay.isConnected) {
       finish();
@@ -147,10 +131,9 @@ function slideToPage(openNextPage, direction) {
   });
 }
 
-// Expose the same transition controller for other full-screen navigation code.
+// This controller is for swipe gestures only. Normal Dashboard/Apiaries button
+// clicks remain React's immediate tab switch and never call slideToPage().
 window.bkSlideScreenTo = slideToPage;
-
-installSharedScreenTransitionStyles();
 
 document.addEventListener('touchstart', (event) => {
   const touch = event.touches[0];
