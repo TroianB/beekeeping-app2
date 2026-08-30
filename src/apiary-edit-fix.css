@@ -8,7 +8,7 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 > div {
   z-index: 121 !important;
 }
 
-/* Edit Apiary stays in the original centered popup format. */
+/* Edit Apiary stays in the original centered popup format on larger screens. */
 body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
   display: grid !important;
   place-items: center !important;
@@ -90,8 +90,36 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
 }
 
 @media (max-width: 520px) {
+  /* On small phones Edit Apiary is a real full-screen page, not a centered card. */
   body.bk-apiary-edit-open #root .bk-apiary-edit-modal {
-    padding: 0.75rem !important;
+    display: block !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    overflow: hidden !important;
+    background: #000 !important;
+    padding: 0 !important;
+  }
+
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div {
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #000 !important;
+    box-sizing: border-box !important;
+    padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
+    padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
   }
 
   body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]),
