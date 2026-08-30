@@ -18,8 +18,11 @@ function getCurrentApiaryName() {
 }
 
 function closeMoreRecordsPage() {
-  document.getElementById(MORE_RECORDS_PAGE_ID)?.remove();
-  document.body.classList.remove('bk-more-records-open');
+  const page = document.getElementById(MORE_RECORDS_PAGE_ID);
+  if (page) page.remove();
+  if (document.body.classList.contains('bk-more-records-open')) {
+    document.body.classList.remove('bk-more-records-open');
+  }
 }
 
 function openMoreRecordsPage() {
@@ -52,7 +55,9 @@ function openMoreRecordsPage() {
 
   page.querySelector('#bkMoreRecordsBackButton')?.addEventListener('click', closeMoreRecordsPage);
   panel.appendChild(page);
-  document.body.classList.add('bk-more-records-open');
+  if (!document.body.classList.contains('bk-more-records-open')) {
+    document.body.classList.add('bk-more-records-open');
+  }
   page.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 }
 
@@ -63,13 +68,18 @@ function enhanceApiaryInformationBar() {
   const originalBackButton = bar.querySelector('button');
   if (!originalBackButton) return;
 
-  originalBackButton.id = 'bkApiaryInformationBackButton';
-  originalBackButton.textContent = 'Back';
+  if (originalBackButton.id !== 'bkApiaryInformationBackButton') {
+    originalBackButton.id = 'bkApiaryInformationBackButton';
+  }
+  if (originalBackButton.textContent?.trim() !== 'Back') {
+    originalBackButton.textContent = 'Back';
+  }
 
-  bar.querySelector('span')?.remove();
+  const directHint = Array.from(bar.children).find((child) => child.tagName === 'SPAN');
+  if (directHint) directHint.remove();
 
-  let moreRecordsButton = document.getElementById('bkMoreRecordsButton');
-  if (!moreRecordsButton || !bar.contains(moreRecordsButton)) {
+  let moreRecordsButton = bar.querySelector('#bkMoreRecordsButton');
+  if (!moreRecordsButton) {
     moreRecordsButton = document.createElement('button');
     moreRecordsButton.type = 'button';
     moreRecordsButton.id = 'bkMoreRecordsButton';
@@ -80,15 +90,26 @@ function enhanceApiaryInformationBar() {
 }
 
 function cleanUpWhenInformationCloses() {
-  if (!document.body.classList.contains('bk-apiary-detail-open')) {
+  if (
+    !document.body.classList.contains('bk-apiary-detail-open')
+    && (document.getElementById(MORE_RECORDS_PAGE_ID) || document.body.classList.contains('bk-more-records-open'))
+  ) {
     closeMoreRecordsPage();
   }
 }
 
-new MutationObserver(() => {
-  enhanceApiaryInformationBar();
-  cleanUpWhenInformationCloses();
-}).observe(document.documentElement, {
+let observerScheduled = false;
+function scheduleEnhancement() {
+  if (observerScheduled) return;
+  observerScheduled = true;
+  window.requestAnimationFrame(() => {
+    observerScheduled = false;
+    enhanceApiaryInformationBar();
+    cleanUpWhenInformationCloses();
+  });
+}
+
+new MutationObserver(scheduleEnhancement).observe(document.documentElement, {
   childList: true,
   subtree: true,
   attributes: true,
@@ -101,4 +122,4 @@ document.addEventListener('click', (event) => {
   }
 }, true);
 
-enhanceApiaryInformationBar();
+scheduleEnhancement();
