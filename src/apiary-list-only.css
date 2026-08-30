@@ -274,8 +274,9 @@ body.bk-apiary-delete-mode .bk-apiary-row-selected {
     font-size: 1.08rem !important;
   }
 
+  /* Keep the information content directly below the fixed Apiary List bar. */
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
-    padding: 7.25rem 0.75rem 0.75rem !important;
+    padding: 4.65rem 0.75rem 0.75rem !important;
   }
 
   #bkApiaryDetailBack {
@@ -286,10 +287,21 @@ body.bk-apiary-delete-mode .bk-apiary-row-selected {
     z-index: 90;
     align-items: stretch;
     flex-direction: column;
-    margin-bottom: 0;
+    gap: 0 !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #0a0a0a !important;
+  }
+
+  #bkApiaryDetailBack span {
+    display: none !important;
   }
 
   #bkApiaryDetailBack button {
     width: 100%;
+    margin: 0 !important;
   }
 }
