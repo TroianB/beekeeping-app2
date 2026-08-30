@@ -41,6 +41,25 @@ body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) .
 }
 
 @media (max-width: 520px) {
+  /* Small phones use the whole viewport instead of a card inside the screen. */
+  body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) {
+    padding: 6.3rem 0 0 !important;
+    background: #0a0a0a !important;
+  }
+
+  body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) > div:not(#bkApiaryDetailBack) {
+    width: 100% !important;
+    max-width: none !important;
+    min-height: calc(100dvh - 6.3rem) !important;
+    margin: 0 !important;
+    padding: 0.75rem max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left)) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #0a0a0a !important;
+    box-sizing: border-box !important;
+  }
+
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) .flex.items-center.justify-between.rounded-xl,
   body.bk-apiaries-list-only [class*="lg:grid-cols-[520px,1fr]"] > :nth-child(2) .flex.items-center.justify-between.rounded-xl > span {
     font-size: 1.65rem !important;
