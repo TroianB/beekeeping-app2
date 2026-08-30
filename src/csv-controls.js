@@ -1,5 +1,6 @@
 const CSV_CONTROL_ID = "bkImportCsvButton";
 const CSV_INPUT_ID = "bkImportCsvInput";
+const APIARY_SEARCH_SELECTOR = 'input[placeholder="Search apiaries..."]';
 
 function parseCSV(text) {
   const rows = [];
@@ -106,16 +107,31 @@ function importRows(rows) {
   throw new Error("This CSV does not look like an apiaries.csv or tasks.csv export.");
 }
 
-function addCsvImportControls() {
-  // Only inspect the real React root. Swipe snapshots can contain cloned IDs;
-  // they must never prevent the live Import CSV control from being restored.
+function getHeaderDataControls() {
   const root = document.querySelector('body > #root');
-  const buttonRow = root?.querySelector(':scope > .mx-auto > div.mb-4.flex > div:last-child');
-  if (!buttonRow) return false;
-  if (buttonRow.querySelector(`#${CSV_CONTROL_ID}`)) return true;
+  if (!root) return { root: null, buttonRow: null };
+  const buttonRow = root.querySelector(':scope > .mx-auto > div.mb-4.flex > div:last-child');
+  return { root, buttonRow };
+}
 
+function addCsvImportControls() {
+  const { root, buttonRow } = getHeaderDataControls();
+  if (!root || !buttonRow) return false;
+
+  const isApiariesPage = Boolean(root.querySelector(APIARY_SEARCH_SELECTOR));
+
+  // Export/Import controls belong to Dashboard only. Hide the complete data
+  // control group before a swipe transition reveals the Apiaries screen.
+  if (isApiariesPage) {
+    buttonRow.style.setProperty('display', 'none', 'important');
+    return true;
+  }
+
+  buttonRow.style.removeProperty('display');
   buttonRow.style.flexWrap = "wrap";
   buttonRow.style.marginRight = "0";
+
+  if (buttonRow.querySelector(`#${CSV_CONTROL_ID}`)) return true;
 
   const input = document.createElement("input");
   input.id = CSV_INPUT_ID;
