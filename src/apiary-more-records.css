@@ -10,194 +10,332 @@
   margin: 0 !important;
 }
 
-#bkMoreRecordsPage,
-#bkFeedingPage {
+.bk-record-page {
   position: fixed;
   inset: 0;
   width: 100vw;
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
-  background: #0a0a0a;
+  background: #050708;
   color: #fef08a;
-  padding: 0.75rem;
-  box-sizing: border-box;
+  z-index: 100;
   font-family: inherit;
 }
 
-#bkMoreRecordsPage { z-index: 100; }
-#bkFeedingPage { z-index: 110; }
+#bkFeedingPage,
+#bkDiseaseMonitoringPage { z-index: 110; }
 
-.bk-more-records-header {
-  position: sticky;
-  top: 0;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0;
-  margin-bottom: 0.75rem;
-  background: #0a0a0a;
-}
-
-#bkMoreRecordsBackButton {
-  flex: 0 0 auto;
-  border-radius: 0.8rem;
-  border: 1px solid rgba(234, 179, 8, 0.45);
-  background: rgba(0, 0, 0, 0.45);
-  color: #fef08a;
-  padding: 0.65rem 0.9rem;
-  font-family: inherit;
-  font-weight: 600;
-}
-
-.bk-more-records-heading { min-width: 0; }
-.bk-more-records-title,
-.bk-more-records-apiary-name,
-.bk-more-records-item {
-  font-family: inherit;
-  font-weight: 600;
-  color: #fef08a;
-  letter-spacing: normal;
-  text-shadow: none;
-}
-
-.bk-more-records-title { line-height: 1.15; }
-.bk-more-records-apiary-name { margin-top: 0.2rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.bk-more-records-list { display: grid; gap: 0.75rem; width: 100%; max-width: 760px; margin: 0 auto; }
-.bk-more-records-item { width: 100%; min-height: 4.25rem; display: flex; align-items: center; justify-content: flex-start; border: 1px solid rgba(234,179,8,.35); border-radius: 1rem; background: rgba(0,0,0,.48); padding: 1rem 1.1rem; line-height: 1.15; text-align: left; }
-.bk-more-records-item:active { transform: translateY(1px); }
-
-/* Feeding record page based on the supplied notebook layout. */
-.bk-feeding-card {
+.bk-record-shell {
   width: min(760px, 100%);
-  min-height: calc(100dvh - 1.5rem);
+  min-height: 100dvh;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  padding: 0 1rem calc(1rem + env(safe-area-inset-bottom));
 }
 
-.bk-feeding-top-row {
+.bk-record-page-header {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 1rem;
-  padding: 0.8rem 0 1rem;
-  border-bottom: 1px solid rgba(234,179,8,.35);
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 4.4rem;
+  border-bottom: 1px solid rgba(255,255,255,.16);
+  background: #050708;
 }
 
-.bk-feeding-title,
-.bk-feeding-apiary-name,
-.bk-feeding-date-label,
-.bk-feeding-line,
-.bk-feeding-quantity,
-.bk-feeding-date-label input,
-.bk-feeding-quantity input,
-#bkFeedingCancel,
-#bkFeedingSave {
+.bk-record-page-title,
+.bk-record-back,
+.bk-record-apiary-name,
+.bk-record-last-visit,
+.bk-more-records-help,
+.bk-more-records-item,
+.bk-record-field,
+.bk-record-subfield,
+.bk-record-check-row,
+.bk-record-cancel,
+.bk-record-save,
+.bk-choice-toggle,
+.bk-level-field,
+.bk-segmented {
   font-family: inherit;
-  font-weight: 600;
   letter-spacing: normal;
   text-shadow: none;
 }
 
-.bk-feeding-title,
-.bk-feeding-apiary-name,
-.bk-feeding-date-label,
-.bk-feeding-line,
-.bk-feeding-quantity {
-  color: #fef08a;
+.bk-record-page-title {
+  color: #fde047;
+  font-size: 1.45rem;
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: center;
 }
 
-.bk-feeding-title { line-height: 1.15; }
-.bk-feeding-apiary-name { margin-top: .35rem; line-height: 1.15; }
-.bk-feeding-date-label { display: grid; gap: .3rem; }
-.bk-feeding-date-label input { border: 1px solid rgba(234,179,8,.45); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem .65rem; }
-
-.bk-feeding-form { display: grid; gap: 1.2rem; padding: 1.4rem 0; }
-.bk-feeding-line { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1fr); align-items: center; gap: 1rem; line-height: 1.15; }
-.bk-feeding-quantity { display: grid; grid-template-columns: auto 5.5rem auto; align-items: center; justify-content: end; gap: .45rem; line-height: 1.15; }
-.bk-feeding-quantity input { width: 5.5rem; border: 1px solid rgba(234,179,8,.5); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem; text-align: center; }
-.bk-feeding-checkbox { justify-self: end; width: 1.7rem; height: 1.7rem; accent-color: #eab308; }
-
-.bk-feeding-actions { margin-top: auto; display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem 0 .5rem; }
-#bkFeedingCancel, #bkFeedingSave { min-width: 8rem; border-radius: .8rem; padding: .75rem 1.2rem; }
-#bkFeedingCancel { border: 1px solid rgba(234,179,8,.45); background: #111; color: #fef08a; }
-#bkFeedingSave { border: 1px solid #eab308; background: #eab308; color: #000; }
-
-@media (min-width: 761px) {
-  #bkMoreRecordsPage, #bkFeedingPage { padding: 2rem; }
-  .bk-more-records-header { width: min(760px, calc(100vw - 4rem)); margin-left: auto; margin-right: auto; }
-  .bk-feeding-card { min-height: calc(100dvh - 4rem); }
-
-  .bk-more-records-title,
-  .bk-more-records-apiary-name,
-  .bk-more-records-item,
-  #bkMoreRecordsBackButton,
-  .bk-feeding-title,
-  .bk-feeding-apiary-name,
-  .bk-feeding-date-label,
-  .bk-feeding-line,
-  .bk-feeding-quantity,
-  .bk-feeding-date-label input,
-  .bk-feeding-quantity input,
-  #bkFeedingCancel,
-  #bkFeedingSave {
-    font-size: 1.45rem;
-    line-height: 1.15;
-  }
+.bk-record-back {
+  justify-self: start;
+  border: 0;
+  background: transparent;
+  color: #fde047;
+  padding: .65rem 0;
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 
-@media (max-width: 760px) {
-  .bk-more-records-title,
-  .bk-more-records-apiary-name,
-  .bk-more-records-item,
-  #bkMoreRecordsBackButton,
-  .bk-feeding-title,
-  .bk-feeding-apiary-name,
-  .bk-feeding-date-label,
-  .bk-feeding-line,
-  .bk-feeding-quantity,
-  .bk-feeding-date-label input,
-  .bk-feeding-quantity input,
-  #bkFeedingCancel,
-  #bkFeedingSave {
-    font-size: 1.45rem;
-    line-height: 1.15;
-  }
+.bk-record-header-spacer { min-width: 1px; }
+
+.bk-record-apiary-card {
+  display: grid;
+  grid-template-columns: 4.2rem 1fr;
+  gap: 1rem;
+  align-items: center;
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: .8rem;
+  background: linear-gradient(145deg, rgba(20,27,33,.95), rgba(9,13,17,.95));
 }
+
+.bk-record-apiary-icon {
+  width: 4rem;
+  height: 4rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid #fde047;
+  border-radius: .7rem;
+  color: #fde047;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.bk-record-apiary-name {
+  color: #fde047;
+  font-size: 1.45rem;
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.bk-record-last-visit {
+  margin-top: .35rem;
+  color: #f8fafc;
+  font-size: 1.05rem;
+  line-height: 1.15;
+  font-weight: 500;
+}
+
+.bk-record-last-visit strong { color: #fde047; font-weight: 700; }
+
+.bk-more-records-help {
+  color: #f8fafc;
+  margin: .3rem 0 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.bk-more-records-list {
+  display: grid;
+  gap: .8rem;
+  width: 100%;
+}
+
+.bk-more-records-item {
+  width: 100%;
+  min-height: 5rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: .75rem;
+  background: linear-gradient(145deg, rgba(20,27,33,.95), rgba(9,13,17,.95));
+  color: #fde047;
+  padding: .9rem 1rem;
+  font-size: 1.45rem;
+  line-height: 1.15;
+  font-weight: 600;
+  text-align: left;
+}
+
+.bk-record-menu-icon {
+  color: #fde047;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.bk-record-menu-arrow { color: #fde047; font-size: 2rem; font-weight: 400; }
+
+.bk-record-form {
+  display: grid;
+  gap: 1.1rem;
+  width: 100%;
+  padding: .3rem 0 1.25rem;
+}
+
+.bk-record-field,
+.bk-record-subfield,
+.bk-level-field {
+  display: grid;
+  gap: .45rem;
+  color: #f8fafc;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.bk-record-field input,
+.bk-record-field select,
+.bk-record-field textarea,
+.bk-level-field select,
+.bk-record-unit-input {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: .65rem;
+  background: linear-gradient(145deg, #111820, #0b1015);
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.bk-record-field input,
+.bk-record-field select,
+.bk-level-field select { min-height: 3.1rem; padding: .65rem .8rem; }
+.bk-record-field textarea { padding: .8rem; resize: vertical; }
+
+.bk-record-unit-input {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding-right: .9rem;
+}
+
+.bk-record-unit-input input {
+  border: 0;
+  background: transparent;
+  min-height: 3rem;
+  padding: .65rem .8rem;
+}
+
+.bk-record-check-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #f8fafc;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+.bk-record-check-row input {
+  width: 1.7rem;
+  height: 1.7rem;
+  accent-color: #fde047;
+}
+
+.bk-record-actions {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1.25rem 0 .25rem;
+}
+
+.bk-record-cancel,
+.bk-record-save {
+  min-height: 3.6rem;
+  border-radius: .65rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.bk-record-cancel { border: 1px solid #fde047; background: #111820; color: #fde047; }
+.bk-record-save { border: 1px solid #fde047; background: #fde047; color: #050708; }
+.bk-record-save:disabled { opacity: .75; }
+
+.bk-disease-form { gap: 1rem; }
+
+.bk-segmented,
+.bk-choice-toggle {
+  display: grid;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: .65rem;
+  background: #10161c;
+}
+
+.bk-segmented { grid-template-columns: repeat(3, 1fr); }
+.bk-choice-toggle { grid-template-columns: 1fr 1fr; }
+
+.bk-segmented button,
+.bk-choice-toggle button {
+  min-height: 3rem;
+  border: 0;
+  border-right: 1px solid rgba(255,255,255,.16);
+  background: transparent;
+  color: #f8fafc;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.bk-segmented button:last-child,
+.bk-choice-toggle button:last-child { border-right: 0; }
+
+.bk-segmented button.is-selected,
+.bk-choice-toggle button.is-selected {
+  background: #fde047;
+  color: #050708;
+}
+
+.bk-disease-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(7rem, .8fr);
+  gap: 1rem;
+  align-items: end;
+}
+
+.bk-disease-question { display: grid; gap: .45rem; color: #f8fafc; font-size: 1.05rem; }
 
 @media (max-width: 520px) {
-  #bkMoreRecordsPage, #bkFeedingPage { padding: max(.45rem, env(safe-area-inset-top)) max(.55rem, env(safe-area-inset-right)) max(.75rem, env(safe-area-inset-bottom)) max(.55rem, env(safe-area-inset-left)); }
-  #bkApiaryDetailBack { gap: .45rem !important; }
-  #bkApiaryDetailBack #bkApiaryInformationBackButton, #bkApiaryDetailBack #bkMoreRecordsButton { padding: .6rem .55rem !important; font-size: .9rem !important; }
-  .bk-more-records-header { padding-top: 0; }
-  .bk-more-records-item { min-height: 3.8rem; border-radius: .8rem; padding: .9rem; }
-  .bk-feeding-card { min-height: calc(100dvh - 1.2rem); }
-  .bk-feeding-top-row { gap: .55rem; }
-  .bk-feeding-date-label input { width: 8.8rem; box-sizing: border-box; }
-  .bk-feeding-line { grid-template-columns: minmax(7.5rem, 1fr) minmax(9rem, 1.15fr); gap: .55rem; }
-  .bk-feeding-quantity { grid-template-columns: 1fr 4.2rem auto; gap: .3rem; }
-  .bk-feeding-quantity input { width: 4.2rem; padding: .5rem .3rem; }
-  #bkFeedingCancel, #bkFeedingSave { min-width: 0; width: 42%; }
+  .bk-record-shell {
+    padding-left: max(.8rem, env(safe-area-inset-left));
+    padding-right: max(.8rem, env(safe-area-inset-right));
+  }
+
+  .bk-record-page-header { min-height: 3.9rem; }
+  .bk-record-page-title,
+  .bk-record-apiary-name,
+  .bk-more-records-item { font-size: 1.25rem; }
+  .bk-record-back { font-size: 1rem; }
+  .bk-record-apiary-card { grid-template-columns: 3.4rem 1fr; padding: .85rem; gap: .75rem; }
+  .bk-record-apiary-icon { width: 3.2rem; height: 3.2rem; font-size: 1.5rem; }
+  .bk-record-last-visit,
+  .bk-more-records-help,
+  .bk-record-field,
+  .bk-record-subfield,
+  .bk-record-check-row,
+  .bk-disease-question,
+  .bk-level-field { font-size: .95rem; }
+  .bk-more-records-item { min-height: 4.5rem; grid-template-columns: 2.5rem 1fr auto; gap: .7rem; }
+  .bk-record-menu-icon { font-size: 1.65rem; }
+  .bk-record-menu-arrow { font-size: 1.6rem; }
+  .bk-disease-row { grid-template-columns: minmax(0, 1.55fr) minmax(6.5rem, .75fr); gap: .6rem; }
+  .bk-record-cancel,
+  .bk-record-save { font-size: 1.05rem; min-height: 3.25rem; }
 }
 
 @media (max-width: 390px) {
-  .bk-more-records-title,
-  .bk-more-records-apiary-name,
-  .bk-more-records-item,
-  #bkMoreRecordsBackButton,
-  .bk-feeding-title,
-  .bk-feeding-apiary-name,
-  .bk-feeding-date-label,
-  .bk-feeding-line,
-  .bk-feeding-quantity,
-  .bk-feeding-date-label input,
-  .bk-feeding-quantity input,
-  #bkFeedingCancel,
-  #bkFeedingSave {
-    font-size: 1.3rem;
-    line-height: 1.15;
-  }
+  .bk-record-page-title,
+  .bk-record-apiary-name,
+  .bk-more-records-item { font-size: 1.15rem; }
+  .bk-record-last-visit,
+  .bk-more-records-help,
+  .bk-record-field,
+  .bk-record-subfield,
+  .bk-record-check-row,
+  .bk-disease-question,
+  .bk-level-field { font-size: .9rem; }
+  .bk-disease-row { grid-template-columns: minmax(0, 1.45fr) minmax(6rem, .7fr); }
 }
