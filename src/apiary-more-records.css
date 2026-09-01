@@ -19,9 +19,10 @@
   height: 100dvh;
   overflow-y: auto;
   background: #0a0a0a;
-  color: #fde68a;
+  color: #fef08a;
   padding: 0.75rem;
   box-sizing: border-box;
+  font-family: inherit;
 }
 
 #bkMoreRecordsPage { z-index: 100; }
@@ -44,17 +45,27 @@
   border-radius: 0.8rem;
   border: 1px solid rgba(234, 179, 8, 0.45);
   background: rgba(0, 0, 0, 0.45);
-  color: #fde047;
+  color: #fef08a;
   padding: 0.65rem 0.9rem;
-  font-size: 0.95rem;
-  font-weight: 900;
+  font-family: inherit;
+  font-weight: 600;
 }
 
 .bk-more-records-heading { min-width: 0; }
-.bk-more-records-title { color: #fde047; font-size: 1.25rem; line-height: 1.15; font-weight: 950; }
-.bk-more-records-apiary-name { margin-top: 0.2rem; color: #fef08a; font-size: 1rem; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bk-more-records-title,
+.bk-more-records-apiary-name,
+.bk-more-records-item {
+  font-family: inherit;
+  font-weight: 600;
+  color: #fef08a;
+  letter-spacing: normal;
+  text-shadow: none;
+}
+
+.bk-more-records-title { line-height: 1.15; }
+.bk-more-records-apiary-name { margin-top: 0.2rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bk-more-records-list { display: grid; gap: 0.75rem; width: 100%; max-width: 760px; margin: 0 auto; }
-.bk-more-records-item { width: 100%; min-height: 4.25rem; display: flex; align-items: center; justify-content: flex-start; border: 1px solid rgba(234,179,8,.35); border-radius: 1rem; background: rgba(0,0,0,.48); color: #fde68a; padding: 1rem 1.1rem; font-size: 1.2rem; line-height: 1.2; font-weight: 900; text-align: left; }
+.bk-more-records-item { width: 100%; min-height: 4.25rem; display: flex; align-items: center; justify-content: flex-start; border: 1px solid rgba(234,179,8,.35); border-radius: 1rem; background: rgba(0,0,0,.48); padding: 1rem 1.1rem; line-height: 1.15; text-align: left; }
 .bk-more-records-item:active { transform: translateY(1px); }
 
 /* Feeding record page based on the supplied notebook layout. */
@@ -76,26 +87,85 @@
   border-bottom: 1px solid rgba(234,179,8,.35);
 }
 
-.bk-feeding-title { color: #fde047; font-size: 2rem; font-weight: 950; line-height: 1.05; }
-.bk-feeding-apiary-name { margin-top: .35rem; color: #fef08a; font-size: 1.05rem; font-weight: 800; }
-.bk-feeding-date-label { display: grid; gap: .3rem; color: #fde68a; font-size: .85rem; font-weight: 900; }
-.bk-feeding-date-label input { border: 1px solid rgba(234,179,8,.45); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem .65rem; font-weight: 800; }
+.bk-feeding-title,
+.bk-feeding-apiary-name,
+.bk-feeding-date-label,
+.bk-feeding-line,
+.bk-feeding-quantity,
+.bk-feeding-date-label input,
+.bk-feeding-quantity input,
+#bkFeedingCancel,
+#bkFeedingSave {
+  font-family: inherit;
+  font-weight: 600;
+  letter-spacing: normal;
+  text-shadow: none;
+}
+
+.bk-feeding-title,
+.bk-feeding-apiary-name,
+.bk-feeding-date-label,
+.bk-feeding-line,
+.bk-feeding-quantity {
+  color: #fef08a;
+}
+
+.bk-feeding-title { line-height: 1.15; }
+.bk-feeding-apiary-name { margin-top: .35rem; line-height: 1.15; }
+.bk-feeding-date-label { display: grid; gap: .3rem; }
+.bk-feeding-date-label input { border: 1px solid rgba(234,179,8,.45); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem .65rem; }
 
 .bk-feeding-form { display: grid; gap: 1.2rem; padding: 1.4rem 0; }
-.bk-feeding-line { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1fr); align-items: center; gap: 1rem; color: #fde68a; font-size: 1.15rem; font-weight: 900; }
-.bk-feeding-quantity { display: grid; grid-template-columns: auto 5.5rem auto; align-items: center; justify-content: end; gap: .45rem; font-size: .9rem; }
-.bk-feeding-quantity input { width: 5.5rem; border: 1px solid rgba(234,179,8,.5); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem; text-align: center; font-size: 1.05rem; font-weight: 900; }
+.bk-feeding-line { display: grid; grid-template-columns: minmax(9rem, 1fr) minmax(12rem, 1fr); align-items: center; gap: 1rem; line-height: 1.15; }
+.bk-feeding-quantity { display: grid; grid-template-columns: auto 5.5rem auto; align-items: center; justify-content: end; gap: .45rem; line-height: 1.15; }
+.bk-feeding-quantity input { width: 5.5rem; border: 1px solid rgba(234,179,8,.5); border-radius: .65rem; background: #111; color: #fef08a; padding: .55rem; text-align: center; }
 .bk-feeding-checkbox { justify-self: end; width: 1.7rem; height: 1.7rem; accent-color: #eab308; }
 
 .bk-feeding-actions { margin-top: auto; display: flex; justify-content: space-between; gap: 1rem; padding: 1.25rem 0 .5rem; }
-#bkFeedingCancel, #bkFeedingSave { min-width: 8rem; border-radius: .8rem; padding: .75rem 1.2rem; font-size: 1rem; font-weight: 950; }
-#bkFeedingCancel { border: 1px solid rgba(234,179,8,.45); background: #111; color: #fde047; }
+#bkFeedingCancel, #bkFeedingSave { min-width: 8rem; border-radius: .8rem; padding: .75rem 1.2rem; }
+#bkFeedingCancel { border: 1px solid rgba(234,179,8,.45); background: #111; color: #fef08a; }
 #bkFeedingSave { border: 1px solid #eab308; background: #eab308; color: #000; }
 
 @media (min-width: 761px) {
   #bkMoreRecordsPage, #bkFeedingPage { padding: 2rem; }
   .bk-more-records-header { width: min(760px, calc(100vw - 4rem)); margin-left: auto; margin-right: auto; }
   .bk-feeding-card { min-height: calc(100dvh - 4rem); }
+
+  .bk-more-records-title,
+  .bk-more-records-apiary-name,
+  .bk-more-records-item,
+  #bkMoreRecordsBackButton,
+  .bk-feeding-title,
+  .bk-feeding-apiary-name,
+  .bk-feeding-date-label,
+  .bk-feeding-line,
+  .bk-feeding-quantity,
+  .bk-feeding-date-label input,
+  .bk-feeding-quantity input,
+  #bkFeedingCancel,
+  #bkFeedingSave {
+    font-size: 1.45rem;
+    line-height: 1.15;
+  }
+}
+
+@media (max-width: 760px) {
+  .bk-more-records-title,
+  .bk-more-records-apiary-name,
+  .bk-more-records-item,
+  #bkMoreRecordsBackButton,
+  .bk-feeding-title,
+  .bk-feeding-apiary-name,
+  .bk-feeding-date-label,
+  .bk-feeding-line,
+  .bk-feeding-quantity,
+  .bk-feeding-date-label input,
+  .bk-feeding-quantity input,
+  #bkFeedingCancel,
+  #bkFeedingSave {
+    font-size: 1.45rem;
+    line-height: 1.15;
+  }
 }
 
 @media (max-width: 520px) {
@@ -103,13 +173,31 @@
   #bkApiaryDetailBack { gap: .45rem !important; }
   #bkApiaryDetailBack #bkApiaryInformationBackButton, #bkApiaryDetailBack #bkMoreRecordsButton { padding: .6rem .55rem !important; font-size: .9rem !important; }
   .bk-more-records-header { padding-top: 0; }
-  .bk-more-records-item { min-height: 3.8rem; border-radius: .8rem; padding: .9rem; font-size: 1.1rem; }
+  .bk-more-records-item { min-height: 3.8rem; border-radius: .8rem; padding: .9rem; }
   .bk-feeding-card { min-height: calc(100dvh - 1.2rem); }
-  .bk-feeding-title { font-size: 1.65rem; }
   .bk-feeding-top-row { gap: .55rem; }
   .bk-feeding-date-label input { width: 8.8rem; box-sizing: border-box; }
-  .bk-feeding-line { grid-template-columns: minmax(7.5rem, 1fr) minmax(9rem, 1.15fr); gap: .55rem; font-size: 1rem; }
-  .bk-feeding-quantity { grid-template-columns: 1fr 4.2rem auto; gap: .3rem; font-size: .72rem; }
+  .bk-feeding-line { grid-template-columns: minmax(7.5rem, 1fr) minmax(9rem, 1.15fr); gap: .55rem; }
+  .bk-feeding-quantity { grid-template-columns: 1fr 4.2rem auto; gap: .3rem; }
   .bk-feeding-quantity input { width: 4.2rem; padding: .5rem .3rem; }
   #bkFeedingCancel, #bkFeedingSave { min-width: 0; width: 42%; }
+}
+
+@media (max-width: 390px) {
+  .bk-more-records-title,
+  .bk-more-records-apiary-name,
+  .bk-more-records-item,
+  #bkMoreRecordsBackButton,
+  .bk-feeding-title,
+  .bk-feeding-apiary-name,
+  .bk-feeding-date-label,
+  .bk-feeding-line,
+  .bk-feeding-quantity,
+  .bk-feeding-date-label input,
+  .bk-feeding-quantity input,
+  #bkFeedingCancel,
+  #bkFeedingSave {
+    font-size: 1.3rem;
+    line-height: 1.15;
+  }
 }
