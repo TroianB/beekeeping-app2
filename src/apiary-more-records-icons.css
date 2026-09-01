@@ -1,0 +1,18 @@
+.bk-record-menu-icon {
+  display: grid;
+  place-items: center;
+}
+
+.bk-record-menu-icon svg {
+  width: 2.55rem;
+  height: 2.55rem;
+  display: block;
+  overflow: visible;
+}
+
+@media (max-width: 520px) {
+  .bk-record-menu-icon svg {
+    width: 2.1rem;
+    height: 2.1rem;
+  }
+}
