@@ -28,6 +28,28 @@ function readApiaries() {
   }
 }
 
+function readRecords(storageKey) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function getLatestRecord(storageKey, apiaryName) {
+  const target = String(apiaryName || '').trim().toLowerCase();
+  const matching = readRecords(storageKey).filter(
+    (record) => String(record?.apiaryName || '').trim().toLowerCase() === target
+  );
+  if (!matching.length) return null;
+  return matching.reduce((latest, record) => {
+    const latestTime = Date.parse(latest?.createdAt || '') || 0;
+    const recordTime = Date.parse(record?.createdAt || '') || 0;
+    return recordTime >= latestTime ? record : latest;
+  }, matching[0]);
+}
+
 function getCurrentLastVisit(apiaryName) {
   const target = String(apiaryName || '').trim().toLowerCase();
   const apiary = readApiaries().find((item) => String(item?.name || '').trim().toLowerCase() === target);
@@ -66,8 +88,7 @@ function todayForInput() {
 
 function saveRecord(storageKey, record) {
   try {
-    const parsed = JSON.parse(localStorage.getItem(storageKey) || '[]');
-    const records = Array.isArray(parsed) ? parsed : [];
+    const records = readRecords(storageKey);
     records.push(record);
     localStorage.setItem(storageKey, JSON.stringify(records));
     return true;
@@ -135,6 +156,17 @@ function closeDiseasePage() {
   document.body.classList.remove('bk-disease-monitoring-open');
 }
 
+function restoreFeedingRecord(page, apiaryName) {
+  const record = getLatestRecord(FEEDING_STORAGE_KEY, apiaryName);
+  if (!record) return;
+  const date = page.querySelector('#bkFeedingDate');
+  const sugar = page.querySelector('#bkFeedingSugarSyrup');
+  const pollen = page.querySelector('#bkFeedingPollenSupplement');
+  if (date && record.date) date.value = record.date;
+  if (sugar) sugar.value = record.sugarSyrup == null ? '' : String(record.sugarSyrup);
+  if (pollen) pollen.checked = Boolean(record.pollenSupplement);
+}
+
 function openFeedingPage() {
   const panel = getApiaryDetailPanel();
   if (!panel) return;
@@ -178,6 +210,7 @@ function openFeedingPage() {
   `;
 
   fillApiarySummary(page, apiaryName);
+  restoreFeedingRecord(page, apiaryName);
   page.querySelector('#bkFeedingBack')?.addEventListener('click', closeFeedingPage);
   page.querySelector('#bkFeedingCancel')?.addEventListener('click', closeFeedingPage);
   page.querySelector('#bkFeedingSave')?.addEventListener('click', () => {
@@ -233,6 +266,45 @@ function selectedToggleValue(page, id) {
   return page.querySelector(`[data-toggle-for="${id}"] .is-selected`)?.dataset?.value || 'no';
 }
 
+function setToggleValue(page, id, yes) {
+  const toggle = page.querySelector(`[data-toggle-for="${id}"]`);
+  if (!toggle) return;
+  toggle.querySelectorAll('button').forEach((button) => {
+    button.classList.toggle('is-selected', button.dataset.value === (yes ? 'yes' : 'no'));
+  });
+}
+
+function restoreDiseaseRecord(page, apiaryName) {
+  const record = getLatestRecord(DISEASE_STORAGE_KEY, apiaryName);
+  if (!record) return;
+
+  const date = page.querySelector('#bkDiseaseDate');
+  if (date && record.date) date.value = record.date;
+
+  const varroa = record.varroaLevel || 'Low';
+  page.querySelectorAll('#bkVarroaLevel button').forEach((button) => {
+    button.classList.toggle('is-selected', button.dataset.value === varroa);
+  });
+
+  setToggleValue(page, 'afb', Boolean(record.afb));
+  setToggleValue(page, 'chalkbrood', Boolean(record.chalkbrood));
+  setToggleValue(page, 'nosema', Boolean(record.nosema));
+
+  const afbLevel = page.querySelector('#afbLevel');
+  const chalkLevel = page.querySelector('#chalkbroodLevel');
+  const nosemaLevel = page.querySelector('#nosemaLevel');
+  const other = page.querySelector('#bkDiseaseOther');
+  const otherLevel = page.querySelector('#bkOtherLevel');
+  const notes = page.querySelector('#bkDiseaseNotes');
+
+  if (afbLevel && record.afbLevel != null) afbLevel.value = String(record.afbLevel);
+  if (chalkLevel && record.chalkbroodLevel != null) chalkLevel.value = String(record.chalkbroodLevel);
+  if (nosemaLevel && record.nosemaLevel != null) nosemaLevel.value = String(record.nosemaLevel);
+  if (other) other.value = record.other || '';
+  if (otherLevel && record.otherLevel != null) otherLevel.value = String(record.otherLevel);
+  if (notes) notes.value = record.notes || '';
+}
+
 function openDiseaseMonitoringPage() {
   const panel = getApiaryDetailPanel();
   if (!panel) return;
@@ -279,6 +351,7 @@ function openDiseaseMonitoringPage() {
 
   fillApiarySummary(page, apiaryName);
   bindChoiceToggles(page);
+  restoreDiseaseRecord(page, apiaryName);
   page.querySelector('#bkVarroaLevel')?.addEventListener('click', (event) => {
     const button = event.target.closest('button');
     if (!button) return;
@@ -323,8 +396,22 @@ function closeMoreRecordsPage() {
   document.body.classList.remove('bk-more-records-open');
 }
 
-function recordMenuItem(icon, type, label) {
-  return `<button type="button" class="bk-more-records-item" data-record-type="${type}"><span class="bk-record-menu-icon" aria-hidden="true">${icon}</span><span>${label}</span><span class="bk-record-menu-arrow">›</span></button>`;
+function recordIconSvg(type) {
+  const common = 'viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"';
+  if (type === 'feeding') {
+    return `<svg ${common}><path d="M17 8h14l2 5H15l2-5Z"/><rect x="14" y="13" width="20" height="27" rx="4"/><path d="M18 21h12M18 28h12"/><circle cx="24" cy="34" r="2.5"/></svg>`;
+  }
+  if (type === 'disease-monitoring') {
+    return `<svg ${common}><circle cx="20" cy="20" r="11"/><path d="m28.5 28.5 10 10"/></svg>`;
+  }
+  if (type === 'queen-records') {
+    return `<svg ${common}><path d="m9 18 7 7 8-13 8 13 7-7-3 19H12L9 18Z"/><circle cx="9" cy="16" r="2"/><circle cx="24" cy="10" r="2"/><circle cx="39" cy="16" r="2"/><path d="M14 32h20"/></svg>`;
+  }
+  return `<svg ${common}><path d="m12 36 20-20"/><path d="m25 12 9 9"/><path d="m28 9 10 10"/><path d="m22 15 10 10"/><path d="M35 28c4 4 4 7 0 10-4-3-4-6 0-10Z"/></svg>`;
+}
+
+function recordMenuItem(type, label) {
+  return `<button type="button" class="bk-more-records-item" data-record-type="${type}"><span class="bk-record-menu-icon" aria-hidden="true">${recordIconSvg(type)}</span><span>${label}</span><span class="bk-record-menu-arrow">›</span></button>`;
 }
 
 function openMoreRecordsPage() {
@@ -347,10 +434,10 @@ function openMoreRecordsPage() {
       ${apiarySummaryMarkup()}
       <div class="bk-more-records-help">Select a record type to view or add records.</div>
       <div class="bk-more-records-list" aria-label="Apiary record categories">
-        ${recordMenuItem('▣', 'feeding', 'Feeding')}
-        ${recordMenuItem('◯', 'disease-monitoring', 'Disease Monitoring')}
-        ${recordMenuItem('♕', 'queen-records', 'Queen Records')}
-        ${recordMenuItem('◇', 'honey-records', 'Honey Records')}
+        ${recordMenuItem('feeding', 'Feeding')}
+        ${recordMenuItem('disease-monitoring', 'Disease Monitoring')}
+        ${recordMenuItem('queen-records', 'Queen Records')}
+        ${recordMenuItem('honey-records', 'Honey Records')}
       </div>
     </div>
   `;
