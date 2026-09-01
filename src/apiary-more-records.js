@@ -11,11 +11,9 @@ function getApiaryDetailPanel() {
 function getCurrentApiaryName() {
   const panel = getApiaryDetailPanel();
   if (!panel) return 'Apiary';
-
   const name = panel.querySelector(
     ':scope > div:not(#bkApiaryDetailBack) > div.flex.items-start.justify-between.gap-4 > div:first-child > div:first-child'
   )?.textContent?.trim();
-
   return name || 'Apiary';
 }
 
@@ -42,6 +40,49 @@ function saveFeedingRecord(record) {
   } catch {
     return false;
   }
+}
+
+function updateApiaryLastVisit(apiaryName, date) {
+  try {
+    const raw = localStorage.getItem('bk.hives');
+    const apiaries = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(apiaries)) return false;
+    const target = String(apiaryName || '').trim().toLowerCase();
+    let changed = false;
+    const updated = apiaries.map((apiary) => {
+      if (String(apiary?.name || '').trim().toLowerCase() !== target) return apiary;
+      changed = true;
+      return { ...apiary, lastInspection: date };
+    });
+    if (!changed) return false;
+    localStorage.setItem('bk.hives', JSON.stringify(updated));
+    syncVisibleLastVisit(apiaryName, date);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function formatDMY(iso) {
+  const [y, m, d] = String(iso || '').split('T')[0].split('-');
+  return y && m && d ? `${d.padStart(2, '0')}/${m.padStart(2, '0')}/${y}` : String(iso || '');
+}
+
+function syncVisibleLastVisit(apiaryName, date) {
+  const formatted = formatDMY(date);
+  const panel = getApiaryDetailPanel();
+  const detailDate = panel?.querySelector(
+    ':scope > div:not(#bkApiaryDetailBack) > div.flex.items-start.justify-between.gap-4 > div:first-child > div:nth-child(2) span:last-child'
+  );
+  if (detailDate) detailDate.textContent = formatted;
+
+  document.querySelectorAll('.bk-last-update-value').forEach((value) => {
+    const row = value.closest('div.grid');
+    const name = row?.querySelector(':scope > span[draggable="true"], :scope > span:not(.bk-last-update-value)')?.textContent?.trim();
+    if (String(name || '').toLowerCase() === String(apiaryName || '').trim().toLowerCase()) {
+      value.textContent = formatted;
+    }
+  });
 }
 
 function todayForInput() {
@@ -71,7 +112,6 @@ function openFeedingPage() {
           <input type="date" id="bkFeedingDate" value="${todayForInput()}">
         </label>
       </div>
-
       <div class="bk-feeding-form">
         <div class="bk-feeding-line">
           <label for="bkFeedingSugarSyrup">Sugar Syrup</label>
@@ -81,13 +121,11 @@ function openFeedingPage() {
             <span>L</span>
           </div>
         </div>
-
         <div class="bk-feeding-line">
           <label for="bkFeedingPollenSupplement">Pollen supplement</label>
           <input type="checkbox" id="bkFeedingPollenSupplement" class="bk-feeding-checkbox">
         </div>
       </div>
-
       <div class="bk-feeding-actions">
         <button type="button" id="bkFeedingCancel">Cancel</button>
         <button type="button" id="bkFeedingSave">Save</button>
@@ -121,7 +159,15 @@ function openFeedingPage() {
       return;
     }
 
-    closeFeedingPage();
+    updateApiaryLastVisit(apiaryName, date);
+
+    const saveButton = page.querySelector('#bkFeedingSave');
+    if (saveButton) {
+      saveButton.textContent = 'Saved';
+      window.setTimeout(() => {
+        if (saveButton.isConnected) saveButton.textContent = 'Save';
+      }, 1200);
+    }
   });
 
   panel.appendChild(page);
@@ -140,7 +186,6 @@ function openMoreRecordsPage() {
   if (!panel) return;
 
   closeMoreRecordsPage();
-
   const page = document.createElement('section');
   page.id = MORE_RECORDS_PAGE_ID;
   page.setAttribute('aria-label', 'More Records');
@@ -162,7 +207,6 @@ function openMoreRecordsPage() {
 
   const nameElement = page.querySelector('.bk-more-records-apiary-name');
   if (nameElement) nameElement.textContent = getCurrentApiaryName();
-
   page.querySelector('#bkMoreRecordsBackButton')?.addEventListener('click', closeMoreRecordsPage);
   page.querySelector('[data-record-type="feeding"]')?.addEventListener('click', openFeedingPage);
   panel.appendChild(page);
@@ -173,16 +217,12 @@ function openMoreRecordsPage() {
 function enhanceApiaryInformationBar() {
   const bar = document.getElementById('bkApiaryDetailBack');
   if (!bar) return;
-
   const originalBackButton = bar.querySelector('button');
   if (!originalBackButton) return;
-
   if (originalBackButton.id !== 'bkApiaryInformationBackButton') originalBackButton.id = 'bkApiaryInformationBackButton';
   if (originalBackButton.textContent?.trim() !== 'Back') originalBackButton.textContent = 'Back';
-
   const directHint = Array.from(bar.children).find((child) => child.tagName === 'SPAN');
   if (directHint) directHint.remove();
-
   let moreRecordsButton = bar.querySelector('#bkMoreRecordsButton');
   if (!moreRecordsButton) {
     moreRecordsButton = document.createElement('button');
