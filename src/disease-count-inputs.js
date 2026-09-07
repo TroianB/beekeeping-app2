@@ -54,31 +54,18 @@ function setCountState(page, toggleId, isYes) {
   if (!isYes) input.value = '0';
 }
 
-function makeCleanToggle(page, toggleId, savedYes) {
-  let toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
+function prepareToggle(page, toggleId, savedYes) {
+  const toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
   if (!toggle) return;
 
-  if (toggle.dataset.cleanDiseaseToggle !== '1') {
-    const cleanToggle = toggle.cloneNode(true);
-    cleanToggle.dataset.cleanDiseaseToggle = '1';
-
-    const noButton = cleanToggle.querySelector('[data-value="no"]');
-    const yesButton = cleanToggle.querySelector('[data-value="yes"]');
-    if (noButton && yesButton) {
-      cleanToggle.appendChild(noButton);
-      cleanToggle.appendChild(yesButton);
-    }
-
-    toggle.replaceWith(cleanToggle);
-    toggle = cleanToggle;
-
-    toggle.addEventListener('click', (event) => {
-      const button = event.target.closest('button');
-      if (!button) return;
-      setCountState(page, toggleId, button.dataset.value === 'yes');
-    });
+  const noButton = toggle.querySelector('[data-value="no"]');
+  const yesButton = toggle.querySelector('[data-value="yes"]');
+  if (noButton && yesButton && toggle.firstElementChild !== noButton) {
+    toggle.insertBefore(noButton, yesButton);
   }
 
+  if (toggle.dataset.diseaseCountReady === '1') return;
+  toggle.dataset.diseaseCountReady = '1';
   setCountState(page, toggleId, savedYes === true);
 }
 
@@ -106,7 +93,6 @@ function replaceLevelSelect(select, savedValue) {
   const label = select.closest('label');
   const caption = label?.querySelector(':scope > span');
   if (caption) caption.textContent = 'Infected hives';
-
   select.replaceWith(input);
 }
 
@@ -115,7 +101,6 @@ function applyDiseaseCountInputs() {
   if (!page) return;
 
   const latest = getLatestDiseaseRecord(getPageApiaryName(page));
-
   Object.entries(COUNT_FIELDS).forEach(([elementId, config]) => {
     const element = page.querySelector(`#${elementId}`);
     const savedValue = latest?.[config.recordField] ?? 0;
@@ -124,7 +109,7 @@ function applyDiseaseCountInputs() {
 
   ['afb', 'chalkbrood', 'nosema'].forEach((toggleId) => {
     const savedYes = latest ? Boolean(latest[toggleId]) : false;
-    makeCleanToggle(page, toggleId, savedYes);
+    prepareToggle(page, toggleId, savedYes);
   });
 }
 
@@ -143,7 +128,18 @@ new MutationObserver(scheduleApply).observe(document.documentElement, {
   subtree: true,
 });
 
+/* Capture Yes/No before the legacy form listener. This directly controls the
+   infected-hive input and cannot be reset by the observer after initialization. */
 document.addEventListener('click', (event) => {
+  const button = event.target?.closest?.('.bk-choice-toggle button');
+  const page = button?.closest?.(`#${DISEASE_PAGE_ID}`);
+  const toggle = button?.closest?.('.bk-choice-toggle');
+  const toggleId = toggle?.dataset?.toggleFor;
+
+  if (page && ['afb', 'chalkbrood', 'nosema'].includes(toggleId)) {
+    setCountState(page, toggleId, button.dataset.value === 'yes');
+  }
+
   if (!event.target?.closest?.('#bkDiseaseSave')) return;
   Object.keys(COUNT_FIELDS).forEach((id) => {
     const input = document.getElementById(id);
