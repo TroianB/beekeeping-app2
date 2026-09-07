@@ -40,12 +40,16 @@ function normalizeCount(value) {
   return Math.floor(number);
 }
 
-function setCountEnabled(page, toggleId) {
+function setCountState(page, toggleId, isYes) {
   if (!toggleId) return;
   const toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
   const input = page.querySelector(`#${toggleId}Level`);
   if (!toggle || !input) return;
-  const isYes = toggle.querySelector('.is-selected')?.dataset?.value === 'yes';
+
+  toggle.querySelectorAll('button').forEach((button) => {
+    button.classList.toggle('is-selected', button.dataset.value === (isYes ? 'yes' : 'no'));
+  });
+
   input.disabled = !isYes;
   input.setAttribute('aria-disabled', String(!isYes));
   if (!isYes) input.value = '0';
@@ -57,21 +61,16 @@ function arrangeToggle(page, toggleId, savedYes) {
 
   const noButton = toggle.querySelector('[data-value="no"]');
   const yesButton = toggle.querySelector('[data-value="yes"]');
-  if (noButton && toggle.firstElementChild !== noButton) toggle.insertBefore(noButton, yesButton);
-
-  const useYes = savedYes === true;
-  toggle.querySelectorAll('button').forEach((button) => {
-    button.classList.toggle('is-selected', button.dataset.value === (useYes ? 'yes' : 'no'));
-  });
-
-  if (toggle.dataset.countBinding !== '1') {
-    toggle.dataset.countBinding = '1';
-    toggle.addEventListener('click', () => requestAnimationFrame(() => setCountEnabled(page, toggleId)));
+  if (noButton && yesButton && toggle.firstElementChild !== noButton) {
+    toggle.insertBefore(noButton, yesButton);
   }
+
+  setCountState(page, toggleId, savedYes === true);
 }
 
 function replaceLevelSelect(select, savedValue) {
   if (!select || select.tagName !== 'SELECT') return;
+
   const input = document.createElement('input');
   input.type = 'number';
   input.id = select.id;
@@ -81,14 +80,19 @@ function replaceLevelSelect(select, savedValue) {
   input.inputMode = 'numeric';
   input.value = String(normalizeCount(savedValue));
   input.setAttribute('aria-label', 'Infected hives');
+
   input.addEventListener('input', () => {
     if (input.value === '') return;
     if (Number(input.value) < 0) input.value = '0';
-    if (!Number.isInteger(Number(input.value))) input.value = String(Math.floor(Number(input.value) || 0));
+    if (!Number.isInteger(Number(input.value))) {
+      input.value = String(Math.floor(Number(input.value) || 0));
+    }
   });
+
   const label = select.closest('label');
   const caption = label?.querySelector(':scope > span');
   if (caption) caption.textContent = 'Infected hives';
+
   select.replaceWith(input);
 }
 
@@ -97,6 +101,7 @@ function applyDiseaseCountInputs() {
   if (!page) return;
 
   const latest = getLatestDiseaseRecord(getPageApiaryName(page));
+
   Object.entries(COUNT_FIELDS).forEach(([elementId, config]) => {
     const element = page.querySelector(`#${elementId}`);
     const savedValue = latest?.[config.recordField] ?? 0;
@@ -106,7 +111,6 @@ function applyDiseaseCountInputs() {
   ['afb', 'chalkbrood', 'nosema'].forEach((toggleId) => {
     const savedYes = latest ? Boolean(latest[toggleId]) : false;
     arrangeToggle(page, toggleId, savedYes);
-    setCountEnabled(page, toggleId);
   });
 }
 
@@ -125,7 +129,19 @@ new MutationObserver(scheduleApply).observe(document.documentElement, {
   subtree: true,
 });
 
+/* Handle Disease Monitoring Yes/No directly so the count box changes state
+   immediately and does not depend on the order of other click handlers. */
 document.addEventListener('click', (event) => {
+  const button = event.target?.closest?.(`#${DISEASE_PAGE_ID} .bk-choice-toggle button`);
+  if (button) {
+    const toggle = button.closest('.bk-choice-toggle');
+    const toggleId = toggle?.dataset?.toggleFor;
+    if (toggleId && ['afb', 'chalkbrood', 'nosema'].includes(toggleId)) {
+      const page = document.getElementById(DISEASE_PAGE_ID);
+      if (page) setCountState(page, toggleId, button.dataset.value === 'yes');
+    }
+  }
+
   if (!event.target?.closest?.('#bkDiseaseSave')) return;
   Object.keys(COUNT_FIELDS).forEach((id) => {
     const input = document.getElementById(id);
