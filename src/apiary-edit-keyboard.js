@@ -83,12 +83,6 @@ function getRecordPageForElement(element) {
   return element?.closest?.(RECORD_PAGE_SELECTOR) || null;
 }
 
-function getActiveRecordPage() {
-  const activePage = getRecordPageForElement(document.activeElement);
-  if (activePage) return activePage;
-  return document.querySelector(RECORD_PAGE_SELECTOR);
-}
-
 function clearRecordPageKeyboardState(page) {
   if (!page) return;
   const shell = page.querySelector('.bk-record-shell');
@@ -130,22 +124,17 @@ function updateRecordKeyboardSpacer() {
 
     const visibleHeight = Math.max(260, getVisibleViewportHeight());
     const offsetTop = getViewportOffsetTop();
-    const spacerHeight = Math.max(
-      keyboardCoveredHeight() + 64,
-      keyboardFallbackHeight(),
-      320
-    );
 
-    /* Feeding and Disease Monitoring are fixed full-screen pages. On phones,
-       the keyboard can cover the lower part of that fixed page without making
-       its own scroll container smaller. Size the record page to the actual
-       visible viewport while a field is focused, then add real content below
-       the action buttons so they can always be scrolled above the keyboard. */
+    /* The page itself is already reduced to the visible area above the keyboard,
+       so only a small tail is needed below the action buttons. The previous
+       keyboard-sized spacer made Feeding and Disease Monitoring scroll much too far. */
+    const spacerHeight = 96;
+
     page.style.setProperty('top', `${offsetTop}px`, 'important');
     page.style.setProperty('bottom', 'auto', 'important');
     page.style.setProperty('height', `${visibleHeight}px`, 'important');
     page.style.setProperty('max-height', `${visibleHeight}px`, 'important');
-    page.style.setProperty('scroll-padding-bottom', `${spacerHeight}px`, 'important');
+    page.style.setProperty('scroll-padding-bottom', '24px', 'important');
 
     const spacer = getOrCreateSpacer(shell, RECORD_SPACER_CLASS);
     setSpacerHeight(spacer, spacerHeight);
