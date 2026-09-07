@@ -1,50 +1,53 @@
 const EDIT_MODAL_SELECTOR = '#root .bk-apiary-edit-modal';
+const KEYBOARD_SPACER_CLASS = 'bk-apiary-keyboard-spacer';
 
 function isSmallScreen() {
   return window.matchMedia('(max-width: 520px)').matches;
 }
 
-function getEditModalParts() {
-  const modal = document.querySelector(EDIT_MODAL_SELECTOR);
-  const panel = modal?.firstElementChild || null;
-  return { modal, panel };
+function getEditPanel() {
+  return document.querySelector(`${EDIT_MODAL_SELECTOR} > div`);
 }
 
-function clearKeyboardViewportSizing() {
-  const { modal, panel } = getEditModalParts();
-  [modal, panel].forEach((element) => {
-    if (!element) return;
-    element.style.removeProperty('height');
-    element.style.removeProperty('max-height');
-  });
-  if (modal) elementSafeRemove(modal, 'top');
-  if (panel) panel.style.removeProperty('padding-bottom');
+function getKeyboardSpacer(panel) {
+  if (!panel) return null;
+  let spacer = panel.querySelector(`:scope > .${KEYBOARD_SPACER_CLASS}`);
+  if (!spacer) {
+    spacer = document.createElement('div');
+    spacer.className = KEYBOARD_SPACER_CLASS;
+    spacer.setAttribute('aria-hidden', 'true');
+    panel.appendChild(spacer);
+  }
+  return spacer;
 }
 
-function elementSafeRemove(element, property) {
-  element?.style?.removeProperty(property);
+function keyboardCoveredHeight() {
+  const viewport = window.visualViewport;
+  if (!viewport) return 0;
+
+  const layoutHeight = Math.max(window.innerHeight || 0, document.documentElement.clientHeight || 0);
+  const visibleBottom = viewport.height + viewport.offsetTop;
+  return Math.max(0, Math.round(layoutHeight - visibleBottom));
 }
 
-function applyKeyboardViewportSizing() {
+function updateKeyboardSpacer() {
+  const panel = getEditPanel();
+  if (!panel) return;
+
   if (!isSmallScreen() || !document.body.classList.contains('bk-apiary-edit-open')) {
-    clearKeyboardViewportSizing();
+    panel.querySelector(`:scope > .${KEYBOARD_SPACER_CLASS}`)?.remove();
     return;
   }
 
-  const { modal, panel } = getEditModalParts();
-  if (!modal || !panel) return;
+  const spacer = getKeyboardSpacer(panel);
+  const covered = keyboardCoveredHeight();
+  const fieldFocused = Boolean(panel.querySelector('input:focus, textarea:focus, select:focus'));
 
-  const viewport = window.visualViewport;
-  const height = Math.max(260, Math.round(viewport?.height || window.innerHeight));
-  const offsetTop = Math.max(0, Math.round(viewport?.offsetTop || 0));
-
-  modal.style.setProperty('top', `${offsetTop}px`, 'important');
-  modal.style.setProperty('height', `${height}px`, 'important');
-  modal.style.setProperty('max-height', `${height}px`, 'important');
-
-  panel.style.setProperty('height', `${height}px`, 'important');
-  panel.style.setProperty('max-height', `${height}px`, 'important');
-  panel.style.setProperty('padding-bottom', 'max(1rem, env(safe-area-inset-bottom))', 'important');
+  /* When a software keyboard overlays the page, create real scrollable space
+     below the action buttons. A small fallback keeps the buttons reachable on
+     browsers that do not report the keyboard height through VisualViewport. */
+  const spacerHeight = fieldFocused ? Math.max(covered + 24, 220) : 0;
+  spacer.style.height = `${spacerHeight}px`;
 }
 
 function keepFocusedFieldVisible(event) {
@@ -52,22 +55,22 @@ function keepFocusedFieldVisible(event) {
   if (!target?.closest?.(EDIT_MODAL_SELECTOR)) return;
 
   window.setTimeout(() => {
-    applyKeyboardViewportSizing();
-    target.scrollIntoView({ block: 'center', inline: 'nearest', behavior: 'smooth' });
-  }, 120);
+    updateKeyboardSpacer();
+    target.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'auto' });
+  }, 180);
 }
 
-window.visualViewport?.addEventListener('resize', applyKeyboardViewportSizing);
-window.visualViewport?.addEventListener('scroll', applyKeyboardViewportSizing);
-window.addEventListener('resize', applyKeyboardViewportSizing);
+window.visualViewport?.addEventListener('resize', updateKeyboardSpacer);
+window.visualViewport?.addEventListener('scroll', updateKeyboardSpacer);
+window.addEventListener('resize', updateKeyboardSpacer);
 document.addEventListener('focusin', keepFocusedFieldVisible, true);
-document.addEventListener('focusout', () => window.setTimeout(applyKeyboardViewportSizing, 120), true);
+document.addEventListener('focusout', () => window.setTimeout(updateKeyboardSpacer, 180), true);
 
-new MutationObserver(applyKeyboardViewportSizing).observe(document.documentElement, {
+new MutationObserver(updateKeyboardSpacer).observe(document.documentElement, {
   childList: true,
   subtree: true,
   attributes: true,
   attributeFilter: ['class'],
 });
 
-applyKeyboardViewportSizing();
+updateKeyboardSpacer();
