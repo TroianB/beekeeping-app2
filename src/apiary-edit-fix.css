@@ -114,6 +114,7 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
     max-height: none !important;
     margin: 0 !important;
     overflow-y: auto !important;
+    overscroll-behavior-y: contain !important;
     -webkit-overflow-scrolling: touch !important;
     border: 0 !important;
     border-radius: 0 !important;
@@ -123,6 +124,14 @@ body.bk-apiaries-list-only #root .fixed.inset-0.z-50 div.text-sm:has(> div.mb-1)
     padding-left: max(0.75rem, env(safe-area-inset-left)) !important;
     padding-right: max(0.75rem, env(safe-area-inset-right)) !important;
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom)) !important;
+    scroll-padding-bottom: 45vh !important;
+  }
+
+  /* Mobile keyboards can cover the lower part of the layout viewport. While
+     a field is being edited, add real scroll space below the action buttons
+     so Cancel and Save can always be pulled above the keyboard. */
+  body.bk-apiary-edit-open #root .bk-apiary-edit-modal > div:focus-within {
+    padding-bottom: max(45vh, calc(env(safe-area-inset-bottom) + 1rem)) !important;
   }
 
   body.bk-apiaries-list-only #root .fixed.inset-0.z-50 label:has(> input[type="number"]),
