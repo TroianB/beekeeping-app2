@@ -33,6 +33,7 @@ import "./apiary-action-row.js";
 import "./apiary-delete-no-reload.js";
 import "./apiary-detail-back-arrow.js";
 import "./apiary-edit-fix.js";
+import "./apiary-edit-keyboard.js";
 import "./apiary-add-number-cleanup.js";
 import "./apiary-edit-cancel-return.js";
 import "./apiary-list-metric-dropdown.js";
