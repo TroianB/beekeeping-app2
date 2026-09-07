@@ -1,0 +1,27 @@
+.bk-level-field .bk-infected-hives-input {
+  width: 100%;
+  min-height: 3.35rem;
+  box-sizing: border-box;
+  border: 1px solid #465058;
+  border-radius: .65rem;
+  background: linear-gradient(135deg, #12191f, #0c1116);
+  color: #f8fafc;
+  padding: .7rem .9rem;
+  font-family: inherit;
+  font-size: 1.08rem;
+  font-weight: 400;
+  text-align: center;
+  outline: none;
+}
+
+.bk-level-field .bk-infected-hives-input:focus {
+  border-color: #ffe11f;
+}
+
+@media (max-width: 520px) {
+  .bk-level-field .bk-infected-hives-input {
+    min-height: 3rem;
+    padding: .6rem .75rem;
+    font-size: .98rem;
+  }
+}
