@@ -41,7 +41,6 @@ function normalizeCount(value) {
 }
 
 function setCountState(page, toggleId, isYes) {
-  if (!toggleId) return;
   const toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
   const input = page.querySelector(`#${toggleId}Level`);
   if (!toggle || !input) return;
@@ -55,14 +54,29 @@ function setCountState(page, toggleId, isYes) {
   if (!isYes) input.value = '0';
 }
 
-function arrangeToggle(page, toggleId, savedYes) {
-  const toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
+function makeCleanToggle(page, toggleId, savedYes) {
+  let toggle = page.querySelector(`[data-toggle-for="${toggleId}"]`);
   if (!toggle) return;
 
-  const noButton = toggle.querySelector('[data-value="no"]');
-  const yesButton = toggle.querySelector('[data-value="yes"]');
-  if (noButton && yesButton && toggle.firstElementChild !== noButton) {
-    toggle.insertBefore(noButton, yesButton);
+  if (toggle.dataset.cleanDiseaseToggle !== '1') {
+    const cleanToggle = toggle.cloneNode(true);
+    cleanToggle.dataset.cleanDiseaseToggle = '1';
+
+    const noButton = cleanToggle.querySelector('[data-value="no"]');
+    const yesButton = cleanToggle.querySelector('[data-value="yes"]');
+    if (noButton && yesButton) {
+      cleanToggle.appendChild(noButton);
+      cleanToggle.appendChild(yesButton);
+    }
+
+    toggle.replaceWith(cleanToggle);
+    toggle = cleanToggle;
+
+    toggle.addEventListener('click', (event) => {
+      const button = event.target.closest('button');
+      if (!button) return;
+      setCountState(page, toggleId, button.dataset.value === 'yes');
+    });
   }
 
   setCountState(page, toggleId, savedYes === true);
@@ -110,7 +124,7 @@ function applyDiseaseCountInputs() {
 
   ['afb', 'chalkbrood', 'nosema'].forEach((toggleId) => {
     const savedYes = latest ? Boolean(latest[toggleId]) : false;
-    arrangeToggle(page, toggleId, savedYes);
+    makeCleanToggle(page, toggleId, savedYes);
   });
 }
 
@@ -129,19 +143,7 @@ new MutationObserver(scheduleApply).observe(document.documentElement, {
   subtree: true,
 });
 
-/* Handle Disease Monitoring Yes/No directly so the count box changes state
-   immediately and does not depend on the order of other click handlers. */
 document.addEventListener('click', (event) => {
-  const button = event.target?.closest?.(`#${DISEASE_PAGE_ID} .bk-choice-toggle button`);
-  if (button) {
-    const toggle = button.closest('.bk-choice-toggle');
-    const toggleId = toggle?.dataset?.toggleFor;
-    if (toggleId && ['afb', 'chalkbrood', 'nosema'].includes(toggleId)) {
-      const page = document.getElementById(DISEASE_PAGE_ID);
-      if (page) setCountState(page, toggleId, button.dataset.value === 'yes');
-    }
-  }
-
   if (!event.target?.closest?.('#bkDiseaseSave')) return;
   Object.keys(COUNT_FIELDS).forEach((id) => {
     const input = document.getElementById(id);
