@@ -27,6 +27,7 @@ import "./csv-controls.js";
 import "./apiary-mobile.js";
 import "./apiary-list-only.js";
 import "./apiary-more-records.js";
+import "./disease-count-inputs.js";
 import "./apiary-action-row.js";
 import "./apiary-delete-no-reload.js";
 import "./apiary-detail-back-arrow.js";
